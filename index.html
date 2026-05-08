@@ -23,11 +23,24 @@ background: #fafafa;
 }
 
 footer {
-    font-size: 11px;
-    color: #888888;
-    text-align: center; /* 選擇性：讓文字置中 */
-    padding: 20px 0;    /* 選擇性：增加上下留白 */
-  }
+  font-size: 11px;
+  color: #888888;
+  text-align: center; 
+  padding: 20px 0;
+  line-height: 1.8; 
+}
+
+.report-link {
+  display: block; 
+  color: #888888;
+  text-decoration: none; 
+  margin-top: 4px;
+}
+
+.report-link:hover {
+  text-decoration: underline; 
+  color: #555555; 
+}
 
 input {
 
@@ -97,7 +110,7 @@ white-space: pre-wrap;
 
 
 
-<h2>🎧 到底是哪集啦 </h2>
+<h2>🫱 到底是哪集啦 </h2>
 
 <h5 style="color: #888888;"> 點擊標題就可以飛過去看影片囉🧚🏼</h5>
 
@@ -108,7 +121,8 @@ white-space: pre-wrap;
 <div id="results"></div>
 
 <footer>
-  資料更新時間：<span id="last-mod"></span>
+  <a href="https://forms.gle/a5JUXWqHpME7kbwe8" target="_blank" class="report-link">🐛本工具非達康官方製作，有問題請來這裡回報🐛</a>
+資料更新時間：<span id="last-mod"></span>
 </footer>
 
 <script>
@@ -131,13 +145,13 @@ const data = [
   {
     "title": "EP112｜好啦，休半年假【#達康還在講－新世界】",
     "text": "其實手機使用時間最久的不是康康？！",
-    "tags": ["螢幕使用時間", "手機成癮", "FOMO", "新聞", "滑手機"],
+    "tags": ["螢幕使用時間", "手機成癮", "FOMO", "新聞", "滑手機", "休息", "焦慮"],
     "url": "https://www.youtube.com/watch?v=wW85O6lkDmM"
   },
   {
     "title": "EP111｜欸！不要內耗【#達康還在講－新世界#已讀誤回QQA】",
     "text": "學習當個外耗人",
-    "tags": ["內耗", "情緒消耗", "心理壓力", "自我調適", "QQA"],
+    "tags": ["內耗", "打屁股", "openmic", "自我調適", "QQA"],
     "url": "https://www.youtube.com/watch?v=TuetJSB5Bw8"
   },
   {
@@ -160,13 +174,13 @@ const data = [
 },
 {
 "title": "EP107｜可是你要感謝你自己【#達康還在講－新世界】",
-"text": "飲控中的阿達、密封袋機",
+"text": "飲控中的阿達 密封袋機",
 "tags": ["拉麵", "飲控", "健康", "心理建設"],
 "url": "https://www.youtube.com/watch?v=mQPPY_zoDH4"
 },
 {
 "title": "EP106｜好想要取消啊【#達康還在講－新世界】",
-"text": "打哈欠是會傳染的",
+"text": "打哈欠是會傳染的 康康需要阿達來啟動(?)",
 "tags": ["取消", "開場", "拖延", "心理掙扎"],
 "url": "https://www.youtube.com/watch?v=DQv10NRwl78"
 },
@@ -190,7 +204,7 @@ const data = [
 },
 {
 "title": "EP102｜不然退休來開漫才師咖啡廳【#達康還在講－新世界#已讀誤回QQA】",
-"text": "Q：因為我在女僕咖啡廳上班，想問達康哈如果能開一間主題式的咖啡廳或餐廳的話，會想要開樣的咖啡廳或餐廳呢？ \nQ：之前看過一個測試反社會人格的問題，你跟陌生人同時撿到$100，對方有如何分配的提案權但你有否決權，而且只有一次機會。這時對方提議他拿$99美金你拿$1美金 \n你會接受這個提案還是否決這個提案？",
+"text": "Q：因為我在女僕咖啡廳上班，想問達康哈如果能開一間主題式的咖啡廳或餐廳的話，會想要開樣的咖啡廳或餐廳呢？ \nQ：之前看過一個測試反社會人格的問題，你跟陌生人同時撿到$100，對方有如何分配的提案權但你有否決權，而且只有一次機會。這時對方提議他拿$99美金你拿$1美金\n你會接受這個提案還是否決這個提案？",
 "tags": ["主題咖啡廳", "創業", "餐廳經營", "女僕咖啡廳", "分錢實驗", "心理測試"],
 "url": "https://www.youtube.com/watch?v=gvTj24dVRFk"
 },
@@ -214,7 +228,7 @@ const data = [
 },
 {
 "title": "EP98｜曾經很喜歡但搞丟的自己【#達康還在講－新世界#已讀誤回QQA】",
-"text": "辣雞男看到阿姨閃閃發亮的眼神🤩\n\n　Q：如果喜歡的店走味了願意再去消費幾次呢？我自己是二到五次。越好吃願意再多試幾次，還是一樣走味就會放棄呢？ \nQ：逛二手店鋪時看到令我驚訝的商品，某某課程結業證書、叉叉感謝狀還有疑似是學生時期收到的生日禮物摺紙星星許願罐。如果達康哈逛二手市集看到自己參加活動的作品或是曾經送別人的禮物會想要買回去嗎？如果以二手店舖為主題的交換禮物，夥伴們會怎麼樣挑選禮物？ \nQ：有些人抱怨遇到問題聯繫官方，結果客服窗口都在官腔講屁話。如果客服全都省略了敬語及修飾用語會比較好嗎？",
+"text": "辣雞男看到阿姨閃閃發亮的眼神🤩\n\nQ：如果喜歡的店走味了願意再去消費幾次呢？我自己是二到五次。越好吃願意再多試幾次，還是一樣走味就會放棄呢？ \nQ：逛二手店鋪時看到令我驚訝的商品，某某課程結業證書、叉叉感謝狀還有疑似是學生時期收到的生日禮物摺紙星星許願罐。如果達康哈逛二手市集看到自己參加活動的作品或是曾經送別人的禮物會想要買回去嗎？如果以二手店舖為主題的交換禮物，夥伴們會怎麼樣挑選禮物？ \nQ：有些人抱怨遇到問題聯繫官方，結果客服窗口都在官腔講屁話。如果客服全都省略了敬語及修飾用語會比較好嗎？",
 "tags": ["自我迷失", "二手店", "回憶", "物品情感", "客服抱怨", "溝通問題"],
 "url": "https://www.youtube.com/watch?v=FOoH5DUNwi8"
 },
@@ -598,7 +612,7 @@ const data = [
 },
 {
 "title": "EP44｜達康哈演恐怖片的話【#達康還在講－新世界#已讀誤回QQA】",
-"text": "AI曲—阿嬤襪子超臭\n\n Q：鄭重道謝與鄭重道歉應該怎麼做才算有誠意呢？ \nQ：如果達康哈穿越進恐怖喜劇片裡，覺得對方會是什麼樣角色呢？ \nQ：測視力的時候看不到會用猜的，還是很誠實的說看不到？",
+"text": "AI曲—阿嬤襪子超臭\n\nQ：鄭重道謝與鄭重道歉應該怎麼做才算有誠意呢？ \nQ：如果達康哈穿越進恐怖喜劇片裡，覺得對方會是什麼樣角色呢？ \nQ：測視力的時候看不到會用猜的，還是很誠實的說看不到？",
 "tags": ["恐怖片", "喜劇角色", "道歉", "誠意", "接受道歉", "視力測驗", "猜還是誠實"],
 "url": "https://www.youtube.com/watch?v=HJ3BssRyg5k"
 },
@@ -652,7 +666,7 @@ const data = [
 },
 {
 "title": "十月份直播｜我大喜利你的大喜利【#達康還在講 #HelloLIVE #大喜利】",
-"text": "ㄎ一ㄤ康",
+"text": "ㄎ一ㄤ康 白飯大喜利",
 "tags": ["直播", "大喜利", "頻率很怪", "碳暈"],
 "url": "https://www.youtube.com/watch?v=WusyWEzdOWw"
 },
@@ -908,10 +922,10 @@ const data = [
 "tags": ["大叔", "新時代", "世代差異", "年齡", "觀念改變", "社會變化"],
 "url": "https://www.youtube.com/watch?v=3R2Z3qzWvZA"
 },
-  // === 😄Return 系列😄===
+  // === 😄Return 系列分隔線😄===
   {
     "title": "EP73｜哎呦戲劇系的，喜怒哀樂來一下啊【#達康還在講Return #已讀誤回QQA】",
-    "text": "划船機\n\n Q：達康哈退休後會做些什麼？會選擇平淡度日還是繼續往表演路前進？\nQ：過年到底要怎麼面對親戚的詢問？尤其本人還是戲劇系每年都演喜怒哀樂",
+    "text":"划船機\n\n Q：達康哈退休後會做些什麼？會選擇平淡度日還是繼續往表演路前進？\nQ：過年到底要怎麼面對親戚的詢問？尤其本人還是戲劇系每年都演喜怒哀樂",
     "tags": ["退休生活", "戲劇系", "親戚過年", "喜怒哀樂", "QQA"],
     "url": "https://www.youtube.com/watch?v=TC6GhqS9iEg"
   },
@@ -1334,7 +1348,7 @@ const data = [
   },
   {
     "title": "EP05｜人都有情緒，但東西是無辜的！",
-    "text": "本集內容整理中",
+    "text": "阿達拍桌",
     "tags": ["情緒控制", "砸東西", "克制", "QQA"],
     "url": "https://www.youtube.com/watch?v=zOO8YpnYNgg"
   },
@@ -1524,7 +1538,7 @@ const data = [
     "tags": ["防疫", "獨居", "睡不著", "生理痛"],
     "url": "https://www.youtube.com/watch?v=fo9eUV1N_Gg"
   },
-  // === 😄漫才系列😄 ===
+  // === 😄漫才系列分隔線😄 ===
     {
     "title": "達康.come漫才《爸媽沒教的事小學堂》",
     "text": "盛竹如 股票哥哥 假人頭哥哥 切小指頭",
@@ -1545,20 +1559,20 @@ const data = [
   },
   {
     "title": "達康.come漫才《標籤》",
-    "text": "弄丟perfume帽子",
-    "tags": [],
+    "text": "貓派 狗派 康的小帳 弄丟perfume帽子 真的嗎?",
+    "tags": ["大阪表演","A片","左派", "右派","台派"],
     "url": "https://www.youtube.com/watch?v=AFfLu3f3zvs&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《台日友好嗎？》",
-    "text": "直直走",
-    "tags": [],
+    "text": "漫才少爺 直直走",
+    "tags": ["吃拉麵","啤酒", "泡澡", "統神","お疲れ様でした","三木","太田"],
     "url": "https://www.youtube.com/watch?v=GFPvVwKPv8c&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《搭車即地獄》",
     "text": "好多種計程車司機",
-    "tags": [],
+    "tags": ["間諜","運毒","棄屍","孕婦"],
     "url": "https://www.youtube.com/watch?v=ox_spl9d_mg&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -1569,68 +1583,68 @@ const data = [
   },
   {
     "title": "達康.come漫才《PeeUA》",
-    "text": "我的尿尿不需要課程 邪教",
-    "tags": [],
+    "text": "毛毛蟲 我的尿尿不需要課程 邪教",
+    "tags": ["道歉","冰山理論", "蝴蝶", "電線杆", "天鵝"],
     "url": "https://www.youtube.com/watch?v=tfLgO5rRwTo&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《親戚》",
-    "text": "回家拜年 18生 酒促和尚",
-    "tags": [],
+    "text": "回家拜年 酒促和尚 大嘻哈古代",
+    "tags": ["魔法師","分手", "刺青"],
     "url": "https://www.youtube.com/watch?v=6A5h1JBDpsc&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《紅牌男公關》",
-    "text": "達斯汀 康士坦丁",
-    "tags": [],
+    "text": "達斯汀 康士坦丁 打call",
+    "tags": ["椰子水","酒店", "蛋塔", "押韻", "黃國昌", "陳玉珍"],
     "url": "https://www.youtube.com/watch?v=07AFakOGiY4&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《要的打+1》",
     "text": "直播帶貨 哞哞",
-    "tags": [],
+    "tags": ["時間差吐槽","momo paradise", "烏魚子", "鍋蓋", "何瑞康", "188.8"],
     "url": "https://www.youtube.com/watch?v=PkOK_K1eqvs&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
-  {
+   {
     "title": "達康.come漫才《吐槽病》",
     "text": "珊珊颱風 阿達去日本玩",
-    "tags": [],
+    "tags": ["王齊麟","傳教", "飯店", "舔"],
     "url": "https://www.youtube.com/watch?v=gYyQnAbpOnU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《早安大小姐》",
-    "text": "管家炒飯",
-    "tags": [],
+    "text": "管家炒飯 十六蹲",
+    "tags": ["精品","稀釋", "西式", "台式炒飯"],
     "url": "https://www.youtube.com/watch?v=4pCvWQt7IgY&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《觀眾教育》",
     "text": "達康的孩子 何媽媽 陳媽媽 康康三振舞 演出不要滑手機講電話阿",
-    "tags": [],
+    "tags": ["半生不熟","觀眾互動", "遲到", "罰站"],
     "url": "https://www.youtube.com/watch?v=PAZ3NVKjW6s&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《博愛座不座》",
     "text": "level up 不愧是你啊",
-    "tags": [],
+    "tags": ["捷運","M"],
     "url": "https://www.youtube.com/watch?v=NDs-AjLQ4fU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《報告潛水長》",
-    "text": "under the sea 魟魚康 海帶芽",
-    "tags": [],
+    "text": "under the sea 魟魚康 海帶芽 福利熊",
+    "tags": ["廈門","水鬼","壓力","OW","WOW"],
     "url": "https://www.youtube.com/watch?v=oRbaj8HfPU4&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《葬獨》",
-    "text": "葬禮 抬棺獨立",
-    "tags": [],
+    "text": "走鐘獎入圍作品✨ 頂加 葬禮 抬棺獨立",
+    "tags": ["漫才屋","藏獨","台獨","漫才後輩"],
     "url": "https://www.youtube.com/watch?v=_1rrr17wXV4&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《鬼臉》",
-    "text": "本集內容整理中",
-    "tags": [],
+    "text": "在那邊 裝帥 冰崩冰崩 阿達鬼臉連拍",
+    "tags": ["自肥","康康","小肚肚","拍照"],
     "url": "https://www.youtube.com/watch?v=nC0Fstmxjfg&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -1753,10 +1767,10 @@ const data = [
    "tags": ["二手消息","姊夫", "新冠", "統神"],
     "url": "https://www.youtube.com/watch?v=0-zwf853hBU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
-  {
+{
     "title": "達康.come漫才《留個紀念也好》",
-    "text": "本集內容整理中",
-    "tags": [],
+    "text": "才不是才不對才不是勒菩提撒婆訶\n裝傻本無相，吐槽都一樣",
+    "tags": ["吐槽心經"],
     "url": "https://www.youtube.com/watch?v=PKY8bUzWO0I&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -1797,200 +1811,200 @@ const data = [
   },
   {
     "title": "達康.come漫才《預告片》",
-    "text": "威秀泰坦廳",
-    "tags": [],
+    "text": "本集內容整理中",
+    "tags": ["威秀泰坦廳"],
     "url": "https://www.youtube.com/watch?v=dUuhbVtG5cI&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《拍電影》",
-    "text": "威秀泰坦廳",
-    "tags": [],
+    "text": "本集內容整理中",
+    "tags": ["威秀泰坦廳"],
     "url": "https://www.youtube.com/watch?v=nXrJVjYUyXM&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《畢業》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["大稻埕"],
     "url": "https://www.youtube.com/watch?v=uZmU_qlafUE&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《被採訪》",
-    "text": "本集內容整理中",
-    "tags": [],
+    "text": "車禍目擊者",
+    "tags": ["爵士鼓","黑人","連女士","大稻埕"],
     "url": "https://www.youtube.com/watch?v=5SZU9VNrjI8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《惡鄰退散》",
-    "text": "本集內容整理中",
-    "tags": [],
+    "text": "%%% 觀落音菩薩 氣球人",
+    "tags": ["鄰居","房事","管委會","矮靈"],
     "url": "https://www.youtube.com/watch?v=6VcnapwsNYo&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《火烤Roast》",
-    "text": "本集內容整理中",
-    "tags": [],
+    "text": "抖M",
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=xYfxhLz5zzw&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《黑仔》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=qiDv-NujZR8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《溫泉》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=3Ub_a20biwU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《夾娃娃機》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=9JpXdsrGNzM&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《路見不平》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=X-NUYXRs2Sw&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《啪啪啪》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=W54FhLPF_0M&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《金孫Pro》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=TchTSeMQpnI&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
    {
     "title": "達康.come漫才《網路跟風小遊戲》",
     "text": "猜哪個職業是假的 一二三強國人",
-    "tags": ["印表機銷售員","A片導演","天氣不好"],
+    "tags": ["印表機銷售員","A片導演","天氣不好","23comedy"],
     "url": "https://www.youtube.com/watch?v=Zakm0uzNlag&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《駕駛 do it》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=2geh5Hciw98&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《誕誕的哀傷》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=-V2HkqU8_LY&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《死神》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=1gQ1B50gq-8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《給我你的安慰》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=l6v9dKotNZc&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《道歉》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=2fPysZl2IhE&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《床的世界》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=lgeMiho-0x8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《做生意》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=GOea0WthUkU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《馬桶》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=CujK86zoR2I&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《老闆》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=ZkDdH4L8k3Q&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《誤會》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=LlIqN28HUgY&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《扒手》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=eDiaOH5zf40&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《看妹仔》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=56_URW3dO_8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《交友》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=mkgJB52GnhU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《傳統狂》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=DzOY-7kYQu4&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《選舉騎士》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=D2rxLRHb4p8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《疏忽》",
     "text": "謝盈萱 豬肉 豬瘟 洗澡 安全帽",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=knI-j1Spth8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《陳選手》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=UxfhMpVJUfw&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《陳同學》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡","英文課","狗屎寫手"],
     "url": "https://www.youtube.com/watch?v=SbkTUkSIqJw&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《搶真愛》",
     "text": "本集內容整理中",
-    "tags": [],
+    "tags": ["後台咖啡"],
     "url": "https://www.youtube.com/watch?v=dSaCv64N8bI&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《不食主義者》",
-    "text": "本集內容整理中",
-    "tags": [],
+    "text": "動物朋友 蔬菜朋友 水果朋友",
+    "tags": ["後台咖啡","高麗菜"],
     "url": "https://www.youtube.com/watch?v=n-k-oWiuw5I&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -2040,6 +2054,13 @@ const data = [
     "text": "本集內容整理中",
     "tags": [],
     "url": "https://www.youtube.com/watch?v=d8jgFVRrkNc&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
+  },
+// === 😄整集內容分隔線😄===
+{
+    "title": "《好了啦！達康！》Night Live 第二季 第二集【#完整節目】",
+    "text": "康康忘詞在這裡🤫",
+    "tags": [],
+    "url": "https://youtu.be/RWlSECCeKas?si=7RiYYpKFLvTG524B"
   }
 ];
 
@@ -2128,6 +2149,5 @@ document.getElementById("searchBox").addEventListener("input", (e) => {
 </body>
 
 </html>
-
 
 
