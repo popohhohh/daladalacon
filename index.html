@@ -22,7 +22,12 @@ background: #fafafa;
 
 }
 
-
+footer {
+    font-size: 11px;
+    color: #888888;
+    text-align: center; /* 選擇性：讓文字置中 */
+    padding: 20px 0;    /* 選擇性：增加上下留白 */
+  }
 
 input {
 
@@ -102,7 +107,22 @@ white-space: pre-wrap;
 
 <div id="results"></div>
 
+<footer>
+  資料更新時間：<span id="last-mod"></span>
+</footer>
 
+<script>
+  // 取得原始的最後修改時間字串
+  const lastMod = new Date(document.lastModified);
+
+  // 格式化為 YYYY/MM/DD 
+  const formattedDate = lastMod.getFullYear() + '/' + 
+                        (lastMod.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                        lastMod.getDate().toString().padStart(2, '0');
+
+  // 顯示到網頁上
+  document.getElementById('last-mod').textContent = formattedDate;
+</script>
 
 <script>
 // 🔥 JSON 🔥
@@ -266,7 +286,7 @@ const data = [
 },
 {
 "title": "EP88｜當出租大叔有搞頭嗎【#達康還在講－新世界#已讀誤回QQA】",
-"text": "Uber被硬生生棄單的康\n\nQ：達康哈會想租一日男女或是當一日男女友嗎？怎麼安排行程呢？ \nQ：想請問在創團成立初期是否有過迷茫的時刻？導致有打算不講慢才的念頭呢？如果有迷茫的時刻該如何跨越呢？ \nQ：香水有分前中後調，達康哈覺得代表自己的味道會是什麼呢？PS.不局限香氣香氛氣味，比如說烤肉香直男臭",
+"text": "Uber被硬生生棄單的康\n\nQ：達康哈會想租一日男女或是當一日男女友嗎？怎麼安排行程呢？ \nQ：想請問在創團成立初期是否有過迷茫的時刻？導致有打算不講漫才的念頭呢？如果有迷茫的時刻該如何跨越呢？ \nQ：香水有分前中後調，達康哈覺得代表自己的味道會是什麼呢？PS.不局限香氣香氛氣味，比如說烤肉香直男臭",
 "tags": ["出租男友", "一日情侶", "陪伴服務", "創業迷茫", "人生方向", "香水味道", "個人風格"],
 "url": "https://www.youtube.com/watch?v=7Z1LYyLxG3g"
 },
@@ -1729,8 +1749,8 @@ const data = [
   },
   {
     "title": "達康.come漫才《阿達家的阿姆斯壯》",
-    "text": "二手消息 姊夫 新冠一號 統神 康康的第一次",
-    "tags": [],
+    "text": "阿達搬家 康康的第一次",
+   "tags": ["二手消息","姊夫", "新冠", "統神"],
     "url": "https://www.youtube.com/watch?v=0-zwf853hBU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -1747,8 +1767,8 @@ const data = [
   },
   {
     "title": "達康.come漫才《說好的進軍大巨蛋呢》",
-    "text": "達媽打爵士鼓 你的愛我丟在大安森林公園的垃圾桶裡",
-    "tags": [],
+    "text": "你的愛我丟在大安森林公園的垃圾桶裡 國道招牌對話框",
+    "tags": ["達媽打爵士鼓","早餐店紅布條","飲料封膜","十周年"],
     "url": "https://www.youtube.com/watch?v=NZaVcZNg4d8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -1847,10 +1867,10 @@ const data = [
     "tags": [],
     "url": "https://www.youtube.com/watch?v=TchTSeMQpnI&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
-  {
+   {
     "title": "達康.come漫才《網路跟風小遊戲》",
     "text": "猜哪個職業是假的 一二三強國人",
-    "tags": [],
+    "tags": ["印表機銷售員","A片導演","天氣不好"],
     "url": "https://www.youtube.com/watch?v=Zakm0uzNlag&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -2108,3 +2128,6 @@ document.getElementById("searchBox").addEventListener("input", (e) => {
 </body>
 
 </html>
+
+
+
