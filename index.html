@@ -18,7 +18,7 @@ body {
 
 font-family: -apple-system, BlinkMacSystemFont;
 
-padding: 20px;
+padding: 30px 5%; /* 5% 代表左右會根據螢幕寬度自動留白 */
 
 background: #fafafa;
 
@@ -45,17 +45,20 @@ footer {
 }
 
 input {
-
-width: 100%;
-  max-width: 600px; /* 這裡限制搜尋框最長只到 600px */
-  display: block;   /* 確保它佔用一行 */
+  /* 讓寬度填滿父容器 */
+  width: 100%;
+  /* 設定一個更大的上限，例如 900px，這樣在大螢幕才不會無限延伸到看不見盡頭 */
+  max-width: 900px; 
+  display: block;   
+  /* 靠左對齊，並與下方保持距離 */
   margin: 0 0 20px 0; 
   padding: 12px;
   font-size: 16px;
-  box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
+  box-sizing: border-box; 
   border: 1px solid #ccc;
   border-radius: 8px;
-
+  /* 增加一點陰影，讓長條輸入框看起來比較有質感 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .card {
@@ -104,12 +107,12 @@ white-space: pre-wrap;
 
 .tag-container {
   width: 100%;
-  max-width: 600px; /* 標籤容器也限制跟搜尋框一樣寬 */
-  margin: -10px 0 20px 0;
+  max-width: 900px; 
+  margin: -10px 0 30px 0; /* 增加下方間距，跟結果區隔開 */
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-start; /* 標籤從左邊開始排 */
+  justify-content: flex-start; 
 }
 
 .tag-btn {
