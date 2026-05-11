@@ -169,17 +169,7 @@ white-space: pre-wrap;
 <div id="tag-cloud" class="tag-container"><button class="tag-btn">#ㄆㄧㄚˊ嘴</button><button class="tag-btn">#跪趴</button><button class="tag-btn">#忘詞</button><button class="tag-btn">#退休</button><button class="tag-btn">#笑太夫</button><button class="tag-btn">#睡不著</button><button class="tag-btn">#溝通</button></div>
 
 
-<div id="results"><div class="card">
-      <h3><a href="https://www.youtube.com/watch?v=KhI5-k7un4s&amp;list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx" target="_blank" style="text-decoration:none; color:inherit;">《好了啦！達康！》Night Live 第六季第四集【#完整節目】</a></h3>
-      <p class="reason">👉 命中：標籤</p>
-      <p>不可以在沒有笑點的地方笑、出、來！💥💥
-
-漫才《紅毯主持》
-達康來解答
-漫才《貓派的資格》
-達康演一下之這ㄊㄇ誰啊
-晚安曲</p>
-    </div></div>
+<div id="results"></div> 
 
 <footer>
   <a href="https://forms.gle/a5JUXWqHpME7kbwe8" target="_blank" class="report-link">🐛本工具非達康官方製作，有問題請來這裡回報🐛</a>
@@ -203,6 +193,12 @@ white-space: pre-wrap;
 // 🔥 JSON 🔥
 
 const data = [
+{
+    "title": "EP113｜不可以讓何瑞康拿到神燈【#達康還在講－新世界#已讀誤回QQA】",
+    "text": "達深刻感到危機的一集 乾乾的石頭很多\n\nQ：假影片能獲得真快樂嗎？最近看到人扮成長頸鹿和鴕鳥亂入動物群，好喜歡。\nQ：請問達康哈想要在火星種植什麼呢？\nQ：最近很喜歡考驗人性的問題。想請問達康哈如果今天撿到一個神燈，可以不需要付出代價，許個不違背良善風俗的願望，對象只能是別人，想知道達康他會幫對方取什麼願望",
+    "tags": ["飲控", "阿達私廚", "外星人", "怪談的來源", "複製人", "大麻", "龍舌蘭", "火星", "I人", "牛排","豆芽菜"],
+    "url": "https://www.youtube.com/watch?v=wW85O6lkDmM"
+  },
   {
     "title": "EP112｜好啦，休半年假【#達康還在講－新世界】",
     "text": "其實手機使用時間最久的不是康康？！",
@@ -2311,13 +2307,14 @@ const data = [
   }
 ];
 
-// ✅ 搜尋函數（已優化）
+// ✅ 搜尋函數（已整合 GA 追蹤）
 function search(keyword) {
   if (!keyword || !keyword.trim()) return [];
   
   const keywords = keyword.toLowerCase().split(/\s+/).filter(k => k.length > 0);
 
-  return data.map(item => {
+  // 1. 先計算搜尋結果
+  const results = data.map(item => {
     let reasons = [];
     const title = item.title.toLowerCase();
     const text = (item.text || "").toLowerCase();
@@ -2337,6 +2334,16 @@ function search(keyword) {
     }
     return null;
   }).filter(Boolean);
+
+  // 📢 2. 觸發 GA 事件：告訴 GA 有人搜了什麼
+  if (typeof gtag === 'function') {
+    gtag('event', 'view_search_results', {
+      search_term: keyword
+    });
+  }
+
+  // 3. 回傳結果給 UI 使用
+  return results;
 }
 
 // ✅ 高亮函數
@@ -2456,5 +2463,4 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
-
 
