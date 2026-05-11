@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-
-<html lang="zh-TW">
-
+<html>
 <head>
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta charset="UTF-8">
 
@@ -45,16 +47,16 @@ footer {
 input {
 
 width: 100%;
-
-padding: 12px;
-
-font-size: 16px;
-
-margin-bottom: 20px;
+  max-width: 600px; /* 這裡限制搜尋框最長只到 600px */
+  display: block;   /* 確保它佔用一行 */
+  margin: 0 auto 20px auto; /* 上下維持原樣，左右設為 auto 來達到置中 */
+  padding: 12px;
+  font-size: 16px;
+  box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
+  border: 1px solid #ccc;
+  border-radius: 8px;
 
 }
-
-
 
 .card {
 
@@ -101,11 +103,13 @@ white-space: pre-wrap;
 }
 
 .tag-container {
-  margin-top: -10px;
-  margin-bottom: 20px;
+  width: 100%;
+  max-width: 600px; /* 標籤容器也限制跟搜尋框一樣寬 */
+  margin: -10px auto 20px auto; /* 置中 */
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: flex-start; /* 標籤從左邊開始排 */
 }
 
 .tag-btn {
@@ -127,14 +131,30 @@ white-space: pre-wrap;
 .tag-btn:active {
   background: #d0d0d0;
 }
+/* 針對手機版 (螢幕寬度小於 600px) 的微調 */
+@media (max-width: 600px) {
+  body {
+    padding: 15px; /* 手機版邊距縮小一點點 */
+  }
+  
+  input {
+    font-size: 14px; /* 稍微縮小字體 */
+  }
+
+  .tag-btn {
+    padding: 6px 10px; /* 讓手機版標籤稍微大一點，比較好點擊 */
+  }
 
 </style>
 
+
+
+
 </head>
-
-
-
 <body>
+
+
+
 
 
 
@@ -142,15 +162,25 @@ white-space: pre-wrap;
 
 <h5 style="color: #888888;"> 點擊標題就可以飛過去看影片囉🧚🏼</h5>
 
-<input id="searchBox" placeholder="想來點什麼呢" />
-<div id="tag-cloud" class="tag-container"></div>
+<input id="searchBox" placeholder="想來點什麼呢">
+<div id="tag-cloud" class="tag-container"><button class="tag-btn">#ㄆㄧㄚˊ嘴</button><button class="tag-btn">#跪趴</button><button class="tag-btn">#忘詞</button><button class="tag-btn">#退休</button><button class="tag-btn">#笑太夫</button><button class="tag-btn">#睡不著</button><button class="tag-btn">#溝通</button></div>
 
 
-<div id="results"></div>
+<div id="results"><div class="card">
+      <h3><a href="https://www.youtube.com/watch?v=KhI5-k7un4s&amp;list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx" target="_blank" style="text-decoration:none; color:inherit;">《好了啦！達康！》Night Live 第六季第四集【#完整節目】</a></h3>
+      <p class="reason">👉 命中：標籤</p>
+      <p>不可以在沒有笑點的地方笑、出、來！💥💥
+
+漫才《紅毯主持》
+達康來解答
+漫才《貓派的資格》
+達康演一下之這ㄊㄇ誰啊
+晚安曲</p>
+    </div></div>
 
 <footer>
   <a href="https://forms.gle/a5JUXWqHpME7kbwe8" target="_blank" class="report-link">🐛本工具非達康官方製作，有問題請來這裡回報🐛</a>
-資料更新時間：<span id="last-mod"></span>
+資料更新時間：<span id="last-mod">2026/05/11</span>
 </footer>
 
 <script>
@@ -712,8 +742,8 @@ const data = [
 },
 {
 "title": "EP34｜這款ASMR不行吧【#達康還在講－新世界#已讀誤回QQA】",
-"text": "如果器官會說話、ASMㄇㄨㄚˊ \n\nQ：有什麼字或詞語單看似好意放到句子裡面就變成不懷好意呢？ \nQ：如果上帝讓你決定一種動物能夠開口說話，會選擇哪一種？ \nQ：想知道如果達康哈要做ASMR會做什麼樣主題呢？",
-"tags": ["ASMR", "聲音內容", "AV主題", "字詞語感", "語氣", "不懷好意", "動物說話", "想像"],
+"text": "如果器官會說話 ASMㄇㄨㄚˊ 康康低音砲 \n\nQ：有什麼字或詞語單看似好意放到句子裡面就變成不懷好意呢？ \nQ：如果上帝讓你決定一種動物能夠開口說話，會選擇哪一種？ \nQ：想知道如果達康哈要做ASMR會做什麼樣主題呢？",
+"tags": ["ASMR", "ㄆㄧㄚˊ嘴", "AV主題", "低音", "語氣", "不懷好意", "動物說話", "想像"],
 "url": "https://www.youtube.com/watch?v=-AxusfTt_A0"
 },
 {
@@ -2084,11 +2114,197 @@ const data = [
     "url": "https://www.youtube.com/watch?v=d8jgFVRrkNc&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
 // === 😄整集內容分隔線😄===
-{
+ {
+    "title": "《好了啦！達康！》Night Live 12/28【#完整節目】",
+    "text": "漫才《便當》\n達康給問嗎\n漫才《瞌睡蟲》\n聯誼節目\n晚安曲",
+    "tags": ["完整節目", "2019", "Night Live"],
+    "url": "https://www.youtube.com/watch?v=sbNd96Iutrg&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 一月號【#完整節目】",
+    "text": "漫才《拜年》\n達康給問嗎\n漫才《壽司與水餃》\n聯誼節目\n晚安曲",
+    "tags": ["完整節目", "一月號", "Night Live"],
+    "url": "https://www.youtube.com/watch?v=iRM2boM7fF0&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 二月號【#完整節目】",
+    "text": "漫才《痛神》\n達康給問嗎\n漫才《虎姑婆》\n聯誼節目\n晚安曲",
+    "tags": ["完整節目", "二月號", "Night Live"],
+    "url": "https://www.youtube.com/watch?v=v2LpFKSCUro&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 三月號【#完整節目】",
+    "text": "漫才《Champion》\n達康給問嗎\n漫才《缺德鬼》\n大喜利\n聯誼節目\n晚安曲",
+    "tags": ["完整節目", "三月號", "Night Live","2018"],
+    "url": "https://www.youtube.com/watch?v=b-D2VaRHP_M&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第二季 第一集【#完整節目】",
+    "text": "漫才《不食主義者》\n達康來解答\n漫才《搶真愛》\n達康演一下《校園篇》\n晚安曲",
+    "tags": ["完整節目", "第二季", "S2","2018"],
+    "url": "https://www.youtube.com/watch?v=gMlWLupa7qc&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
     "title": "《好了啦！達康！》Night Live 第二季 第二集【#完整節目】",
-    "text": "康康忘詞在這裡🤫",
-    "tags": [],
-    "url": "https://youtu.be/RWlSECCeKas?si=7RiYYpKFLvTG524B"
+    "text": "康康忘詞在這裡🤫\n\n漫才《陳同學》\n達康來解答\n漫才《陳選手》\n達康演一下《醫院篇》\n晚安曲",
+    "tags": ["完整節目", "第二季", "S2","2018"],
+    "url": "https://www.youtube.com/watch?v=RWlSECCeKas&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第二季 第三集【#完整節目】",
+    "text": "漫才《選舉騎士》\n達康來解答\n漫才《傳統狂》\n達康演一下《遊樂場篇》\n晚安曲",
+    "tags": ["完整節目", "第二季", "S2","2018"],
+    "url": "https://www.youtube.com/watch?v=xwicjIuRsyk&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第二季 第四集【#完整節目】",
+    "text": "漫才《疏忽》\n達康來解答\n漫才《交友》\n達康演一下《極地篇》\n晚安曲",
+    "tags": ["完整節目", "第二季", "S2","2019"],
+    "url": "https://www.youtube.com/watch?v=HuVMSKbMugs&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第三季 第一集【#完整節目】",
+    "text": "漫才《看妹仔》\n達康來解答\n漫才《扒手》\n達康演一下《機場篇》\n晚安曲",
+    "tags": ["完整節目", "第三季", "S3","2019"],
+    "url": "https://www.youtube.com/watch?v=T3Ec1xCVAoQ&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第三季 第二集【#完整節目】",
+    "text": "漫才《誤會》\n達康來解答\n漫才《老闆》\n達康演一下《監獄篇》\n晚安曲",
+    "tags": ["完整節目", "第三季", "S3","2019"],
+    "url": "https://www.youtube.com/watch?v=TOu5GnIyB_Y&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第三季 第三集【#完整節目】",
+    "text": "漫才《馬桶》\n達康來解答\n漫才《做生意》\n達康演一下《海灘篇》\n晚安曲",
+    "tags": ["完整節目", "第三季", "S3","2019"],
+    "url": "https://www.youtube.com/watch?v=LS1mCpdAaNg&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "生活飲料《好了啦！達康！》Night Live 第三季 第四集【#完整節目】",
+    "text": "漫才《床的世界》\n達康來解答\n漫才《道歉》\n達康演一下《案發現場篇》\n晚安曲",
+    "tags": ["完整節目", "第三季", "S3", "生活飲料","2019"],
+    "url": "https://www.youtube.com/watch?v=_KNUZYwKEMI&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "生活飲料《好了啦！達康！》Night Live 第三季 第五集【#完整節目】",
+    "text": "漫才《給我你的安慰》\n達康來解答\n漫才《死神》\n達康演一下《夜店篇》\n晚安曲",
+    "tags": ["完整節目", "第三季", "S3", "生活飲料","2019"],
+    "url": "https://www.youtube.com/watch?v=cLm8e261kRc&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第三季 最後一集【#完整節目】",
+    "text": "漫才《駕駛do it》\n達康來解答\n漫才《誕誕的哀傷》\n達康演一下《博物館篇》\n晚安曲",
+    "tags": ["完整節目", "第三季", "S3", "最後一集","2019"],
+    "url": "https://www.youtube.com/watch?v=-iCGyrXJFQ8&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "緊急企劃！《不好了啦！達康！－達康99》【#完整節目】",
+    "text": "《那個鄰居北北》\n達康來解答\n《借早餐》\n達康告一下\n晚安曲",
+    "tags": ["完整節目", "達康99", "緊急企劃","2020","23comedy","微笑丹尼","直播"],
+    "url": "https://www.youtube.com/watch?v=rnZX2DPo3sg&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "直播演出！《快好了啦！達康！》【#完整節目】",
+    "text": "漫才《網路跟風小遊戲》\n達康來解答\n《Mr.Bar》\n達康告一下\n晚安曲",
+    "tags": ["完整節目", "直播", "快好了啦","2020","23comedy"],
+    "url": "https://www.youtube.com/watch?v=ZkbQqZngJU8&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第四季第一集【#完整節目】",
+    "text": "漫才《啪啪啪》\n達康來解答\n漫才《金孫Pro》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第四季", "S4","2020"],
+    "url": "https://www.youtube.com/watch?v=0DddHwNg5t0&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第四季第二集【#完整節目】",
+    "text": "漫才《路見不平》\n達康來解答\n漫才《夾娃娃機》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第四季", "S4","2020"],
+    "url": "https://www.youtube.com/watch?v=tSgxOWUliCk&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第四季第三集【#完整節目】",
+    "text": "漫才《溫泉》\n達康來解答\n漫才《黑仔》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第四季", "S4","2020"],
+    "url": "https://www.youtube.com/watch?v=igO1kvyJ0Xc&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第四季第四集【#完整節目】",
+    "text": "漫才《惡鄰退散》\n達康來解答\n漫才《火烤Roast》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第四季", "S4","2020"],
+    "url": "https://www.youtube.com/watch?v=Yhm4FIptfls&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第五季第一集【#完整節目】",
+    "text": "漫才《被採訪》\n達康來解答\n漫才《畢業》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第五季", "S5","2021","大稻埕"],
+    "url": "https://www.youtube.com/watch?v=jbTEtBIAePo&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《威～好了啦！達康！》第五季特番 in 威秀影城【#完整節目】",
+    "text": "漫才《拍電影》\n達康來解答\n漫才《預告片》\n達康開麥拉\n晚安曲",
+    "tags": ["完整節目", "第五季", "S5", "特番", "威秀影城","2021"],
+    "url": "https://www.youtube.com/watch?v=eAI0fLuLi9Q&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第五季第二集【#完整節目】",
+    "text": "漫才《阿姨我不想努力了》\n達康來解答\n漫才《婚宴》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第五季", "S5","2021","大稻埕"],
+    "url": "https://www.youtube.com/watch?v=Jc7yFGNrW1c&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第五季第三集【#完整節目】",
+    "text": "漫才《美味大挑戰》\n達康來解答\n漫才《裝傻像浪浪一樣多》\n戲說達康\n晚安曲",
+    "tags": ["完整節目", "第五季", "S5","2022"],
+    "url": "https://www.youtube.com/watch?v=MbVDfLrbVuQ&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第六季第一集【#完整節目】",
+    "text": "漫才《說好的進軍大巨蛋呢》\n達康來解答\n漫才《大賣場》\n達康演一下之這ㄊㄇ誰啊\n晚安曲",
+    "tags": ["完整節目", "第六季", "S6","2022"],
+    "url": "https://www.youtube.com/watch?v=n-U-Oln3bfE&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第六季第二集【#完整節目】",
+    "text": "漫才《留個紀念也好》\n達康來解答\n漫才《阿達家的阿姆斯壯》\n達康演一下之這ㄊㄇ誰啊\n晚安曲",
+    "tags": ["完整節目", "第六季", "S6","2022"],
+    "url": "https://www.youtube.com/watch?v=YAYHco_JfEQ&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第六季第三集【#完整節目】",
+    "text": "漫才《丟了啦》\n達康來解答\n漫才《露營》\n達康演一下之這ㄊㄇ誰啊\n晚安曲",
+    "tags": ["完整節目", "第六季", "S6","2022"],
+    "url": "https://www.youtube.com/watch?v=GeSXs7jnLXY&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第六季第四集【#完整節目】",
+    "text": "不可以在沒有笑點的地方笑、出、來！💥💥\n\n漫才《紅毯主持》\n達康來解答\n漫才《貓派的資格》\n達康演一下之這ㄊㄇ誰啊\n晚安曲",
+    "tags": ["完整節目", "第六季", "S6","2023","崩潰"],
+    "url": "https://www.youtube.com/watch?v=KhI5-k7un4s&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第六季第五集【#完整節目】",
+    "text": "漫才《不戴比較爽？》\n達康來解答\n漫才《看牙恐懼》\n達康演一下之這ㄊㄇ誰啊\n晚安曲",
+    "tags": ["完整節目", "第六季", "S6","2023"],
+    "url": "https://www.youtube.com/watch?v=yI0h4FiOeGk&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第七季第一集【#完整節目】",
+    "text": "漫才《女王的飯店》\n達康來解答\n漫才《你的孩子就是我的孩子》\n 是在演哪齣啦\n晚安曲",
+    "tags": ["完整節目", "第七季", "S7","2023"],
+    "url": "https://www.youtube.com/watch?v=S6V-KEFDnpc&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第七季第二集【#完整節目】",
+    "text": "漫才《誰要去同學會啊》\n達康來解答\n漫才《依比呀呀》\n 是在演哪齣啦\n晚安曲",
+    "tags": ["完整節目", "第七季", "S7"],
+    "url": "https://www.youtube.com/watch?v=gv40APpe0Bo&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
+  },
+  {
+    "title": "《好了啦！達康！》Night Live 第七季第三集【#完整節目】",
+    "text": "漫才《健康檢查》\n達康來解答\n漫才《可不可以吃你一小口》\n 是在演哪齣啦\n晚安曲",
+    "tags": ["完整節目", "第七季", "S7","2023"],
+    "url": "https://www.youtube.com/watch?v=AZZ9u7viyeA&list=PLGJVjjv5zdzDEgYFSNyRbYAHzJD8z79Mx"
   }
 ];
 
@@ -2219,13 +2435,23 @@ function initTags() {
   });
 }
 
-// 在頁面載入後執行初始化標籤
-initTags();
+// 在頁面載入完成後執行
+window.addEventListener('load', () => {
+  const searchBox = document.getElementById("searchBox");
+  const resultsContainer = document.getElementById("results");
 
+  // 1. 強制清空搜尋框的文字（破解瀏覽器自動填充）
+  searchBox.value = ""; 
+
+  // 2. 強制清空搜尋結果區
+  resultsContainer.innerHTML = "";
+
+  // 3. 重新初始化標籤（確保標籤雲是最新的隨機狀態）
+  initTags();
+});
 </script>
-  
 
 </body>
-
 </html>
+
 
