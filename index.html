@@ -100,6 +100,34 @@ white-space: pre-wrap;
 
 }
 
+.tag-container {
+  margin-top: -10px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-btn {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.tag-btn:hover {
+  background: #e2e2e2;
+  border-color: #bbb;
+}
+
+.tag-btn:active {
+  background: #d0d0d0;
+}
+
 </style>
 
 </head>
@@ -115,7 +143,7 @@ white-space: pre-wrap;
 <h5 style="color: #888888;"> 點擊標題就可以飛過去看影片囉🧚🏼</h5>
 
 <input id="searchBox" placeholder="想來點什麼呢" />
-
+<div id="tag-cloud" class="tag-container"></div>
 
 
 <div id="results"></div>
@@ -156,7 +184,7 @@ const data = [
   },
   {
     "title": "EP110｜年過40看所謂朋友【#達康還在講－新世界】",
-    "text": "阿達浴室水灘之謎、以為自己尿床的康、康對犬跟Ally的靈魂拷問、達康哈彼此現在友情的成分占比",
+    "text": "阿達浴室水灘之謎 以為自己尿床的康\n康對犬跟Ally的靈魂拷問 達康哈彼此現在友情的成分占比",
     "tags": ["漏水","朋友關係", "燈罩", "人際變化", "成熟"],
     "url": "https://www.youtube.com/watch?v=OGEY9WDbmzs"
   },
@@ -192,7 +220,7 @@ const data = [
 },
 {
 "title": "EP104｜家家有本難念的經【#達康還在講－新世界】",
-"text": "阿達水獺🦦、與父母政治立場不同時",
+"text": "阿達水獺🦦 與父母政治立場不同時",
 "tags": ["家庭問題", "家庭壓力", "人際關係", "煩惱"],
 "url": "https://www.youtube.com/watch?v=1fGPE44ZKkY"
 },
@@ -282,7 +310,7 @@ const data = [
 },
 {
 "title": "十一月直播｜那些曾經留下的文字【#達康還在講 #HelloLIVE】",
-"text": "康的情書、達的詩集",
+"text": "康的情書 達的作文",
 "tags": ["直播", "作文", "回憶", "感性", "日記"],
 "url": "https://www.youtube.com/watch?v=gRNsmiJidAs"
 },
@@ -462,8 +490,8 @@ const data = [
 },
 {
 "title": "EP65｜搬家真的很難欸【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["搬家", "收拾", "打包", "壓力", "生活轉換", "勞累"],
+"text": "<a href=\"https://www.youtube.com/watch?v=gRNsmiJidAs\">11月直播真的回顧學生時代的作文了😍</a>\n一條龍服務像移動城堡 搬家的心理負擔 無法斷捨離的康\n搬家才發現被尿的地方 買房vs租房 英文文法書應該要撿回來\n機車快點報廢！",
+"tags": ["搬家", "收拾", "打包", "貓咪", "高中作文", "斷捨離"],
 "url": "https://www.youtube.com/watch?v=X5ewkCRnkWQ"
 },
 {
@@ -510,8 +538,8 @@ const data = [
 },
 {
 "title": "EP58｜外星版達康哈be like【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["外星人", "宇宙", "異星", "想像", "角色設定"],
+"text": "土豪金有潔癖的異形 想留下什麼 遇到外星人第一句要講什麼",
+"tags": ["外星人", "ET", "黏液", "紀念", "科幻"],
 "url": "https://www.youtube.com/watch?v=3ttNawl_h40"
 },
 {
@@ -576,8 +604,8 @@ const data = [
 },
 {
 "title": "EP49｜過年回憶殺【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["過年", "回憶", "春節", "家庭", "童年", "年節習俗"],
+"text": "聽了會很餓的一集🤤\nAI歌—下巴太長 年夜飯的菜色 康康兒時的眷村回憶\n小時候玩什麼 工作室來辦個過年 在冰島打麻將",
+"tags": ["眷村", "回憶", "春節", "家庭", "童年", "年節習俗", "親情"],
 "url": "https://www.youtube.com/watch?v=G2onmiZi7W0"
 },
 {
@@ -1847,38 +1875,38 @@ const data = [
   },
   {
     "title": "達康.come漫才《黑仔》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "養貓 高高的叔叔",
+    "tags": ["後台咖啡","桃太郎"],
     "url": "https://www.youtube.com/watch?v=qiDv-NujZR8&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《溫泉》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "流氓康 先聊天再脫衣 沖脫泡蓋送\n＼訓導主任／",
+    "tags": ["後台咖啡","大眾湯","紙娃娃","減肥","下水湯"],
     "url": "https://www.youtube.com/watch?v=3Ub_a20biwU&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《夾娃娃機》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "故障的康康 要被AI取代啦 用腳講漫才 中指搖桿",
+    "tags": ["後台咖啡","躺著賺","頭皮按摩"],
     "url": "https://www.youtube.com/watch?v=9JpXdsrGNzM&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《路見不平》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "騎車一直震好困擾",
+    "tags": ["後台咖啡","機車","呱吉","高嘉瑜"],
     "url": "https://www.youtube.com/watch?v=X-NUYXRs2Sw&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《啪啪啪》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "鄰居 覺奮青年 多人運動中心",
+    "tags": ["後台咖啡","做愛"],
     "url": "https://www.youtube.com/watch?v=W54FhLPF_0M&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
     "title": "達康.come漫才《金孫Pro》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "父親節 手機 孫子 康嬰兒",
+    "tags": ["後台咖啡","天線寶寶"],
     "url": "https://www.youtube.com/watch?v=TchTSeMQpnI&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
    {
@@ -1889,8 +1917,8 @@ const data = [
   },
   {
     "title": "達康.come漫才《駕駛 do it》",
-    "text": "本集內容整理中",
-    "tags": ["後台咖啡"],
+    "text": "開車的脾氣 副駕駛的工作 丹尼",
+    "tags": ["後台咖啡","雲門劇場","恐不恐怖"],
     "url": "https://www.youtube.com/watch?v=2geh5Hciw98&list=PLGJVjjv5zdzCTFQkxSMYmuvnCVBRE8-E1"
   },
   {
@@ -2143,11 +2171,61 @@ document.getElementById("searchBox").addEventListener("input", (e) => {
   const results = search(keyword);
   render(results, keyword);
 });
+
+// ✅ 這是點擊標籤後要執行的「搜尋動作」
+function quickSearch(tag) {
+  const searchBox = document.getElementById("searchBox");
+  
+  // 1. 把標籤文字填入搜尋框
+  searchBox.value = tag; 
+  
+  // 2. 執行你原本寫好的搜尋邏輯
+  // 注意：這裡直接呼叫你程式碼裡現有的 search() 和 render()
+  const results = search(tag);
+  render(results, tag);
+  
+  // 3. (選配) 讓頁面自動捲動到頂部，方便看結果
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+// ✅ 標籤們
+function initTags() {
+  const tagCloud = document.getElementById("tag-cloud");
+  tagCloud.innerHTML = ""; // 先清空，避免重複渲染
+
+  // 1. 【手動保底】：你想永遠出現在最前面的標籤
+  const priorityTags = ["ㄆㄧㄚˊ嘴", "跪趴", "忘詞"];
+
+  // 2. 【自動抓取】：從 JSON 撈出所有標籤
+  const allTagsFromData = data.flatMap(item => item.tags || []);
+  
+  // 3. 【去重】：去掉重複的，也去掉已經在保底名單裡的詞
+  const otherTags = [...new Set(allTagsFromData)].filter(tag => !priorityTags.includes(tag));
+
+  // 4. 【洗牌補位】：從剩下的標籤隨機抽 4 個補在後面
+  const randomSupplement = otherTags
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 4);
+
+  // 5. 【合併】：最終顯示的名單
+  const finalTags = [...priorityTags, ...randomSupplement];
+
+  // 6. 【生成按鈕】
+  finalTags.forEach(tag => {
+    const btn = document.createElement("button");
+    btn.className = "tag-btn";
+    btn.innerText = `#${tag}`;
+    btn.onclick = () => quickSearch(tag);
+    tagCloud.appendChild(btn);
+  });
+}
+
+// 在頁面載入後執行初始化標籤
+initTags();
+
 </script>
   
 
 </body>
 
 </html>
-
 
