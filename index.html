@@ -16,8 +16,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta charset="UTF-8">
+<meta name="description" content=”想回味達康的作品卻又想不起來在哪裡？來這裡找找吧！近期的演出活動資訊也有整理，想看真人不要錯過！"> 
+<meta name="keywords" content="近期活動, 線上售票, 達康.come, 漫才, 喜劇">
+<meta name="robots" content="index, follow"> 
 
-<title>達康作品搜尋器</title>
+<title>達康作品搜尋器｜達康.come影片節目和活動搜尋</title>
 
 
 
@@ -211,7 +214,328 @@ input::placeholder {
         searchBox.placeholder = placeholders[randomIndex];
     };
 </script>
+    
+<!-- ==============================
+達康活動行事曆
+使用方式：貼在 <footer> 前面
+更新活動：直接改 Google Sheet 即可
+============================== -->
+<style>
+.event-section {
+margin: 40px 0 20px 0;
+}
 
+.event-section h2 {
+font-size: 18px;
+font-weight: bold;
+margin-bottom: 6px;
+color: #222;
+}
+
+.event-subtitle {
+font-size: 13px;
+color: #888;
+margin-bottom: 20px;
+}
+
+.event-card {
+display: flex;
+gap: 16px;
+align-items: center;
+background: white;
+border: 1px solid #eee;
+border-radius: 10px;
+padding: 14px 16px;
+margin-bottom: 12px;
+text-decoration: none;
+color: inherit;
+box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+transition: border-color 0.15s;
+}
+
+a.event-card:hover {
+border-color: #bbb;
+}
+
+.event-date-box {
+min-width: 52px;
+text-align: center;
+background: #fafafa;
+border: 1px solid #eee;
+border-radius: 8px;
+padding: 4px 4px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+.event-date-month {
+font-size: 11px;
+color: #888;
+}
+
+.event-date-day {
+font-size: 18px;
+font-weight: bold;
+line-height: 1;
+color: #222;
+}
+
+.event-date-weekday {
+font-size: 10px;
+color: #aaa;
+}
+
+.event-info {
+flex: 1;
+min-width: 0;
+}
+
+.event-name-row {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 5px;
+flex-wrap: wrap;
+}
+
+.event-name {
+font-size: 15px;
+font-weight: bold;
+color: #222;
+}
+
+.event-badge {
+font-size: 11px;
+padding: 2px 8px;
+border-radius: 20px;
+white-space: nowrap;
+}
+
+.event-badge.selling {
+background: #e6f4ea;
+color: #2d7a3a;
+}
+
+.event-badge.soon {
+background: #fff4e0;
+color: #a06000;
+}
+
+.event-badge.soldout {
+background: #f0f0f0;
+color: #888;
+}
+
+.event-meta {
+font-size: 13px;
+color: #888;
+display: flex;
+gap: 14px;
+flex-wrap: wrap;
+}
+
+/* ─── 購票按鈕（優化：更小、顏色更柔和） ─── */
+.event-action {
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+font-size: 12px;        /* 字體縮小 */
+font-weight: bold;
+padding: 6px 12px;     /* 上下左右內距全面縮小 */
+border-radius: 6px;
+transition: background 0.2s, color 0.2s;
+text-align: center;
+min-width: 64px;       /* 縮小按鈕最小寬度限制 */
+}
+
+/* 售票中：換成柔和的莫蘭迪藍 */
+.event-action.buy {
+background: #84C1FF;   /* 降飽和度的柔和藍 */
+color: white;
+}
+
+/* 懸停效果：顏色稍微加深一點點，依舊保持柔和 */
+a.event-card:hover .event-action.buy {
+background: #3572d4;   
+}
+
+/* 完售：維持清爽灰 */
+.event-action.sold-out {
+background: #f0f0f0;
+color: #888;
+}
+
+/* 即將開賣 / 其他狀態 */
+.event-action.wait {
+background: #f5f5f5;
+color: #aaa;
+}
+
+@media (max-width: 600px) {
+  /* 1. 卡片主體：上下排列 */
+  .event-card {
+    padding: 12px;
+    gap: 10px;
+    flex-direction: column; 
+    align-items: stretch;
+  }
+
+  /* 2. 日期框修正：拿掉會撐爆的 width/min-width、灰底與邊框 */
+  .event-date-box {
+    min-width: 0;
+    width: auto;                /* 讓它隨內容自動延伸，不強撐 100% */
+    flex-direction: row;        /* 改為橫向一排 */
+    justify-content: flex-start;/* 靠左對齊 */
+    align-items: center;
+    gap: 6px;                   /* 月、日、星期之間的間距 */
+    padding: 0;                 /* 拿掉內距 */
+    background: none;           /* 移除灰底 */
+    border: none;               /* 移除邊框 */
+  }
+
+  /* 調整手機版單行日期的字體大小 */
+  .event-date-month,
+  .event-date-day,
+  .event-date-weekday {
+    font-size: 13px;
+    color: #666;     /* 稍微加深顏色，讓拉成一行時更清晰 */
+  }
+  
+  .event-date-day {
+    font-weight: bold;
+    color: #222;
+  }
+
+  /* 3. 活動資訊區塊 */
+  .event-info {
+    width: 100%; 
+  }
+
+  .event-name {
+    font-size: 14px;
+  }
+
+  /* 4. 按鈕：優雅地靠右下角 */
+  .event-action {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-width: 58px;
+    align-self: flex-end; 
+    margin-top: 4px;      
+  }
+}
+}
+</style>
+
+<div class="event-section">
+<h2>🎪 近期活動</h2><br>
+<div id="event-list"><p class="event-loading">載入中…</p></div>
+</div>
+
+<script>
+(function() {
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTK7dY0rEBbjgvHRtwbwCVYBomcTyW0GO3_1gp5tB_QOC3H9mH4zPxisiYAMTeSbgD_F1kXi8goTGsm/pub?gid=0&single=true&output=csv";
+
+const WEEKDAYS = ["日","一","二","三","四","五","六"];
+const MONTHS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+function parseCSV(text) {
+const lines = text.trim().split("\n");
+if (lines.length < 2) return [];
+const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
+return lines.slice(1).map(line => {
+const cols = [];
+let cur = "", inQ = false;
+for (let i = 0; i < line.length; i++) {
+const ch = line[i];
+if (ch === '"') { inQ = !inQ; continue; }
+if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; continue; }
+cur += ch;
+}
+cols.push(cur.trim());
+const obj = {};
+headers.forEach((h, i) => { obj[h] = (cols[i] || "").replace(/^"|"$/g, ""); });
+return obj;
+}).filter(ev => ev.date && ev.name);
+}
+
+function formatDate(dateStr) {
+const d = new Date(dateStr + "T00:00:00");
+return {
+month: MONTHS[d.getMonth()],
+day: d.getDate(),
+weekday: "週" + WEEKDAYS[d.getDay()]
+};
+}
+
+function render(events) {
+const el = document.getElementById("event-list");
+if (!events.length) {
+el.innerHTML = '<p class="event-empty">目前沒有近期活動，敬請期待 🌟</p>';
+return;
+}
+
+el.innerHTML = events.map(ev => {
+const df = formatDate(ev.date);
+const isSelling = ev.status === "售票中";
+const isSoldOut = ev.status === "完售";
+const hasTicket = ev.ticketUrl && ev.ticketUrl.trim() !== "";
+
+let badgeClass = "soon", badgeText = ev.status || "即將開賣";
+if (isSelling) { badgeClass = "selling"; badgeText = "售票中"; }
+if (isSoldOut) { badgeClass = "soldout"; badgeText = "完售"; }
+
+let actionClass = "wait", actionText = "未開賣";
+if (isSelling && hasTicket) {
+    actionClass = "buy";
+    actionText = "立即購票";
+} else if (isSoldOut) {
+    actionClass = "sold-out";
+    actionText = "已完售";
+}
+
+const inner = `
+<div class="event-date-box">
+<span class="event-date-month">${df.month}</span>
+<span class="event-date-day">${df.day}</span>
+<span class="event-date-weekday">${df.weekday}</span>
+</div>
+<div class="event-info">
+<div class="event-name-row">
+<span class="event-name">${ev.name}</span>
+<span class="event-badge ${badgeClass}">${badgeText}</span>
+</div>
+<div class="event-meta">
+${ev.time ? `<span>🕐 ${ev.time}</span>` : ""}
+${ev.venue ? `<span>📍 ${ev.venue}</span>` : ""}
+</div>
+</div>
+<div class="event-action ${actionClass}">
+${actionText}
+</div>
+`;
+
+if (isSelling && hasTicket) {
+return `<a class="event-card" href="${ev.ticketUrl}" target="_blank" rel="noopener">${inner}</a>`;
+} else {
+return `<div class="event-card disabled">${inner}</div>`;
+}
+}).join("");
+}
+
+fetch(CSV_URL)
+.then(r => r.text())
+.then(text => render(parseCSV(text)))
+.catch(() => {
+document.getElementById("event-list").innerHTML =
+'<p class="event-empty">活動資訊暫時無法載入，請稍後再試。</p>';
+});
+})();
+</script>
+    
 <footer>
   <a href="https://forms.gle/a5JUXWqHpME7kbwe8" target="_blank" class="report-link">🐛本工具非達康官方製作，有問題請來這裡回報🐛</a>
 使用GA4匿名追蹤優化搜尋體驗🧐<br><br>
@@ -2508,6 +2832,8 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
+
 
 
 
