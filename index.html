@@ -199,6 +199,29 @@ input::placeholder {
 
 <div id="results"></div> 
 
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. 找到網頁中所有 class 為 tag-btn 的按鈕
+    var tagButtons = document.querySelectorAll('.tag-btn');
+    
+    // 2. 為每一個按鈕綁定點擊事件
+    tagButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            // 抓取按鈕內的文字（例如：#ㄆㄧㄚˊ嘴）
+            var tagName = this.innerText || this.textContent;
+            
+            // 3. 將事件發送給 GA4
+            if (typeof gtag === 'function') {
+                gtag('event', 'search_tag_click', {
+                    'tag_name': tagName
+                });
+                console.log('已成功發送標籤點擊給 GA4:', tagName); // 測試用，可在瀏覽器主控台查看
+            }
+        });
+    });
+});
+</script>
+
 <script>
     window.onload = function() {
         const placeholders = [
@@ -2839,29 +2862,6 @@ window.addEventListener('load', () => {
   if (resultsContainer) resultsContainer.innerHTML = "";
 
   initTags();
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. 找到網頁中所有 class 為 tag-btn 的按鈕
-    var tagButtons = document.querySelectorAll('.tag-btn');
-    
-    // 2. 為每一個按鈕綁定點擊事件
-    tagButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            // 抓取按鈕內的文字（例如：#ㄆㄧㄚˊ嘴）
-            var tagName = this.innerText || this.textContent;
-            
-            // 3. 將事件發送給 GA4
-            if (typeof gtag === 'function') {
-                gtag('event', 'search_tag_click', {
-                    'tag_name': tagName
-                });
-                console.log('已成功發送標籤點擊給 GA4:', tagName); // 測試用，可在瀏覽器主控台查看
-            }
-        });
-    });
 });
 </script>
 
