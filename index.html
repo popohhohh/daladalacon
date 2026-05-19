@@ -2751,15 +2751,25 @@ function highlight(text, keywords) {
   return result;
 }
 
-// ✅ Render (保持不變)
+// ✅ 修改後的 Render 函數（加入了「搜尋無結果」的 GA4 追蹤）
 function render(results, keyword) {
   const container = document.getElementById("results");
   container.innerHTML = "";
 
   const keywords = keyword.toLowerCase().split(/\s+/).filter(Boolean);
 
+  // 當找不到結果時
   if (results.length === 0) {
     container.innerHTML = "<p>找不到結果 😶‍🌫️</p>";
+    
+    // 🔥 在這裡加入 GA4 追蹤程式碼
+    if (typeof gtag === 'function' && keyword && keyword.trim().length > 0) {
+      gtag('event', 'search_no_results', {
+        'search_term': keyword.trim() // 記錄使用者搜了什麼詞卻找不到
+      });
+      console.log('GA4 已記錄【無結果】關鍵字：', keyword.trim()); // 測試用
+    }
+    
     return;
   }
 
@@ -2814,14 +2824,16 @@ document.getElementById("searchBox").addEventListener("keydown", (e) => {
   }
 });
 
-// ✅ 這是點擊標籤後要執行的「搜尋動作」 (加入防呆)
+// ✅ 修正後的 quickSearch 函數（自動過濾掉 # 字號）
 function quickSearch(tag) {
-  if (!tag || !tag.trim()) return; // 防呆：確保點擊的標籤有內容
+  if (!tag || !tag.trim()) return; // 防呆
+  
+  // 💡 關鍵修正：如果標籤開頭有 #，就把它去掉，這樣才搜得到資料
+  const cleanedTag = tag.trim().replace(/^#/, '');
   
   const searchBox = document.getElementById("searchBox");
-  const cleanedTag = tag.trim();
   
-  // 1. 把標籤文字填入搜尋框
+  // 1. 把乾淨的標籤文字填入搜尋框
   searchBox.value = cleanedTag; 
   
   // 2. 執行搜尋與渲染
@@ -2873,6 +2885,7 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
 
 
 
