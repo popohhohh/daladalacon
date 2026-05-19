@@ -201,24 +201,28 @@ input::placeholder {
 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. 找到網頁中所有 class 為 tag-btn 的按鈕
-    var tagButtons = document.querySelectorAll('.tag-btn');
+    // 監聽整個標籤容器
+    var tagCloud = document.getElementById('tag-cloud');
     
-    // 2. 為每一個按鈕綁定點擊事件
-    tagButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            // 抓取按鈕內的文字（例如：#ㄆㄧㄚˊ嘴）
-            var tagName = this.innerText || this.textContent;
+    if (tagCloud) {
+        tagCloud.addEventListener('click', function(event) {
+            // 確保點擊到的是帶有 .tag-btn 類別的按鈕
+            var button = event.target.closest('.tag-btn');
             
-            // 3. 將事件發送給 GA4
-            if (typeof gtag === 'function') {
-                gtag('event', 'search_tag_click', {
-                    'tag_name': tagName
-                });
-                console.log('已成功發送標籤點擊給 GA4:', tagName); // 測試用，可在瀏覽器主控台查看
+            if (button) {
+                // 抓取按鈕內的文字（例如：#百萬觀看）
+                var tagName = button.innerText || button.textContent;
+                
+                // 發送事件給 GA4
+                if (typeof gtag === 'function') {
+                    gtag('event', 'search_tag_click', {
+                        'tag_name': tagName
+                    });
+                    console.log('已成功發送標籤點擊給 GA4:', tagName); // 測試用
+                }
             }
         });
-    });
+    }
 });
 </script>
 
@@ -2869,6 +2873,9 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
+
+
 
 
 
