@@ -2,6 +2,9 @@
 <html>
 <head>
 
+<!-- ==========================================
+     📊 GOOGLE ANALYTICS 追蹤碼
+     ========================================== -->
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EPHSV81193"></script>
 <script>
@@ -15,53 +18,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <meta name="description" content="想回味達康的作品卻又想不起來在哪裡？來這裡找找吧！近期的演出活動資訊也有整理，想看真人不要錯過！"> 
-<meta name="keywords" content="近期活動, 線上售票, 達康.come, 漫才, 喜劇">
+<meta name="keywords" content="近期活動, 線上售票, 達康.come, 漫才, 喜劇, 音樂作品">
 <meta name="robots" content="index, follow"> 
 
 <title>達康作品搜尋器｜達康.come影片節目和活動搜尋</title>
 
+<!-- ==========================================
+     🎨 CSS 樣式網頁美化區
+     ========================================== -->
 <style>
+/* 🌎 全域基礎樣式 */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  padding: 30px 5%; /* 5% 代表左右會根據螢幕寬度自動留白 */
+  padding: 30px 5%; 
   background: #f8f9fa;
   color: #333;
 }
 
-footer {
-  font-size: 11px;
-  color: #888888;
-  text-align: center; 
-  padding: 40px 0 20px 0;
-  line-height: 1.8; 
-}
-
-.report-link {
-  display: block; 
-  color: #888888;
-  text-decoration: none; 
-  margin-top: 4px;
-}
-
-.report-link:hover {
-  text-decoration: underline; 
-  color: #555555; 
-}
-
+/* 🔍 搜尋與影片卡片樣式 */
 input {
-  /* 讓寬度填滿父容器 */
   width: 100%;
-  /* 設定一個更大的上限，例如 900px，這樣在大螢幕才不會無限延伸到看不見盡頭 */
   max-width: 1500px; 
   display: block;   
-  /* 靠左對齊，並與下方保持距離 */
   margin: 0 0 20px 0; 
   padding: 14px 18px;
   font-size: 16px;
   box-sizing: border-box; 
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  /* 增加一點陰影，讓長條輸入框看起來比較有質感 */
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
   outline: none;
   transition: all 0.2s ease;
@@ -72,7 +56,10 @@ input:focus {
   box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 
-/* ✨ 卡片基礎樣式優化 ✨ */
+input::placeholder {
+  font-size: 13px;      
+}
+
 .card {
   padding: 20px;
   margin-bottom: 16px;
@@ -105,14 +92,12 @@ input:focus {
   color: #0056b3;
 }
 
-/* 👑 會員限定卡片特殊樣式優化 */
 .card.member-only {
-  border: 1px solid #e6c875 !important; /* 精緻優雅的金絲邊框 */
-  background: linear-gradient(145deg, #ffffff 60%, #fffbf0 100%) !important; /* 極淡的雅緻暖金漸層 */
+  border: 1px solid #e6c875 !important; 
+  background: linear-gradient(145deg, #ffffff 60%, #fffbf0 100%) !important; 
   position: relative;
 }
 
-/* 右上角會員標籤 */
 .member-badge {
   position: absolute;
   top: 18px;
@@ -126,7 +111,6 @@ input:focus {
   border-radius: 6px;
 }
 
-/* 會員限定專屬按鈕優化 */
 .member-btn {
   display: inline-block;
   margin-top: 14px;
@@ -154,7 +138,6 @@ input:focus {
   font-weight: bold;
 }
 
-/* 命中原因標籤化 */
 .reason-badge {
   display: inline-block;
   font-size: 11px;
@@ -173,10 +156,11 @@ input:focus {
   margin-bottom: 0;
 }
 
+/* 🏷️ 快速搜尋標籤雲樣式 */
 .tag-container {
   width: 100%;
   max-width: 900px; 
-  margin: -10px 0 30px 0; /* 增加下方間距，跟結果區隔開 */
+  margin: -10px 0 30px 0; 
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -201,267 +185,138 @@ input:focus {
   color: #333;
 }
 
-.tag-btn:active {
-  background: #e8e8e8;
+/* 🎪 近期活動行事曆樣式 */
+.event-section { margin: 40px 0 20px 0; }
+.event-card {
+  display: flex; gap: 16px; align-items: center; background: white; border: 1px solid #eee;
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; text-decoration: none;
+  color: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-color 0.15s;
+}
+a.event-card:hover { border-color: #bbb; }
+.event-date-box {
+  min-width: 52px; text-align: center; background: #fafafa; border: 1px solid #eee;
+  border-radius: 8px; padding: 4px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.event-date-month { font-size: 11px; color: #888; }
+.event-date-day { font-size: 18px; font-weight: bold; line-height: 1; color: #222; }
+.event-date-weekday { font-size: 10px; color: #aaa; }
+.event-info { flex: 1; min-width: 0; }
+.event-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+.event-name { font-size: 15px; font-weight: bold; color: #222; }
+.event-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+.event-badge.selling { background: #e6f4ea; color: #2d7a3a; }
+.event-badge.soon { background: #fff4e0; color: #a06000; }
+.event-badge.soldout { background: #f0f0f0; color: #888; }
+.event-meta { font-size: 13px; color: #888; display: flex; gap: 14px; flex-wrap: wrap; }
+.event-action {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 6px; text-align: center; min-width: 64px;       
+}
+.event-action.buy { background: #84C1FF; color: white; }
+a.event-card:hover .event-action.buy { background: #3572d4; }
+.event-action.sold-out { background: #f0f0f0; color: #888; }
+.event-action.wait { background: #f5f5f5; color: #aaa; }
+
+/* ↙️ 活動展開/收合按鈕樣式（已修改為超低調半透明淺灰） */
+.toggle-events-btn {
+  display: none; /* 預設隱藏，由 JS 判斷大於 5 個才顯示 */
+  background: none;
+  border: none;
+  margin: 10px auto 0 auto;
+  padding: 5px 10px;
+  font-size: 13px;
+  color: #888888;
+  opacity: 0.5;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.2s ease;
+}
+.toggle-events-btn:hover {
+  opacity: 0.9;
 }
 
-input::placeholder {
-  font-size: 13px;      /* 比輸入時的文字小一點 */
+/* 🎵 音樂作品區塊樣式 */
+.music-section { margin: 40px 0 20px 0; }
+.music-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.music-card {
+  background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
+  text-decoration: none; color: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  transition: all 0.2s ease; display: flex; flex-direction: column; justify-content: space-between;
 }
+.music-card:hover { transform: translateY(-2px); border-color: #cbd5e1; box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
+.music-title { font-size: 15px; font-weight: bold; color: #1e293b; margin-bottom: 12px; line-height: 1.4; }
 
-/* 針對手機版 (螢幕寬度小於 600px) 的微調 */
+/* 📝 歌詞彈出視窗（Popup）樣式 */
+.lyrics-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.lyrics-overlay.active { opacity: 1; pointer-events: auto; }
+.lyrics-window {
+  background: white; width: 90%; max-width: 500px; max-height: 75vh; border-radius: 16px; padding: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; animation: popupScale 0.3s ease;
+}
+@keyframes popupScale {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.lyrics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+.lyrics-popup-title { font-size: 17px; font-weight: bold; color: #1e293b; }
+.lyrics-close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #94a3b8; }
+.lyrics-close-btn:hover { color: #334155; }
+.lyrics-body { overflow-y: auto; font-size: 15px; color: #334155; line-height: 1.8; white-space: pre-wrap; text-align: center; padding: 10px 0; }
+.lyrics-btn {
+  background: #f1f5f9; color: #475569; border: none; padding: 6px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; align-self: flex-end;
+}
+.lyrics-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+/* 👤 頁尾與響應式 RWD 行動裝置優化 */
+footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20px 0; line-height: 1.8; }
+.report-link { display: block; color: #888888; text-decoration: none; margin-top: 4px; }
+.report-link:hover { text-decoration: underline; color: #555555; }
+
 @media (max-width: 600px) {
-  body {
-    padding: 15px; /* 手機版邊距縮小一點點 */
-  }
-  
-  input {
-    font-size: 14px; /* 稍微縮小字體 */
-    padding: 12px;
-  }
-
-  .tag-btn {
-    padding: 6px 12px; /* 讓手機版標籤稍微大一點，比較好點擊 */
-  }
-  
-  input::placeholder {
-    font-size: 12px;
-  }
-  
-  .member-badge {
-    position: static;
-    display: inline-block;
-    margin-bottom: 8px;
-  }
+  body { padding: 15px; }
+  input { font-size: 14px; padding: 12px; }
+  .tag-btn { padding: 6px 12px; }
+  .member-badge { position: static; display: inline-block; margin-bottom: 8px; }
+  .event-card { padding: 12px; gap: 10px; flex-direction: column; align-items: stretch; }
+  .event-date-box { min-width: 0; width: auto; flex-direction: row; justify-content: flex-start; align-items: center; gap: 6px; padding: 0; background: none; border: none; }
+  .event-date-month, .event-date-day, .event-date-weekday { font-size: 13px; color: #666; }
+  .event-date-day { font-weight: bold; color: #222; }
+  .event-info { width: 100%; }
+  .event-name { font-size: 14px; }
+  .event-action { padding: 5px 10px; font-size: 11px; min-width: 58px; align-self: flex-end; margin-top: 4px; }
+  .music-grid { grid-template-columns: 1fr; }
 }
 </style>
 
 </head>
 <body>
 
+<!-- ==========================================
+     🔍 區塊一：搜尋與標籤雲區
+     ========================================== -->
 <h3>🫱 到底是哪集啦 </h3>
 <h5 style="color: #888888;"> 點擊標題就可以飛過去看影片囉🧚🏼</h5>
 
 <input id="searchBox" placeholder="期待下次現場相見(✪ω✪)">
 <div id="tag-cloud" class="tag-container"></div>
 
+<!-- 影片搜尋結果容器 -->
 <div id="results"></div> 
 
-<script>
-    window.onload = function() {
-        const placeholders = [
-            "想來點什麼呢",
-            "這裡也可以輸入年份考古",
-            "期待下次現場相見(✪ω✪)"
-        ];
-        
-        const searchBox = document.getElementById('searchBox');
-        const randomIndex = Math.floor(Math.random() * placeholders.length);
-        
-        // 執行隨機替換
-        searchBox.placeholder = placeholders[randomIndex];
-    };
-</script>
-    
-<!-- ==============================
-達康活動行事曆
-============================== -->
-<style>
-.event-section {
-  margin: 40px 0 20px 0;
-}
 
-.event-subtitle {
-  font-size: 13px;
-  color: #888;
-  margin-bottom: 20px;
-}
-
-.event-card {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: border-color 0.15s;
-}
-
-a.event-card:hover {
-  border-color: #bbb;
-}
-
-.event-date-box {
-  min-width: 52px;
-  text-align: center;
-  background: #fafafa;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 4px 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.event-date-month {
-  font-size: 11px;
-  color: #888;
-}
-
-.event-date-day {
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 1;
-  color: #222;
-}
-
-.event-date-weekday {
-  font-size: 10px;
-  color: #aaa;
-}
-
-.event-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.event-name-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 5px;
-  flex-wrap: wrap;
-}
-
-.event-name {
-  font-size: 15px;
-  font-weight: bold;
-  color: #222;
-}
-
-.event-badge {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  white-space: nowrap;
-}
-
-.event-badge.selling {
-  background: #e6f4ea;
-  color: #2d7a3a;
-}
-
-.event-badge.soon {
-  background: #fff4e0;
-  color: #a06000;
-}
-
-.event-badge.soldout {
-  background: #f0f0f0;
-  color: #888;
-}
-
-.event-meta {
-  font-size: 13px;
-  color: #888;
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.event-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 12px;        
-  font-weight: bold;
-  padding: 6px 12px;     
-  border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
-  text-align: center;
-  min-width: 64px;       
-}
-
-.event-action.buy {
-  background: #84C1FF;   
-  color: white;
-}
-
-a.event-card:hover .event-action.buy {
-  background: #3572d4;   
-}
-
-.event-action.sold-out {
-  background: #f0f0f0;
-  color: #888;
-}
-
-.event-action.wait {
-  background: #f5f5f5;
-  color: #aaa;
-}
-
-@media (max-width: 600px) {
-  .event-card {
-    padding: 12px;
-    gap: 10px;
-    flex-direction: column; 
-    align-items: stretch;
-  }
-
-  .event-date-box {
-    min-width: 0;
-    width: auto;                
-    flex-direction: row;        
-    justify-content: flex-start;
-    align-items: center;
-    gap: 6px;                   
-    padding: 0;                 
-    background: none;           
-    border: none;               
-  }
-
-  .event-date-month,
-  .event-date-day,
-  .event-date-weekday {
-    font-size: 13px;
-    color: #666;     
-  }
-  
-  .event-date-day {
-    font-weight: bold;
-    color: #222;
-  }
-
-  .event-info {
-    width: 100%; 
-  }
-
-  .event-name {
-    font-size: 14px;
-  }
-
-  .event-action {
-    padding: 5px 10px;
-    font-size: 11px;
-    min-width: 58px;
-    align-self: flex-end; 
-    margin-top: 4px;      
-  }
-}
-</style>
-
-<div class="event-section">
-  <h3>🎪 近期活動</h3>
-  <div id="event-list">
-    <!-- 以下為直接渲染的活動項目，會自動被 Google Sheet 資料覆蓋 -->
+<!-- ==========================================
+     🎪 區塊二：近期活動行事曆區
+     ========================================== -->
+<div class="event-section" style="display: flex; flex-direction: column; align-items: center;">
+  <h3 style="align-self: flex-start; width: 100%;">🎪 近期活動</h3>
+  <div id="event-list" style="width: 100%;">
+    <!-- 預留靜態備份，會自動被下方 Google Sheet API 抓取的資料覆蓋 -->
     <a class="event-card" href="https://www.opentix.life/event/2026504468403777537" target="_blank" rel="noopener">
       <div class="event-date-box">
         <span class="event-date-month">5月</span>
@@ -480,132 +335,326 @@ a.event-card:hover .event-action.buy {
       </div>
       <div class="event-action buy">立即購票</div>
     </a>
-    <!-- 其餘活動行事曆項目保持原樣... -->
+  </div>
+  
+  <!-- ↙️ 新增：超低調展開隱藏活動的按鈕 -->
+  <button id="toggle-events-btn" class="toggle-events-btn" onclick="toggleEventsDisplay()">展開 ▼</button>
+</div>
+
+
+<!-- ==========================================
+     🎵 區塊三：音樂作品與歌詞區
+     ========================================== -->
+<div class="music-section">
+  <h3>🎧 音樂作品</h3>
+  <div id="music-list" class="music-grid">
+    <!-- 由下方 musicData 自動生成 -->
   </div>
 </div>
 
-<script>
-(function() {
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTK7dY0rEBbjgvHRtwbwCVYBomcTyW0GO3_1gp5tB_QOC3H9mH4zPxisiYAMTeSbgD_F1kXi8goTGsm/pub?gid=0&single=true&output=csv";
-
-const WEEKDAYS = ["日","一","二","三","四","五","六"];
-const MONTHS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
-
-function parseCSV(text) {
-const lines = text.trim().split("\n");
-if (lines.length < 2) return [];
-const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
-return lines.slice(1).map(line => {
-const cols = [];
-let cur = "", inQ = false;
-for (let i = 0; i < line.length; i++) {
-const ch = line[i];
-if (ch === '"') { inQ = !inQ; continue; }
-if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; continue; }
-cur += ch;
-}
-cols.push(cur.trim());
-const obj = {};
-headers.forEach((h, i) => { obj[h] = (cols[i] || "").replace(/^"|"$/g, ""); });
-return obj;
-}).filter(ev => ev.date && ev.name);
-}
-
-function formatDate(dateStr) {
-const d = new Date(dateStr + "T00:00:00");
-return {
-month: MONTHS[d.getMonth()],
-day: d.getDate(),
-weekday: "週" + WEEKDAYS[d.getDay()]
-};
-}
-
-function renderEvents(events) {
-const el = document.getElementById("event-list");
-if (!events.length) {
-el.innerHTML = '<p class="event-empty">目前沒有近期活動，敬請期待 🌟</p>';
-return;
-}
-
-el.innerHTML = events.map(ev => {
-const df = formatDate(ev.date);
-const isSelling = ev.status === "售票中";
-const isSoldOut = ev.status === "完售";
-const hasTicket = ev.ticketUrl && ev.ticketUrl.trim() !== "";
-
-let badgeClass = "soon", badgeText = ev.status || "即將開賣";
-if (isSelling) { badgeClass = "selling"; badgeText = "售票中"; }
-if (isSoldOut) { badgeClass = "soldout"; badgeText = "完售"; }
-
-let actionClass = "wait", actionText = "未開賣";
-if (isSelling && hasTicket) {
-    actionClass = "buy";
-    actionText = "立即購票";
-} else if (isSoldOut) {
-    actionClass = "sold-out";
-    actionText = "已完售";
-}
-
-const inner = `
-<div class="event-date-box">
-<span class="event-date-month">${df.month}</span>
-<span class="event-date-day">${df.day}</span>
-<span class="event-date-weekday">${df.weekday}</span>
+<!-- 📝 歌詞彈出視窗 HTML 隱藏容器 -->
+<div id="lyricsOverlay" class="lyrics-overlay" onclick="closeLyrics()">
+  <div class="lyrics-window" onclick="event.stopPropagation()">
+    <div class="lyrics-header">
+      <div id="popupLyricsTitle" class="lyrics-popup-title">歌名</div>
+      <button class="lyrics-close-btn" onclick="closeLyrics()">✕</button>
+    </div>
+    <div id="popupLyricsBody" class="lyrics-body">歌詞載入中...</div>
+  </div>
 </div>
-<div class="event-info">
-<div class="event-name-row">
-<span class="event-name">${ev.name}</span>
-<span class="event-badge ${badgeClass}">${badgeText}</span>
-</div>
-<div class="event-meta">
-${ev.time ? `<span>🕐 ${ev.time}</span>` : ""}
-${ev.venue ? `<span>📍 ${ev.venue}</span>` : ""}
-</div>
-</div>
-<div class="event-action ${actionClass}">
-${actionText}
-</div>
-`;
 
-if (isSelling && hasTicket) {
-return `<a class="event-card" href="${ev.ticketUrl}" target="_blank" rel="noopener">${inner}</a>`;
-} else {
-return `<div class="event-card disabled">${inner}</div>`;
-}
-}).join("");
-}
 
-fetch(CSV_URL)
-.then(r => r.text())
-.then(text => renderEvents(parseCSV(text)))
-.catch(() => {
-// 如果載入失敗，不蓋掉原本硬編碼的好資料
-});
-})();
-</script>
-    
+<!-- ==========================================
+     👤 區塊四：網頁頁尾資訊區
+     ========================================== -->
 <footer>
   <a href="https://forms.gle/a5JUXWqHpME7kbwe8" target="_blank" class="report-link">🐛本工具非達康官方製作，有問題請來這裡回報🐛</a>
-使用GA4匿名追蹤優化搜尋體驗🧐<br><br>
-資料更新時間：<span id="last-mod"></span>
-    
-    <div class="copyright" style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+  使用GA4匿名追蹤優化搜尋體驗🧐<br><br>
+  資料更新時間：<span id="last-mod"></span>
+     
+  <div class="copyright" style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
     © 2026 popohhohh. All rights reserved.
   </div>
 </footer>
 
+
+<!-- ==========================================
+     ⚙️ JAVASCRIPT 程式邏輯控制區
+     ========================================== -->
 <script>
+// 全域變數：儲存從試算表抓回來的全部活動，以及目前的展開狀態
+let allFetchedEvents = [];
+let isEventsExpanded = false;
+
+// ------------------------------------------
+// 📝 頁面載入基礎設定（隨機 placeholder & 更新時間）
+// ------------------------------------------
+window.addEventListener('load', () => {
+  const placeholders = [
+    "想來點什麼呢",
+    "這裡也可以輸入年份考古",
+    "期待下次現場相見(✪ω✪)"
+  ];
+  const searchBox = document.getElementById('searchBox');
+  if (searchBox) {
+    const randomIndex = Math.floor(Math.random() * placeholders.length);
+    searchBox.placeholder = placeholders[randomIndex];
+    searchBox.value = ""; 
+  }
+  
+  const resultsContainer = document.getElementById("results");
+  if (resultsContainer) resultsContainer.innerHTML = "";
+  
+  // 初始化標籤雲
+  initTags();
+  
+  // 計算最後更新時間
   const lastMod = new Date(document.lastModified);
   const formattedDate = lastMod.getFullYear() + '/' + 
                         (lastMod.getMonth() + 1).toString().padStart(2, '0') + '/' + 
                         lastMod.getDate().toString().padStart(2, '0');
   document.getElementById('last-mod').textContent = formattedDate;
-</script>
+});
 
-<script>
-// 🔥 JSON 資料庫 🔥
+// ------------------------------------------
+// 🎪 活動行事曆邏輯 (串接 Google Sheet API & 5個切換展開)
+// ------------------------------------------
+(function() {
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTK7dY0rEBbjgvHRtwbwCVYBomcTyW0GO3_1gp5tB_QOC3H9mH4zPxisiYAMTeSbgD_F1kXi8goTGsm/pub?gid=0&single=true&output=csv";
+  const WEEKDAYS = ["日","一","二","三","四","五","六"];
+  const MONTHS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+  function parseCSV(text) {
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
+    return lines.slice(1).map(line => {
+      const cols = []; let cur = "", inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i]; if (ch === '"') { inQ = !inQ; continue; }
+        if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; continue; }
+        cur += ch;
+      }
+      cols.push(cur.trim()); const obj = {};
+      headers.forEach((h, i) => { obj[h] = (cols[i] || "").replace(/^"|"$/g, ""); });
+      return obj;
+    }).filter(ev => ev.date && ev.name);
+  }
+
+  fetch(CSV_URL)
+    .then(r => r.text())
+    .then(text => {
+      allFetchedEvents = parseCSV(text);
+      // 根據抓到的總活動數，決定要不要露出展開按鈕
+      const toggleBtn = document.getElementById("toggle-events-btn");
+      if (allFetchedEvents.length > 5) {
+        toggleBtn.style.display = "block";
+      } else {
+        toggleBtn.style.display = "none";
+      }
+      // 初始渲染（顯示前 5 個）
+      renderEventsList(allFetchedEvents, false);
+    })
+    .catch(() => {});
+})();
+
+// 渲染活動畫面的獨立函式
+function renderEventsList(events, expandAll) {
+  const el = document.getElementById("event-list");
+  if (!events.length) {
+    el.innerHTML = '<p class="event-empty">目前沒有近期活動，敬請期待 🌟</p>';
+    return;
+  }
+
+  const WEEKDAYS = ["日","一","二","三","四","五","六"];
+  const MONTHS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+  
+  // 判斷是否展開，若不展開則只取前 5 個
+  const displayEvents = expandAll ? events : events.slice(0, 5);
+
+  el.innerHTML = displayEvents.map(ev => {
+    const d = new Date(ev.date + "T00:00:00");
+    const df = { month: MONTHS[d.getMonth()], day: d.getDate(), weekday: "週" + WEEKDAYS[d.getDay()] };
+    
+    const isSelling = ev.status === "售票中"; 
+    const isSoldOut = ev.status === "完售";
+    const hasTicket = ev.ticketUrl && ev.ticketUrl.trim() !== "";
+    
+    let badgeClass = "soon", badgeText = ev.status || "即將開賣";
+    if (isSelling) { badgeClass = "selling"; badgeText = "售票中"; }
+    if (isSoldOut) { badgeClass = "soldout"; badgeText = "完售"; }
+    
+    let actionClass = "wait", actionText = "未開賣";
+    if (isSelling && hasTicket) { actionClass = "buy"; actionText = "立即購票"; }
+    else if (isSoldOut) { actionClass = "sold-out"; actionText = "已完售"; }
+
+    const inner = `
+      <div class="event-date-box">
+        <span class="event-date-month">${df.month}</span>
+        <span class="event-date-day">${df.day}</span>
+        <span class="event-date-weekday">${df.weekday}</span>
+      </div>
+      <div class="event-info">
+        <div class="event-name-row">
+          <span class="event-name">${ev.name}</span>
+          <span class="event-badge ${badgeClass}">${badgeText}</span>
+        </div>
+        <div class="event-meta">
+          ${ev.time ? `<span>🕐 ${ev.time}</span>` : ""}
+          ${ev.venue ? `<span>📍 ${ev.venue}</span>` : ""}
+        </div>
+      </div>
+      <div class="event-action ${actionClass}">${actionText}</div>
+    `;
+    
+    if (isSelling && hasTicket) { 
+      return `<a class="event-card" href="${ev.ticketUrl}" target="_blank" rel="noopener">${inner}</a>`; 
+    } else { 
+      return `<div class="event-card disabled">${inner}</div>`; 
+    }
+  }).join("");
+}
+
+// 點擊活動展開鈕觸發的控制功能
+function toggleEventsDisplay() {
+  const toggleBtn = document.getElementById("toggle-events-btn");
+  isEventsExpanded = !isEventsExpanded;
+  
+  if (isEventsExpanded) {
+    renderEventsList(allFetchedEvents, true);
+    toggleBtn.innerHTML = "收合 ▲";
+  } else {
+    renderEventsList(allFetchedEvents, false);
+    toggleBtn.innerHTML = "展開 ▼";
+    // 點擊收合時，自動幫使用者平滑捲動回活動區塊頂端
+    document.querySelector('.event-section').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// ------------------------------------------
+// 🎵 音樂作品區塊與歌詞 Popup 邏輯
+// ------------------------------------------
+const musicData = [
+      {"title": "錄音室版《明天初老的我不在你的眼裡》",
+    "imgUrl": "https://cdn.phototourl.com/free/2026-05-20-760be36e-9359-42bb-9f3a-1b70f8792554.png",
+    "url": "https://open.spotify.com/album/5GKkbdBNVSOxYotEhEweU2" },
+  {
+    "title": "《明天我會是更好的人嗎》",
+    "ytId": "N6-IoasXsPk",
+    "lyrics": "今天又被生活擊垮\n明天我還會是更好的人嗎\n有誰是否跟我一樣\n遠方的理想要多久才能到達\n\n多少次 低下頭 想放棄 就這樣結束了吧\n多少次的絕望 想投降卻又掙扎\n請再給我多一點勇氣吧\n\n我不想去洗澡啊(我不想)\n 去洗澡啊 (我不想)\n去洗澡啊 為什麼身體還在沙發上\n就先脫衣服吧 連內褲都脫光吧\n但門鈴卻響啦 為什麼你的餐點已經送達\n(洗澡就明天再說吧)\n\n多少次 低下頭 量體重 數字依舊沒有下降\n多少次 想運動 減脂肪 卻眼見它不斷增加\n請再給我多一點勇氣吧\n\n就先吃一口吧 (我不想)\n 就先吃一口吧 (我不想)\n就先吃一口吧 為什麼 宵夜快被我吃光\n吃最後一口吧 吃最後一口吧\n吃最後一口吧 為什麼我又打開冰箱\n身材就明天再說吧\n\n今天又被工作擊垮\n明天我還會是更好的人嗎\n有誰是否跟我一樣\n業績的要求要多少才能到達\n\n多少次 快遲到 下大雨 沒帶傘困在路上\n多少次 加夜班 一個人 想抽菸卻沒賴打\n請再給我多一點勇氣吧\n\n就幹別人的吧 (我不想)\n 就幹別人的吧 (我不想)\n就幹別人的吧 為什麼雨傘已經被幹光\n就先幹再說吧 就先幹再說吧\n就先幹再說吧 為什麼抽個煙警鈴就響\n\n多少次 被老闆 當狗罵 尊嚴在地上磨擦\n多少次 想賞他 一巴掌 甩上門就離職吧\n請再給我多一點勇氣吧\n\n就下跪道歉吧 (我不想) \n就下跪道歉吧 (我不想)\n就下跪道歉吧 為什麼 老闆你踩著我的臉啊\n就這麼下賤嗎 就這麼下賤嗎\n就這麼下賤嗎 為什麼 我已經在舔皮鞋啦\n辭職就明天再說吧\n\n今天又被命運擊垮\n明天我會是洗過澡的人嗎\n有誰不想改變自己的嗎\n洗澡的夢想我今天一定要抵達\n\n多少次 洗澡前 蹲廁所 一抬頭就是大強\n多少次 殺蟲劑 噴整罐 竟然都殺不死牠\n請再給我多一點勇氣吧\n\n就先大一半吧 (我不想) \n就先大一半吧 (我不想)\n就先大一半吧 為什麼 衛生紙沒剩半張\n就這樣站起來吧 先走去客廳啊\n找拖鞋保護自己啊 為什麼 強哥已在我肩膀上\n\n多少次 大半夜 在廁所 遇見牠是緣分嗎 (你是誰啊)\n多少次 快死亡 只要能活下來 就是堅強 (是大強嗎)\n你要學的 是我的勇氣啊\n\n就這樣活著吧 (像小強) 就這樣活著吧 (像大強)\n就這樣活著吧 殺不死你的使你堅強\n不洗澡也沒差吧 想吃就多吃吧\n舔皮鞋我也甘願啊 \n殺不死我的 使我更強大\n\n(let it go let it go let let let let let let let it go~~)\n(let it go let it go let let let let let let let it go)\n\n現在我 成為更好的人了吧"
+  },
+      {
+    "title": "《我只會打全壘打》",
+    "ytId": "wV9S4WgConk",
+    "lyrics": "Woo~oh oh~oh oh oh\nWoo~oh oh~oh oh oh\n我只會打全壘打!\nWoo~oh oh~oh oh oh\nWoo~oh oh~oh oh oh\n\n九局下半 落後三分\n拯救危機是我的宿命\n滿壘局面 吶喊激情\n我天生神力\n我只會打全壘打\n\n我深呼吸\n進到了flow裡\n像有超能力連時間幾乎暫停\n一切都逃不過我的觀察力\n\n投手的下巴好像有一顆超大的痣\n捕手的呼吸聲像我以前養的西施\n打擊區的白線好像畫得不是很直\n裁判的體香劑是草莓味還是荔枝\n教練的暗號手勢看起來在比中指\n板凳區清潔阿姨開始打掃和收拾\n我的球棒靠近看原來這麼大一支\n我的思緒像一首打油詩不好意思\n\nNo\n為什麼如此分心\n明明你這麼靠近\n我卻無法克制自己\n不去在意那些無關緊要的事情\n\nNo\n為什麼如此分心\n明明你這麼靠近\n難道是我不肯承認\n把你當作了理所當然的空氣\n\nStrike!\nWoo~oh oh~oh oh oh\nWoo~oh oh~oh oh oh\n落空落空我在放空\n好球好球 一好球\n我他媽到底在想什麼\n我要打全壘打\n我要打全壘打\n\n一壘上的隊友他褲子膝蓋有點黑\n二壘上的隊友他宿醉還在打哈欠\n三壘上的隊友拿手機自拍還比耶\n他腳邊有一隻土撥鼠在吃麵包屑\n剛剛被蚊子叮的地方還沒塗口水\n早餐吃完之後的我還沒有用牙線\n右手小拇指的指甲三個月沒有剪\n昨天去玩夜店瞳孔放大片忘了卸\n\nNo\n為什麼如此分心\n明明你這麼靠近\n我卻無法克制自己\n不去在意那些無關緊要的事情\n\nNo\n為什麼如此分心\n明明你這麼靠近\n難道是我不肯承認\n把你當作了理所當然的空氣\n\nStrike!\nWoo~oh oh~oh oh oh\nWoo~oh oh~oh oh oh\n落空落空我在放空\n好球好球 兩好球\n我他媽到底在想什麼\n我要打全壘打\n我要打全壘打\n\n啦啦隊裡有一個女生舞步全跳錯\n觀眾席還有人求婚真不會看時候\n旁邊的情侶已經熱吻了三個鐘頭\n原來是我的好哥們和我的前女友\n家裡的地上有一塊磁磚它有點PO\n冰箱裡過期的美乃滋　我忘了丟\n浴室裡的水龍頭轉了三圈還是鬆\n前幾天訂的MOMO今天沒辦法收\n\n老婆的瑜伽教練腹肌真的有點多\n女兒的每個對象刺青上都有關公\n岳母她每次看著我都會含情脈脈\n兒子的偶像不是我是大谷翔平No\n\n是大谷翔平不是我\n\n[打擊出去\n越飛越遠\n越飛越遠\n出、去、啦!]\n\nWoo~oh oh~oh oh oh\nWoo~oh oh~oh oh oh\n滿貫滿貫全壘打\n重砲炸裂全壘打\n就說我只會打全壘打\n怎麼樣我都打全壘打\n\n一壘 二壘 三壘 我慢慢走\n一分 兩分 三分 不急著收\n\n看板的螢幕裂痕有點多\n等一下要提醒他們記得修\n\n家裡冷氣風量有點弱\n主機冷媒該不會有點漏\n\n也許窗戶關不緊有點縫\n或是我自己不小心按到送風\n\n隊友們的擁抱制服有點臭\n不用把我拋起來因為有點重\n我承認我的分心太失控\n但是那些全壘打真的太愛我\n我只會打全壘打\n我只會打全壘打\n"
+   },
+ {
+    "title": "《我不在你的眼裡》",
+    "ytId": "IViVCxSffG4",
+    "lyrics": "一個人去買永和豆漿\n服務生丟菜單要我自己劃\n點了燒餅油條加鹹豆漿\n他給我蛋餅菜包加無糖紅茶\n\n一個人去逛了迪卡儂\n看到還不錯的防曬外套\n試衣間裡的我想換XXL\n店員卻進來看鏡子擠痘痘\n\n原來在你的眼裡\n我的存在感趨近於零\n原來在你的眼裡\n我只是空氣而已\n\n和女朋友一起去看恐怖電影\n她被嚇到的時候 手握超緊\n結果握著的是旁邊刺青弟弟\n握著我的是 另一個阿姨\n\n還記得跟你去吃沙茶火鍋\n店員帶你去坐了一人座\n你一鍋我一鍋也沒什麼\n但隔壁的卻吃起了我點的肉\n\n原來在你的眼裡\n我不在你的眼裡\n我～只是盤子而已\n\n我～我就在你眼前\n你～你他媽是瞎了眼\n\n下班回家發現你和別人在床上（你沒發現）\n我站在旁邊玩傳說對決贏了一百場（你沒看見）\n我累了躺下你們三個直接壓在我身上（你沒感覺）\n\n原來在你的眼裡\n我只是一張床墊而已\n我就在這裡卻又不在這裡\n矛盾的不在場證明\n\n幼稚園的我玩捉迷藏\n站在桌子上也沒人找到過\n放學爸爸媽媽來接我\n就牽著我旁邊的同學走\n\n蚊子 降落在我的肩膀\n一隻兩隻三隻不叮我也不癢\n小強停在我額頭上\n我老爸直接拿拖鞋來打\n\n原來在你的眼裡\n我的存在感趨近於零\n原來在你的眼裡\n我只是牆壁而已\n\n老師說有問題嗎 我舉手\n他問了十次之後卻搖搖頭\n學校大隊接力　下一棒是我\n我的上一棒卻直接略過我\n\n籃球比賽我都不用防守\n四局比完也都沒拿過球\n場上十個人再多一個我\n同學裁判從來都沒發現過\n\n原來在你的眼裡\n我不在你的眼裡\n我～只是背景而已\n\n我～我就在你眼前\n你～你他媽是瞎了眼\n\n失戀的我騎著機車 時速一百六（我沒感覺）\n我在國道三號測速照相 一張罰單都沒有（它沒發現）\n路邊臨檢都闖過去 警察只是偏頭痛（他沒看見）\n\n原來在你的眼裡\n我只是一陣冷風而已\n我就在這裡卻又不在這裡\n\n我去銀行櫃檯把槍掏出來\n指著行員要他馬上給我三千萬\n他直接按鈴叫下一位的號碼牌\n一個阿婆把我擠開亮出菜刀來\n還在我的槍管上面掛她的菜籃\n大家都自動自發把金庫全打開\n看著她用鈔票把我口袋塞滿滿\n阿婆一邊提著我一邊騎Ubike\n\n原來在你的眼裡 我只是一個菜籃而已\n我就在這裡卻又不在這裡\n矛盾的不在場證明\n\n一個人去逛了IKEA\n看到自己喜歡的沙發\n想說試看看來坐一下\n一對情侶直接坐在我身上\n\n一個人去唱KTV\n走進別人包廂點了《針線情》\n想用麥克風唱出我的傷心\n但沒有一個人聽見我的聲音\n唱沒幾句歌就被人卡下去\n\n原來在你的眼裡\n我不在你的眼裡\n原來在你的眼裡\n\n我不在你的眼裡\n"
+   },
+ {
+    "title": "《啊～》",
+    "ytId": "BsdxH-fPCpA",
+    "lyrics": "你有你的模樣\n我也有我的形狀\n我們不一樣\n卻都需要陽光\n\n你有你的難過\n我也有我的悲傷\n我們不一樣\n卻都受著傷\n\n誰沒有傷口\n也都會流淚吧\n誰沒有痛過\n痛到生不如死的時候\n我們都會大聲嘶吼\n\n啊～啊～啊～啊～啊～\n為什麼腳趾頭踢到沙發\n啊～啊～啊～啊～啊～\n為什麼電腦當機沒存檔\n啊～啊～啊～啊～啊～\n為什麼吃東西咬到嘴巴\n啊！啊…啊…！\n為什麼這麼年輕就長痔瘡\n啊～啊～啊～啊～～啊。\n為什麼拉鏈會卡到叉叉\n啊 啊 啊 啊～ 啊 啊 哦～\n為什麼放個屁就出來啦\n啊…啊…啊…啊～\n為什麼這首歌你只有啊\n\n誰沒有傷口\n也都會結痂吧\n誰沒有抓過\n癢了又抓 抓了又破\n破了又痛 痛了又啊～\n\n啊～啊～啊～啊～～\n為什麼牙醫給我拔錯牙\n啊～啊～啊～啊～啊～\n為什麼女友記得我密碼\n啊啊？啊啊…！\n為什麼開門爸媽在行房\n啊！！啊！啊！！！\n為什麼滑Tinder看到我阿嬤\n啊？啊…wow wow～wow～\n為什麼師傅可以輕一點嗎\n啊～啊…啊～啊……啊\n為什麼阿姨我不想跪趴\n啊～～～啊啊～～哦～啊\n為什麼這首你只有啊\n\n你只有啊\n為什麼你要拿出小喇叭\n為什麼一個屁都沒有啊\n為什麼練習根本沒用吧\n為什麼吹得這麼難聽啊\n為什麼最後還是走音啦\n\n啊～啊～啊～啊～啊～\n為什麼這麼痛啊GOD～\n\n你和我都是痛的共同體\n早該逃離卻又麻痺了自己\n你和我都是痛的共同體\n早該逃離卻又對他上了癮\n"
+   },
+ {
+    "title": "《Dirty Baby》",
+    "ytId": "VJShzIWUVvQ",
+    "lyrics": "瞇瞇眼 小酒窩\n還有一雙小手手\n哭一哭 賣個萌\n全世界都愛上我\n你們腦波也太弱\n\n大過年 除夕夜\n親戚全都圍著我\n真受不了你們的老人臭\n\n這衣服 有夠醜\n像是人工色素的熱狗\n紙尿布 圍兜兜\n真想脫掉 三點全露\n剛出生 不太會走\n一步兩步撞到頭\n\n撞到頭撞到頭撞到頭撞到頭\n撞到頭 幹 是不會來扶我\n\n快看我抱我親我拍拍我\n拍照打卡上傳十萬人追蹤\n快看我抱我親我拍拍我\n你們老了才有人給你送終\n快看我抱我親我拍拍我\n不然我會暴走\n反正我的時間比你們多\n聽到沒有\n還是沒人在理我\n你們他媽的耳聾\n\neverybody\nlook at me\neyes on me\nI am the king in the house\nI am the baby king\n\n我的口水一直流一直流下去\n流到了肚子上\n過來給我舔乾淨\n舔乾淨 舔乾淨\n過來給我舔乾淨\n就是你 就是你\n過來給我舔乾淨\n\n今晚的菜色讓人看不下去\n一口又一口的餵我\n看我把它吐滿地\n吐滿地 吐滿地\n我他媽全部吐滿地\n就是你 就是你\n煮這甚麼爛東西\n\n我滾到地上\n用自己來拖地\n再爬到餐桌上\n一屁股坐湯裡\n胡蘿蔔青椒苦瓜\n都給我當廚餘\n把嘴巴打開\n我幫你們全部倒進去\n\nI am so dirty baby\n(I am dirty baby)\nI am your dirty baby\n(I am so dirty)\nI am so dirty baby\n(come on look at me)\nI am so dirty baby\n(oh sexy)\n\n我的奶嘴一直掉一直掉下去\n你還不跪下去\n給我咬起來\n當我賞給你\n賞給你賞給你\n當我賞給你\n要記得先殺菌\n用紫外線殺菌\n\n那邊的表哥\n喝甚麼可樂不加冰\n我先乾為敬\n三杯克寧奶粉加生啤\n那邊的小姐姐\n我要坐你大腿玩親親\n還是你坐我大腿上\n一起看YOYO TV\n\nI am so dirty baby\n(yoyo 姊姊)\nI am your dirty baby\n(sit on my leg)\nI am so dirty baby\n(I am so naughty)\nI am your dirty baby\n(I am dirty baby)\n\n那隻貓看我的眼神有點攻擊性\n我等等就把牠\n埋到貓砂裡\n那邊的老爺爺\n不要再飄來飄去\n看我砸了祢的牌位\n用童子尿超度祢\n\nI am so dirty\n(I am dirty baby)\nI am your dirty baby\n(I am pee on you)\nI am so dirty\npee on you\n(dirty dirty)\ndirty baby\n(Grandpa look at me)\nTell me baby\nI am your baby\ndirty baby\n"
+   },
+ {
+    "title": "《北七》",
+    "ytId": "El6CgTIbdfg",
+    "lyrics": "<intro>\nおねがいします\n有些男人像毒藥 遇到了 想戒卻戒不掉\n有些男人像瀉藥 遇到了 記得拉乾淨就好\n-------\n\n妳說妳想去看星星\n想抱著他看流星雨\n他溫柔地看著妳說\n我明天中午帶妳去\n\n中午哪來的星星\n難道是太陽那顆星\n兩個人戴著墨鏡站在屋頂\n\n出門前說慢慢來沒關係\n願意等候有體貼的心\n他站在門口看著妳說\n那我先前往目的地\n\n結果不是要等妳\n多待一秒鐘都不願意\n看他坐上Uber尊榮離去\n\n難得邀請妳去看電影\n老派的約會也很美麗\n他買了電影票跟妳說\n我看完我的先去誠品\n\n竟然不是同一部電影\n只是各看各的而已\n拿著爆米花走進IMAX廳\n\n夜店裡有人搭訕妳\n好想看他吃醋的表情\n他有點生氣的跟妳說\n我路上也被警察關心\n\n臨檢才不算搭訕你\n是懷疑你不是喜歡你\n看他被押上警車歐伊歐伊歐伊\n\n這個男人 就是個北七\n（就是個北七 就是個北七）\n他說愛你 就當他放屁\n（就當他放屁 就當他放屁）\n這個男人 就是個北七\n（就是個北七 就是個北七）\n北七的愛讓妳全身過敏\n英文叫做allergy\n\n生日他寫卡片給妳\n一筆一畫都充滿感情\n打開卡片上面寫著\nHappy\n\nBirthday 到底在哪裡\n一封信寫不到一句\n在看守所那麼閒還不用心\n\n吃了妳親手做的料理\n合他的胃口吃得超乾淨\n他一臉滿足走到廚房說\n我碗放這裡記得洗\n\n到底 到底還有沒有天理\n被放出來沒有一點感激\n還給我幫你先付的保釋金\n\n為了紀念他說想刺青\n把最愛的刺在手臂不忘記\n結果他右手刺了\n是誰住在深海的大鳳梨裡\n\n海綿寶寶和派大星\n沒想到被他們比下去\n左手還刺了一二三四代火影\n\n他把一只戒指放妳手裡\n請妳緊握這一生的約定\n他深情的看著妳說\n數到三妳看在我嘴裡\n\n變魔術也不看一看時機\n騙妳眼淚還笑嘻嘻\n最後竟然不小心吞下去\n\n這個男人 就是個北七\n（就是個北七 就是個北七）\n妳別怪他 只是少八根筋\n（一二三四五六機八根筋）\n這個男人 就是個北七\n（就是個北七 就是個北七）\n甩掉以後記得要去收驚\n（阿彌陀佛 保佑你）\n\n這個男人 就是個北七\n（就是個北七 就是個北七）\n還能在一起 妳也病得不輕\n還能在一起\n你們也算是北…\n靈魂伴侶\n"
+   },
+ {
+    "title": "《不放棄先生》",
+    "ytId": "TkzaUIbq_ko",
+    "lyrics": "<intro>\nLadies and gentlemen\n你這輩子多少都放棄過什麼\n你放棄過 你放棄過 我也放棄過\n但接下來這個男人\nThis man, this real man\n他從不放棄 他堅持到底\n他 never stop 他會 keep going\n讓我們歡迎 Mr. Never Give Up\n-------\n\nI will keep it baby\nYou can't stop me\nCome on\n\n我的襪子破了五個洞\n除了小拇指 其他都在外頭\nOh yeah~\n我還想穿著它 跑幾場馬拉松\nRun run don't stop baby\n他還沒放棄 我怎麼能夠放手\nI won't give it up I won't give it up Uh~\n\n我的內褲像被狗咬過\n遮住的地方只剩屁股溝\n我還想夾著它 再去找幾個妞\nI got the balls I got the balls\n它還沒放棄 我怎麼能夠放手\nI won't give it up\nI won't give it up\n\n我不放棄 我還要繼續\n你別懷疑 別讓他們限制你的心\n你要相信你的可能性\n所謂的極限只是另一場的騙局\nI won't give it up\nI won't give it up\n內褲和襪子你都別想丟掉它\nI won't give it up\nI won't give it up\n我可以失去你 但不能沒有它\n\nyeah\nI will keep it\nYou will keep it baby\nYou can't stop me\nCome on\n\n我的衛生紙 放口袋被洗過\n皺得像石頭 攤開還可以用\n我還想留給你 擦去眼淚與難過\nDon't cry baby don't cry\n它還沒放棄 我怎麼能夠放手\nI won't give it up\nI won't give it up\n\n我的麥香紅 就算喝完後\n只要還有吸管 我再吸三個鐘頭\n我還想咬著它 一直到我臨終\nOver my dead body\n它還沒放棄 我怎麼能夠放手\nI won't give it up\nI won't give it up\n\n我不放棄 我還要繼續\n你別懷疑 別讓他們限制你的心\n你要相信你的可能性\n所謂的極限只是另一場的騙局\nI won't give it up\nI won't give it up\n吸管和衛生紙你都別想丟掉它\nI won't give it up\nI won't give it up\n我可以失去你 但不能沒有它\n\nI will keep it\nYou will keep it baby\nYou can't stop me\nCome on\n🕺🕺🕺🕺🕺\n我現在要跳舞 我現在要跳舞 Uh\n我跳的是什麼舞 就是什麼舞 Oh\n你說這是扭屁股 這是扭屁股 No\n我是在拉內褲 那條破內褲 Oh\n\n我的破機車 冬天發不動\n我踩踩踩踩踩踩踩 踩過了幾個秋\n我還想騎著它 去買麥香紅\n我踩踩踩踩踩 踩到了白了頭\n\n我的腎結石 一直跟著我\n我痛痛痛痛痛痛痛 我照樣吃火鍋\n我還想帶著它 再去吃燒肉\n我痛痛痛痛痛 痛痛痛吃痛\n\n它還沒放棄 我怎麼能夠放手\nI won't give it up\nI won't give it up\n\n我不放棄 我還要繼續 你別懷疑\n別讓他們限制你的心 你要相信你的可能性\n所謂的極限只是另一場的騙局\nI won't give it up\nI won't give it up\n機車和腎結石你都別想丟掉它\nI won't give it up\nI won't give it up\n我可以失去你 但不能沒有它\n\n他的腳在抖 他的腳在抖\n他沒有跟節奏 也沒有要中風\n他的腳在抖 這男人不怕窮\n他就是不受控 要抖到世紀末\n\n他的肝在抖 他的肝在抖\n他總是在工作都沒有放假過\n他的肝在抖 這男人死不休\n他覺得甘霖娘 老雞掰咖賀\n\nI won't give it up\nI won't give it up\n抖腳和爆肝你都別想丟掉它\nI won't give it up\nI won't give it up\n我可以失去你 但不能沒有它\n\nI will keep it\nYou will keep it baby\nYou can't stop me\nCome on\n\nWhat?\n\n還要唱什麼 還要唱什麼\n你不放過我 你不放過我 (No no)\n不要看著我 不要看著我 (Yeah baby)\n拜託你住手 拜託你住手\n他還沒放棄 我怎麼能夠放手\nI won't give it up\n"
+   },
+ {
+    "title": "《初老的證明題》",
+    "ytId": "0VhNVcUf7hk",
+    "lyrics": "輕狂的回憶 忽明忽滅\n回頭是我那青春的餘焰\n曾經的義無反顧\n也懂了力不從心的妥協\n跟著別人說著 已是不惑之年\n而鏡子裡的笑容 仍藏著疑惑的眼\n\n終於到你有了點年紀 才明白\n找不到的答案 一直都在那裡\n\n找不到的眼鏡 原來一直都在頭頂\n找不到的手機 原來一直都握在手裡\n找不到的充電器 原來一直都在插座上\n找不到的遙控器 原來一直都在屁股的縫縫裡\n\n找不到的理想 原來你一直都在假裝\n找不到的愛人 原來一直都在別人身旁\n\n初老的證明題 不斷提醒\n我已不年輕 我已不年輕 但我撇過頭去\n初老的證明題 不斷提醒\n我已不年輕 我已不年輕 能不能作弊\n\n如果人生終究是得要繼續\n你要學著忘記 讓自己輕一輕\n\n打開了冰箱 忘了要拿什麼東西\n張開了嘴巴 忘了想說什麼事情\n坐在馬桶上面 忘了要大什麼東西\n難得叫了小姐 忘了脫光光要做什麼事情\n\n到了家門口 忘了鑰匙還在機車上\n想回去拿卻記不得 那機車停在哪\n定位搜尋發現它 正前往彰化\n想罵髒話 卻只記得 什麼什麼什麼什麼你媽\n\n初老的證明題 不斷提醒\n我已不年輕 我已不年輕 但我不懂反省\n初老的證明題 不斷提醒\n我已不年輕 我已不年輕 能不能作弊\n\n光是坐下起立 膝蓋就發出聲音\n光是搭個電梯 耳鳴就一天不停\n光是打個噴嚏 竟然會同時放屁\n光是爬個樓梯 就快要喘到窒息\n光是社交聯誼 就讓人虛脫無力\n光是看個A片 兩個小時過去還沒硬\n\n初老的證明題 不斷提醒\n我已不年輕 我已不年輕 但有什麼關係\n\n<Rap>\n流行的韓劇 看了十分鐘就沒耐心\n流行的短影音 只剩美女還有共鳴\n流行的饒舌歌 速度太快我只聽得到\ncheck check check 這一句\n什麼吉依卡哇 我只聽過咻比嘟哇\n什麼虛擬貨幣 我只會買保健食品\n什麼Chat GPT 我只會上PTT\n能跟上的流行 只剩流感和流鼻涕\n\n初老的證明題 我已不年輕\n初老的證明題\n\n輕狂的回憶 忽明忽滅\n回頭是我那青春的餘焰\n曾經的義無反顧\n也懂了什麼叫 力不從心的妥協\n\n跟著別人說著\n已是不惑之年\n鏡子裡的笑容\n仍藏著疑惑的眼\n"
+   },
+];
+
+// 渲染音樂作品區塊的邏輯（已升級：支援 YouTube 嵌入與純文字連結雙模式）
+function renderMusic() {
+  const musicList = document.getElementById("music-list");
+  if (!musicList) return;
+  
+  if (!musicData || musicData.length === 0) {
+    musicList.innerHTML = '<p style="color:#888; font-size:13px;">音樂作品籌備中 🎸</p>';
+    return;
+  }
+  
+  musicList.innerHTML = musicData.map((song, idx) => {
+    // 💡 模式 A：如果是純文字連結卡片 (有 url 且沒有 ytId)
+if (song.url && !song.ytId) {
+      return `
+        <div class="music-card">
+          <div>
+            <!-- 標題 -->
+            <div class="music-title">${song.title}</div>
+            
+            <!-- 📱 嵌入圖片區：點擊圖片飛到指定連結 -->
+            <a href="${song.url}" target="_blank" rel="noopener" class="music-banner-link" style="display: block;">
+              <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; border-radius: 8px; overflow: hidden; background: #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                ${song.imgUrl ? 
+                  `<img src="${song.imgUrl}" alt="${song.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border: 0;">` :
+                  `<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 13px;">📷 尚未設定圖片 (請填寫 imgUrl)</div>`
+                }
+              </div>
+            </a>
+          </div>
+          <!-- 💡 歌詞/說明按鈕已在此模式下成功移除 ⛔ -->
+        </div>
+      `;
+    }
+    
+    // 💡 模式 B：原本的 YouTube 影音播放卡片
+    return `
+      <div class="music-card" style="text-decoration: none; cursor: default;">
+        <div>
+          <div class="music-title">${song.title}</div>
+          <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; margin-bottom: 12px; border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <iframe 
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+              src="https://www.youtube.com/embed/${song.ytId}" 
+              title="${song.title}" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+        <button class="lyrics-btn" onclick="openLyrics(${idx})">📝 查看歌詞</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function openLyrics(index) {
+  const song = musicData[index];
+  if (!song) return;
+  document.getElementById("popupLyricsTitle").textContent = song.title;
+  document.getElementById("popupLyricsBody").textContent = song.lyrics || "目前暫無提供歌詞 📝";
+  document.getElementById("lyricsOverlay").classList.add("active");
+}
+
+function closeLyrics() {
+  document.getElementById("lyricsOverlay").classList.remove("active");
+}
+
+// 執行音樂渲染
+renderMusic();
+
+
+// ------------------------------------------
+// 🔍 影片搜尋資料庫、高亮與標籤雲核心邏輯
+// ------------------------------------------
 const data = [
-
   {
   "title": "EP114｜人生就是不斷的揉捏啊【#達康還在講－新世界】",
   "text": "你注定要偉大 嘗試本身就有價值",
@@ -1154,8 +1203,8 @@ const data = [
 },
 {
 "title": "EP35｜關於達康哈轉生變成颱風這檔事【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["颱風", "天氣", "轉生", "想像", "災害", "搞笑設定", "2024"],
+"text": "如果台灣有颱風命名權\n 有超能力之後的名稱：千面彌勒、和風先生",
+"tags": ["颱風","回春的炒飯阿伯","冥冥","黑ㄅㄨㄚˊ","花轟颱風","陳彥達颱風 ","何瑞康颱風","Dr.stranger ","記憶枕","千面彌勒","和風先生", "2024"],
 "url": "https://www.youtube.com/watch?v=q8Sl_0u8D6A"
 },
 {
@@ -1250,14 +1299,16 @@ const data = [
 },
 {
 "title": "EP22｜真的好想要一隻機器人【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["機器人", "未來科技", "AI", "生活便利", "想像", "科技發展", "2024"],
-"url": "https://www.youtube.com/watch?v=HPxA2nKV82U"
+"text": "想要養會做大叔行為的機器人🤖",
+"tags": ["tags",":", [
+  "機器人","未來科技", "AI", "想像","2024","以前的廣告","動物叫","宿醉模式","在房間互相充電","機器人漫才","想養一隻何瑞康","想養一隻陳彥達"],
+"url",":", "https://www.youtube.com/watch?v=HPxA2nKV82U"]
 },
 {
 "title": "EP21｜注意！本台非衛教頻道【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["非衛教", "健康話題", "誤解", "知識", "討論", "幽默", "2024"],
+"text": "要定期健康檢查\n超音波震動🔞🔞\n藥還是要按時吃啦(/ω＼)",
+"tags": ["非衛教", "健康話題","2024","矮小細胞","史瑞克","哥布林", "腸胃鏡", "鹽酥大腸","不約而捅", "抽血","血腥瑪麗","攝護腺檢查","觸診","脂肪肝","腸性急胃炎","通風", "風光明媚的痛風","腎結石","燒酒螺","小針美容的中指縫","根管治療","很會蛀牙"
+],
 "url": "https://www.youtube.com/watch?v=mZtp48HGmqo"
 },
 {
@@ -1268,8 +1319,8 @@ const data = [
 },
 {
 "title": "EP19｜這才不是初老【#達康還在講－新世界】",
-"text": "本集內容整理中",
-"tags": ["初老", "年齡焦慮", "變老", "心態", "成長", "生活狀態", "2024"],
+"text": "阿達怕胸部垂\nKTV是康康的戰場\n平平淡淡 vs 轟轟烈烈",
+"\"tags": ["年齡焦慮", "變老", "心態", "成長", "生活狀態","Mojito", "晚安大小姐", "糖葫蘆", "5566", "無量空處", "康康結印", "細紋", "眼邊肉", "脫皮", "掰掰袖", "溢出腰間的肉", "不壯也是性感", "手機不見的康", "留給世界的帽子", "保險業務員", "過生日", "幽會", "礦石", "你去開計程車好不好！！！", "流行語測試", "YYDS"],
 "url": "https://www.youtube.com/watch?v=MdYna7o3hNU"
 },
 {
@@ -2734,12 +2785,10 @@ const data = [
   }
 ];
 
-// 全域變數，供 GA4 計時器使用
 let gaSearchTimer; 
 
 function search(keyword) {
   if (!keyword || !keyword.trim()) return [];
-  
   const cleanedKeyword = keyword.trim();
   const keywords = cleanedKeyword.toLowerCase().split(/\s+/).filter(k => k.length > 0);
 
@@ -2754,25 +2803,16 @@ function search(keyword) {
       if (tags.includes(k)) reasons.push("標籤");
       if (text.includes(k)) reasons.push("內容");
     });
-
-    if (reasons.length > 0) {
-      return {
-        ...item,
-        reasons: [...new Set(reasons)]
-      };
-    }
+    if (reasons.length > 0) { return { ...item, reasons: [...new Set(reasons)] }; }
     return null;
   }).filter(Boolean);
 
   clearTimeout(gaSearchTimer);
   gaSearchTimer = setTimeout(() => {
     if (typeof gtag === 'function' && cleanedKeyword.length > 0) {
-      gtag('event', 'view_search_results', {
-        search_term: cleanedKeyword
-      });
+      gtag('event', 'view_search_results', { search_term: cleanedKeyword });
     }
   }, 1000); 
-
   return results;
 }
 
@@ -2791,70 +2831,43 @@ function highlight(text, keywords) {
 function render(results, keyword) {
   const container = document.getElementById("results");
   container.innerHTML = "";
-
   const keywords = keyword.toLowerCase().split(/\s+/).filter(Boolean);
 
   if (results.length === 0) {
     container.innerHTML = "<p>找不到結果 😶‍🌫️</p>";
     if (typeof gtag === 'function' && keyword && keyword.trim().length > 0) {
-      gtag('event', 'search_no_results', {
-        'search_term': keyword.trim()
-      });
+      gtag('event', 'search_no_results', { 'search_term': keyword.trim() });
     }
     return;
   }
 
   results.forEach((item, index) => {
     const div = document.createElement("div");
-    
-    if (item.isMemberOnly) {
-      div.className = "card member-only";
-    } else {
-      div.className = "card";
-    }
+    div.className = item.isMemberOnly ? "card member-only" : "card";
 
     const titleHtml = highlight(item.title, keywords);
     const snippetHtml = highlight(item.text || "", keywords);
     const reasonHtml = `<div class="reason-badge">🔍 命中：${item.reasons.join(" / ")}</div>`;
 
     if (item.isMemberOnly) {
-      // 會員限定版 HTML 結構
       const btnId = `join-member-btn-${index}`;
-      // 達康官方 Youtube 會員加入畫面網址
-      const joinMemberUrl = "https://www.youtube.com/channel/UC8TtAsZE51ekqffnNASo7DA/join";
-      
+      const joinMemberUrl = "https://www.youtube.com/channel/UCshG6fS9S77wX86D7O0AunA/join";
       div.innerHTML = `
         <div class="member-badge">👑 會員專屬</div>
-        <h3>
-          <a href="${item.url}" target="_blank">
-            <span style="color:#d4af37; font-size:16px; margin-right:4px;">🔒</span>${titleHtml}
-          </a>
-        </h3>
+        <h3><a href="${item.url}" target="_blank"><span style="color:#d4af37; font-size:16px; margin-right:4px;">🔒</span>${titleHtml}</a></h3>
         ${reasonHtml}
         <p>${snippetHtml}</p>
-        <div>
-          <a href="${joinMemberUrl}" target="_blank" class="member-btn" id="${btnId}">
-            加入會員解鎖 ➜
-          </a>
-        </div>
+        <div><a href="${joinMemberUrl}" target="_blank" class="member-btn" id="${btnId}">加入會員解鎖 ➜</a></div>
       `;
-      
-      // 當點擊會員專屬按鈕時，觸發 GA4 事件
       setTimeout(() => {
         const btn = document.getElementById(btnId);
         if (btn) {
           btn.addEventListener('click', function() {
-            if (typeof gtag === 'function') {
-              gtag('event', 'click_join_membership', {
-                'video_title': item.title
-              });
-            }
+            if (typeof gtag === 'function') { gtag('event', 'click_join_membership', { 'video_title': item.title }); }
           });
         }
       }, 0);
-
     } else {
-      // 一般免費影片的 HTML 結構
       div.innerHTML = `
         <h3><a href="${item.url}" target="_blank">${titleHtml}</a></h3>
         ${reasonHtml}
@@ -2866,50 +2879,28 @@ function render(results, keyword) {
 }
 
 document.getElementById("searchBox").addEventListener("input", (e) => {
-  const rawValue = e.target.value;
-  const keyword = rawValue.trim();
-
+  const rawValue = e.target.value; const keyword = rawValue.trim();
   if (rawValue.length > 0 && keyword.length === 0) {
-    document.getElementById("results").innerHTML = "<p style='color: #888;'>請輸入有效文字 🔍</p>";
-    return;
+    document.getElementById("results").innerHTML = "<p style='color: #888;'>請輸入有效文字 🔍</p>"; return;
   }
-
-  if (!keyword) {
-    document.getElementById("results").innerHTML = "";
-    return;
-  }
-
-  const results = search(keyword);
-  render(results, keyword);
+  if (!keyword) { document.getElementById("results").innerHTML = ""; return; }
+  const results = search(keyword); render(results, keyword);
 });
 
 document.getElementById("searchBox").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const keyword = e.target.value.trim();
-    if (keyword.length === 0) {
-      e.preventDefault();
-      alert("請輸入搜尋關鍵字！");
-    }
+    if (keyword.length === 0) { e.preventDefault(); alert("請輸入搜尋關鍵字！"); }
   }
 });
 
 function quickSearch(tag) {
   if (!tag || !tag.trim()) return;
-  
   const cleanedTag = tag.trim().replace(/^#/, '');
   const searchBox = document.getElementById("searchBox");
-  
   searchBox.value = cleanedTag; 
-  
-  if (typeof gtag === 'function') {
-    gtag('event', 'search_tag_click', {
-      'tag_name': `#${cleanedTag}`
-    });
-  }
-  
-  const results = search(cleanedTag);
-  render(results, cleanedTag);
-  
+  if (typeof gtag === 'function') { gtag('event', 'search_tag_click', { 'tag_name': `#${cleanedTag}` }); }
+  const results = search(cleanedTag); render(results, cleanedTag);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2917,35 +2908,17 @@ function initTags() {
   const tagCloud = document.getElementById("tag-cloud");
   if (!tagCloud) return;
   tagCloud.innerHTML = ""; 
-
   const priorityTags = ["會員專屬"];
   const allTagsFromData = data.flatMap(item => item.tags || []);
   const otherTags = [...new Set(allTagsFromData)].filter(tag => !priorityTags.includes(tag));
-
-  const randomSupplement = otherTags
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 5);
-
+  const randomSupplement = otherTags.sort(() => 0.5 - Math.random()).slice(0, 5);
   const finalTags = [...priorityTags, ...randomSupplement];
 
   finalTags.forEach(tag => {
-    const btn = document.createElement("button");
-    btn.className = "tag-btn";
-    btn.innerText = `#${tag}`;
-    btn.onclick = () => quickSearch(tag);
-    tagCloud.appendChild(btn);
+    const btn = document.createElement("button"); btn.className = "tag-btn"; btn.innerText = `#${tag}`;
+    btn.onclick = () => quickSearch(tag); tagCloud.appendChild(btn);
   });
 }
-
-window.addEventListener('load', () => {
-  const searchBox = document.getElementById("searchBox");
-  const resultsContainer = document.getElementById("results");
-
-  if (searchBox) searchBox.value = ""; 
-  if (resultsContainer) resultsContainer.innerHTML = "";
-
-  initTags();
-});
 </script>
 
 </body>
