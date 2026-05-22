@@ -206,20 +206,31 @@ a.event-card:hover { border-color: #bbb; }
 .event-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
 .event-badge.selling { background: #e6f4ea; color: #2d7a3a; }
 .event-badge.soon { background: #fff4e0; color: #a06000; }
-.event-badge.soldout { background: #f0f0f0; color: #888; }
+.event-badge.soldout { background: #b552c9; color: #ffffff; }
 .event-meta { font-size: 13px; color: #888; display: flex; gap: 14px; flex-wrap: wrap; }
 .event-action {
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 6px; text-align: center; min-width: 64px;       
+  font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 6px; text-align: center; min-width: 64px;        
 }
-.event-action.buy { background: #84C1FF; color: white; }
-a.event-card:hover .event-action.buy { background: #3572d4; }
-.event-action.sold-out { background: #f0f0f0; color: #888; }
+
+/* 按鈕顏色狀態樣式 */
+.event-action.buy { 
+  background: #84C1FF; 
+  color: white; 
+  transition: background 0.2s ease;
+}
+a.event-card:hover .event-action.buy { background: #4A90E2; }
+
+/* 🌟 完售按鈕樣式 */
+.event-action.sold-out { background: #4a7dc5; color: #e2e8f0;  
+  transition: background 0.2s ease, color 0.2s ease; }
+a.event-card:hover .event-action.sold-out { background: #345995; color: #ffffff; }
+
 .event-action.wait { background: #f5f5f5; color: #aaa; }
 
-/* ↙️ 活動展開/收合按鈕樣式（已修改為超低調半透明淺灰） */
+/* ↙️ 活動展開/收合按鈕樣式 */
 .toggle-events-btn {
-  display: none; /* 預設隱藏，由 JS 判斷大於 5 個才顯示 */
+  display: none; 
   background: none;
   border: none;
   margin: 10px auto 0 auto;
@@ -316,25 +327,8 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
 <div class="event-section" style="display: flex; flex-direction: column; align-items: center;">
   <h3 style="align-self: flex-start; width: 100%;">🎪 近期活動</h3>
   <div id="event-list" style="width: 100%;">
-    <!-- 預留靜態備份，會自動被下方 Google Sheet API 抓取的資料覆蓋 -->
-    <a class="event-card" href="https://www.opentix.life/event/2026504468403777537" target="_blank" rel="noopener">
-      <div class="event-date-box">
-        <span class="event-date-month">5月</span>
-        <span class="event-date-day">21</span>
-        <span class="event-date-weekday">週四</span>
-      </div>
-      <div class="event-info">
-        <div class="event-name-row">
-          <span class="event-name">《愛在極光下》（哈利）</span>
-          <span class="event-badge selling">售票中</span>
-        </div>
-        <div class="event-meta">
-          <span>🕐 19:30</span>
-          <span>📍 水源劇場</span>
-        </div>
-      </div>
-      <div class="event-action buy">立即購票</div>
-    </a>
+    <!-- 避免載入閃爍，改為提示 -->
+    <p class="event-empty" style="color: #999; font-size: 14px;">最新活動載入中... 🕒</p>
   </div>
   
   <!-- ↙️ 新增：超低調展開隱藏活動的按鈕 -->
@@ -371,7 +365,7 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
   <a href="https://forms.gle/a5JUXWqHpME7kbwe8" target="_blank" class="report-link">🐛本工具非達康官方製作，有問題請來這裡回報🐛</a>
   使用GA4匿名追蹤優化搜尋體驗🧐<br><br>
   資料更新時間：<span id="last-mod"></span>
-     
+       
   <div class="copyright" style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
     © 2026 popohhohh. All rights reserved.
   </div>
@@ -387,7 +381,7 @@ let allFetchedEvents = [];
 let isEventsExpanded = false;
 
 // ------------------------------------------
-// 📝 頁面載入基礎設定（隨機 placeholder & 更新時間）
+// 📝 頁面載入基礎設定
 // ------------------------------------------
 window.addEventListener('load', () => {
   const placeholders = [
@@ -405,10 +399,8 @@ window.addEventListener('load', () => {
   const resultsContainer = document.getElementById("results");
   if (resultsContainer) resultsContainer.innerHTML = "";
   
-  // 初始化標籤雲
   initTags();
   
-  // 計算最後更新時間
   const lastMod = new Date(document.lastModified);
   const formattedDate = lastMod.getFullYear() + '/' + 
                         (lastMod.getMonth() + 1).toString().padStart(2, '0') + '/' + 
@@ -417,12 +409,10 @@ window.addEventListener('load', () => {
 });
 
 // ------------------------------------------
-// 🎪 活動行事曆邏輯 (串接 Google Sheet API & 5個切換展開)
+// 🎪 活動行事曆邏輯 (串接 Google Sheet API)
 // ------------------------------------------
 (function() {
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTK7dY0rEBbjgvHRtwbwCVYBomcTyW0GO3_1gp5tB_QOC3H9mH4zPxisiYAMTeSbgD_F1kXi8goTGsm/pub?gid=0&single=true&output=csv";
-  const WEEKDAYS = ["日","一","二","三","四","五","六"];
-  const MONTHS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
 
   function parseCSV(text) {
     const lines = text.trim().split("\n");
@@ -445,17 +435,18 @@ window.addEventListener('load', () => {
     .then(r => r.text())
     .then(text => {
       allFetchedEvents = parseCSV(text);
-      // 根據抓到的總活動數，決定要不要露出展開按鈕
       const toggleBtn = document.getElementById("toggle-events-btn");
       if (allFetchedEvents.length > 5) {
         toggleBtn.style.display = "block";
       } else {
         toggleBtn.style.display = "none";
       }
-      // 初始渲染（顯示前 5 個）
       renderEventsList(allFetchedEvents, false);
     })
-    .catch(() => {});
+    .catch(() => {
+      const el = document.getElementById("event-list");
+      if (el) el.innerHTML = '<p class="event-empty">資料載入失敗，請重新整理網頁 📋</p>';
+    });
 })();
 
 // 渲染活動畫面的獨立函式
@@ -469,7 +460,6 @@ function renderEventsList(events, expandAll) {
   const WEEKDAYS = ["日","一","二","三","四","五","六"];
   const MONTHS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
   
-  // 判斷是否展開，若不展開則只取前 5 個
   const displayEvents = expandAll ? events : events.slice(0, 5);
 
   el.innerHTML = displayEvents.map(ev => {
@@ -484,9 +474,12 @@ function renderEventsList(events, expandAll) {
     if (isSelling) { badgeClass = "selling"; badgeText = "售票中"; }
     if (isSoldOut) { badgeClass = "soldout"; badgeText = "完售"; }
     
+    // 🌟 邏輯調整：
+    // 如果是「售票中」，右側按鈕顯示「立即購票」
+    // 如果是「完售」，右側按鈕改顯示「活動詳情」
     let actionClass = "wait", actionText = "未開賣";
     if (isSelling && hasTicket) { actionClass = "buy"; actionText = "立即購票"; }
-    else if (isSoldOut) { actionClass = "sold-out"; actionText = "已完售"; }
+    else if (isSoldOut) { actionClass = "sold-out"; actionText = "活動詳情"; }
 
     const inner = `
       <div class="event-date-box">
@@ -507,7 +500,8 @@ function renderEventsList(events, expandAll) {
       <div class="event-action ${actionClass}">${actionText}</div>
     `;
     
-    if (isSelling && hasTicket) { 
+    // 🌟 修改點：只要有網址（不論是售票中或是完售），都渲染成可點擊跳轉的 <a> 標籤
+    if (hasTicket && (isSelling || isSoldOut)) { 
       return `<a class="event-card" href="${ev.ticketUrl}" target="_blank" rel="noopener">${inner}</a>`; 
     } else { 
       return `<div class="event-card disabled">${inner}</div>`; 
@@ -515,7 +509,6 @@ function renderEventsList(events, expandAll) {
   }).join("");
 }
 
-// 點擊活動展開鈕觸發的控制功能
 function toggleEventsDisplay() {
   const toggleBtn = document.getElementById("toggle-events-btn");
   isEventsExpanded = !isEventsExpanded;
@@ -526,11 +519,13 @@ function toggleEventsDisplay() {
   } else {
     renderEventsList(allFetchedEvents, false);
     toggleBtn.innerHTML = "展開 ▼";
-    // 點擊收合時，自動幫使用者平滑捲動回活動區塊頂端
     document.querySelector('.event-section').scrollIntoView({ behavior: 'smooth' });
   }
 }
 
+// 補足占位 Stub 程式碼（請保留您原本完整的影片與音樂資料邏輯）
+function initTags() { }
+function closeLyrics() { document.getElementById('lyricsOverlay').classList.remove('active'); }
 // ------------------------------------------
 // 🎵 音樂作品區塊與歌詞 Popup 邏輯
 // ------------------------------------------
@@ -591,26 +586,26 @@ function renderMusic() {
   }
   
   musicList.innerHTML = musicData.map((song, idx) => {
-    // 💡 模式 A：如果是純文字連結卡片 (有 url 且沒有 ytId)
+   // 💡 模式 A：如果是純文字連結卡片 (有 url 且沒有 ytId)
 if (song.url && !song.ytId) {
-      return `
-        <div class="music-card">
-          <div>
-            <!-- 標題 -->
-            <div class="music-title">${song.title}</div>
-            
-            <!-- 📱 嵌入圖片區：點擊圖片飛到指定連結 -->
-            <a href="${song.url}" target="_blank" rel="noopener" class="music-banner-link" style="display: block;">
-              <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; border-radius: 8px; overflow: hidden; background: #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                ${song.imgUrl ? 
-                  `<img src="${song.imgUrl}" alt="${song.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border: 0;">` :
-                  `<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 13px;">📷 尚未設定圖片 (請填寫 imgUrl)</div>`
-                }
-              </div>
-            </a>
+  return `
+    <a href="${song.url}" target="_blank" rel="noopener" class="music-card-link" style="text-decoration: none; color: inherit; display: block;">
+      <div class="music-card" style="cursor: pointer;">
+        <div>
+          <!-- 標題 -->
+          <div class="music-title">${song.title}</div>
+          
+          <!-- 📱 嵌入圖片區 -->
+          <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; border-radius: 8px; overflow: hidden; background: #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            ${song.imgUrl ? 
+              `<img src="${song.imgUrl}" alt="${song.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border: 0;">` :
+              `<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 13px;">📷 尚未設定圖片 (請填寫 imgUrl)</div>`
+            }
           </div>
-          <!-- 💡 歌詞/說明按鈕已在此模式下成功移除 ⛔ -->
         </div>
+        <!-- 💡 歌詞/說明按鈕已在此模式下成功移除 ⛔ -->
+      </div>
+    </a>
       `;
     }
     
@@ -2923,4 +2918,5 @@ function initTags() {
 
 </body>
 </html>
+
 
