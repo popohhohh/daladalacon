@@ -2,11 +2,12 @@
 <html>
 <head>
 
+
 <!-- ==========================================
      📊 GOOGLE ANALYTICS 追蹤碼
      ========================================== -->
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-EPHSV81193"></script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EPHSV81193"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -305,8 +306,10 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
 }
 </style>
 
+
 </head>
 <body>
+
 
 <!-- ==========================================
      🔍 區塊一：搜尋與標籤雲區
@@ -650,6 +653,11 @@ renderMusic();
 // 🔍 影片搜尋資料庫、高亮與標籤雲核心邏輯
 // ------------------------------------------
 const data = [
+ {  "title": "EP117｜我現在刪掉【#達康還在講－新世界】",
+    "text": "GARMIN整合一下！\n他如果要內診怎麼辦( ´･A･` ) ",
+    "tags": ["手機","APP","蟲蟲危機","銀行","找師傅","花牌","電子雞","投資"],
+"url":"https://youtu.be/h-L3xBVmLd8?si=zUJ8_KHro9fekUIh"
+  },
 {
     "title": "EP116｜你們都不相信我！【#達康還在講－新世界 #已讀誤回QQA】",
     "text": "包裝漁獲的神祕回憶的記憶是真的嗎😦\n你很不適合說實話\n\nQ：第一次的薪水買了什麼呢？\nQ：壁虎會被蚊子叮嗎？\nQ：不知道是因為長得很和善還是怎麼樣？在路上總是被搭訕也好問路也罷，但每次經驗都很不好，讓人想吐。想請問達康哈要什麼讓自己不會有被陌生人搭話機會呢？",
@@ -826,8 +834,8 @@ const data = [
 },
 {
 "title": "EP89｜達康哈的退休之夢【#達康還在講－新世界】",
-"text": "賞鯨",
-"tags": ["退休", "人生規劃", "未來生活", "理想生活", "想像", "2025"],
+"text": "認識你是命運上的錯誤",
+"tags": ["退休", "人生規劃",, "恐龍", "浴袍", "老高", "墮落", "第二春", "地下室", "2025"],
 "url": "https://www.youtube.com/watch?v=bb3ZhboTis0"
 },
 {
@@ -3115,21 +3123,63 @@ function render(results, keyword) {
   });
 }
 
-document.getElementById("searchBox").addEventListener("input", (e) => {
-  const rawValue = e.target.value; const keyword = rawValue.trim();
-  if (rawValue.length > 0 && keyword.length === 0) {
-    document.getElementById("results").innerHTML = "<p style='color: #888;'>請輸入有效文字 🔍</p>"; return;
-  }
-  if (!keyword) { document.getElementById("results").innerHTML = ""; return; }
-  const results = search(keyword); render(results, keyword);
-});
+// 🌟🌟🌟 【這裡開始是修改的重點區】 🌟🌟🌟
+let isComposing = false; // 追蹤是否正在輸入注音組字中
+const searchBoxElement = document.getElementById("searchBox");
 
-document.getElementById("searchBox").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    const keyword = e.target.value.trim();
-    if (keyword.length === 0) { e.preventDefault(); alert("請輸入搜尋關鍵字！"); }
+if (searchBoxElement) {
+  // 監聽注音開始輸入
+  searchBoxElement.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+
+  // 監聽注音選字完成
+  searchBoxElement.addEventListener('compositionend', (e) => {
+    isComposing = false;
+    triggerSearch(e.target.value); // 選完字手動觸發搜尋
+  });
+
+  // 修改原本的 input 監聽器
+  searchBoxElement.addEventListener("input", (e) => {
+    if (isComposing) return; // 如果還在打注音，直接攔截！不送 GA、不刷新畫面
+    triggerSearch(e.target.value);
+  });
+
+  // 監聽鍵盤 Enter 鍵
+  searchBoxElement.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const keyword = e.target.value.trim();
+      if (keyword.length === 0) { e.preventDefault(); alert("請輸入搜尋關鍵字！"); }
+    }
+  });
+}
+
+// 統一負責處理搜尋與防呆的函式
+function triggerSearch(rawValue) {
+  const keyword = rawValue.trim();
+  
+  if (rawValue.length > 0 && keyword.length === 0) {
+    document.getElementById("results").innerHTML = "<p style='color: #888;'>請輸入有效文字 🔍</p>"; 
+    return;
   }
-});
+  
+  if (!keyword) { 
+    document.getElementById("results").innerHTML = ""; 
+    return; 
+  }
+
+  // 額外防呆：如果因為不可抗力誤入「純注音字」，攔截不執行搜尋、不送 GA
+  const bopomofoRegex = /^[\u3105-\u312F\u02CA\u02C7\u02CB\u02D9\s]+$/;
+  if (bopomofoRegex.test(keyword)) {
+    document.getElementById("results").innerHTML = "<p>找不到結果 😶‍🌫️</p>";
+    return;
+  }
+
+  // 執行原本的搜尋與渲染邏輯
+  const results = search(keyword); 
+  render(results, keyword);
+}
+// 🌟🌟🌟 【修改重點區結束】 🌟🌟🌟
 
 function quickSearch(tag) {
   if (!tag || !tag.trim()) return;
@@ -3160,8 +3210,5 @@ function initTags() {
 
 </body>
 </html>
-
-
-
 
 
