@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽籤機</title>
+    <style>
+        /* 🌎 全域基礎樣式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 30px 5%; 
+            background: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lottery-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .lottery-container h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        /* 💎 質感升級後的抽籤按鈕 */
+        .btn-draw {
+            background: linear-gradient(135deg, #96cbff, #5da2ff); /* 1. 改用雙色微漸層，視覺更立體飽滿 */
+            color: white; 
+            border: none;
+            padding: 14px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px; 
+            cursor: pointer;
+            /* 2. 雙層陰影：外層增加柔和藍光擴散，內層 (inset) 注入一道極細的高光邊緣 */
+            box-shadow: 0 6px 16px rgba(93, 162, 255, 0.25), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.5px; /* 3. 微調字距，瞬間帶出視覺設計感 */
+            text-indent: 3px;    /* 修正字距造成的置中微偏 */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 4. 改用動態快進慢出的曲線，反饋更俐落 */
+            margin-bottom: 30px;
+            outline: none;
+        }
+
+        /* 懸浮狀態 */
+        .btn-draw:hover {
+            background: linear-gradient(135deg, #a6d4ff, #6cb0ff);
+            transform: translateY(-2px); /* 優雅的向上微浮 */
+            box-shadow: 0 8px 20px rgba(93, 162, 255, 0.35), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        /* 點擊狀態 */
+        .btn-draw:active {
+            transform: translateY(1px); /* 紮實的按壓反饋 */
+            box-shadow: 0 3px 8px rgba(93, 162, 255, 0.2);
+        }
+
+        .btn-draw:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 📦 抽籤結果卡片 */
+        .card.result-card {
+            text-align: left;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.4s ease;
+            display: none;
+            padding: 24px;
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #eaeaea;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+        }
+
+        .card.result-card.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #1a1a1a;
+        }
+
+        /* 🎬 YouTube 響應式內嵌矩形 */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; 
+            height: 0;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .card p.video-text {
+            white-space: pre-wrap;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #cbd5e1;
+        }
+
+        /* 🏷️ 標籤雲樣式 */
+        .tag-container {
+            width: 100%;
+            margin: 0; 
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-start; 
+        }
+
+        .tag-badge {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: #666;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+        }
+
+        .shuffling {
+            animation: pulse 0.1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lottery-container">
+        <h1>今天推薦給你的是……</h1>
+        <button class="btn-draw" id="drawBtn"> 抽簽！</button>
+
+        <div class="card result-card" id="resultCard">
+            <h3 id="videoTitle">影片標題將顯示在此</h3>
+            
+            <div class="video-container">
+                <iframe id="youtubePlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <p class="video-text" id="videoText"></p>
+            <div class="tag-container" id="tagContainer"></div>
+        </div>
+
+        <br>
+        <a href="index.html" class="back-link">← 返回影片列表</a>
+    </div>
+
+    <script>
+         let videoData = [];
+        
+        const drawBtn = document.getElementById('drawBtn');
+        const resultCard = document.getElementById('resultCard');
+        const videoTitle = document.getElementById('videoTitle');
+        const videoText = document.getElementById('videoText');
+        const tagContainer = document.getElementById('tagContainer');
+        const youtubePlayer = document.getElementById('youtubePlayer');
+
+        function getEmbedUrl(url) {
+            if (!url) return '';
+            let videoId = '';
+            if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else if (url.includes('v=')) {
+                videoId = url.split('v=')[1].split('&')[0];
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+        }
+
+        drawBtn.addEventListener('click', () => {
+            if (videoData.length === 0) return;
+
+            drawBtn.disabled = true;
+            drawBtn.innerText = "等一下下...";
+            
+            resultCard.classList.remove('show');
+            youtubePlayer.src = ''; 
+            resultCard.style.display = 'block';
+            videoTitle.classList.add('shuffling');
+
+            let shuffleCount = 0;
+            
+            const interval = setInterval(() => {
+                const randomIdx = Math.floor(Math.random() * videoData.length);
+                videoTitle.innerText = videoData[randomIdx].title;
+                shuffleCount++;
+                
+                if (shuffleCount > 12) {
+                    clearInterval(interval);
+                    
+                    const finalSelection = videoData[Math.floor(Math.random() * videoData.length)];
+                    
+                    videoTitle.innerText = finalSelection.title;
+                    videoText.innerText = finalSelection.text;
+                    youtubePlayer.src = getEmbedUrl(finalSelection.url);
+                    
+                    tagContainer.innerHTML = '';
+                    if (finalSelection.tags && finalSelection.tags.length > 0) {
+                        finalSelection.tags.forEach(tag => {
+                            const span = document.createElement('span');
+                            span.classList.add('tag-badge');
+                            span.innerText = `#${tag}`;
+                            tagContainer.appendChild(span);
+                        });
+                    }
+
+                    videoTitle.classList.remove('shuffling');
+                    resultCard.classList.add('show');
+                    
+                    drawBtn.disabled = false;
+                    drawBtn.innerText = "再抽一集！";
+                }
+            }, 80);
+        });
+    </script>
+</body>
+</html>
