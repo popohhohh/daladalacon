@@ -304,12 +304,68 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
   .event-action { padding: 5px 10px; font-size: 11px; min-width: 58px; align-self: flex-end; margin-top: 4px; }
   .music-grid { grid-template-columns: 1fr; }
 }
+/* 🎯 右上角圓角長方形抽籤按鈕樣式 */
+.lottery-fixed-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  /* 📐 調整為長方形的寬高與內距 */
+  padding: 8px 16px;
+  min-width: 60px;
+  height: auto;
+  /* 🔲 設定優雅的圓角（可依喜好調整，8px-12px 看起來很精緻） */
+  border-radius: 8px; 
+  
+  /* ⚗️ 低調透明米咖啡色漸層與毛玻璃效果 */
+  background: linear-gradient(135deg, rgba(225, 212, 196, 0.75), rgba(198, 181, 160, 0.75));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px); /* 支援 Safari 瀏覽器 */
+  
+  /* 🎨 文字顏色與字型設定 */
+  color: #6d5c4b !important;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none !important;
+  letter-spacing: 1px; /* 讓文字稍微調寬，增加質感 */
+  
+  /* 居中對齊與陰影 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(198, 181, 160, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  z-index: 999;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* 滑鼠懸停效果 */
+.lottery-fixed-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(198, 181, 160, 0.4);
+  background: linear-gradient(135deg, rgba(218, 204, 187, 0.9), rgba(190, 172, 150, 0.9));
+}
+
+/* 按下時的效果 */
+.lottery-fixed-btn:active {
+  transform: translateY(0);
+}
+
+/* 📱 行動裝置優化：在手機上稍微縮小，避免擋到內容 */
+@media (max-width: 600px) {
+  .lottery-fixed-btn {
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+}
 </style>
 
 
 </head>
 <body>
-
+<a href="lottery.html" class="lottery-fixed-btn">抽籤🛸</a>
 
 <!-- ==========================================
      🔍 區塊一：搜尋與標籤雲區
@@ -858,7 +914,5 @@ function initTags() {
 
 </body>
 </html>
-
-
 
 
