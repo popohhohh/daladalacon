@@ -713,15 +713,15 @@ let data = [];
 
 async function loadData() {
   try {
-    // 這裡的 'data.json' 是相對路徑，請根據你檔案放的位置調整
     const response = await fetch('data.json');
     data = await response.json();
     
-    // 💡 確保資料抓到後，才執行你原本渲染網頁的 function
-    renderPage(data); 
+    // 這裡才開始初始化介面
+    initTags(); // 資料拿到後，才執行標籤初始化
+    console.log("資料已載入，共", data.length, "筆");
     
   } catch (error) {
-    console.error("讀取 JSON 發生錯誤:", error);
+    console.error("讀取 JSON 發生錯誤，請檢查檔案路徑或是否使用伺服器模式開啟:", error);
   }
 }
 
