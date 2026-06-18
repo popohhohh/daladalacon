@@ -714,7 +714,7 @@ let data = [];
 async function loadData() {
   try {
     // 這裡的 'data.json' 是相對路徑，請根據你檔案放的位置調整
-    const response = await fetch('data.js');
+    const response = await fetch('data.json');
     data = await response.json();
     
     // 💡 確保資料抓到後，才執行你原本渲染網頁的 function
