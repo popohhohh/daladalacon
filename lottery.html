@@ -198,84 +198,96 @@
         <a href="index.html" class="back-link">回主頁🐄</a>
     </div>
 
-    <script src="data.json"></script>
-
     <script>
-        // 💡 關鍵修正：假設你在 data.js 裡的變數名稱叫常用名稱（例如：myVideos 或原本主頁用的變數）
-        // 如果你的 data.js 裡宣告的變數不是 videoData，請將下面這一行的 assignments 換成你 data.js 裡的變數名。
-        // 這裡設定：如果全域能抓到 videoData 就直接用，否則嘗試抓取常見名稱，或直接留空。
-        if (typeof videoData === 'undefined') {
-            // 如果你的 data.js 裡面的陣列名稱其實叫別的名字（例如叫 movies 或 cards），請把下面的 'songs' 或 'movies' 改掉
-            videoData = window.videoData || window.movies || window.songs || [];
+    // 1. 全域變數，用來存放資料
+    let videoData = [];
+
+    // 2. 初始化：一進頁面就嘗試抓取 data.json
+    async function initData() {
+        try {
+            const response = await fetch('data.json');
+            if (!response.ok) throw new Error("檔案讀取失敗");
+            videoData = await response.json();
+            console.log("資料庫已就緒，共", videoData.length, "筆資料");
+        } catch (err) {
+            console.error("資料載入錯誤:", err);
+            document.getElementById('videoTitle').innerText = "資料載入失敗，請檢查 JSON 格式或伺服器環境";
         }
+    }
+    
+    // 執行載入
+    initData();
+
+    // 3. 取得 YouTube 嵌入連結的函式
+    function getEmbedUrl(url) {
+        if (!url) return '';
+        let videoId = '';
+        if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        }
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+    }
+
+    // 4. 抽籤邏輯
+    const drawBtn = document.getElementById('drawBtn');
+    const resultCard = document.getElementById('resultCard');
+    const videoTitle = document.getElementById('videoTitle');
+    const videoText = document.getElementById('videoText');
+    const tagContainer = document.getElementById('tagContainer');
+    const youtubePlayer = document.getElementById('youtubePlayer');
+
+    drawBtn.addEventListener('click', () => {
+        // 防呆：如果資料還沒抓到，就直接跳出
+        if (videoData.length === 0) {
+            alert('資料載入中！');
+            return;
+        }
+
+        drawBtn.disabled = true;
+        drawBtn.innerText = "抽籤中...";
         
-        const drawBtn = document.getElementById('drawBtn');
-        const resultCard = document.getElementById('resultCard');
-        const videoTitle = document.getElementById('videoTitle');
-        const videoText = document.getElementById('videoText');
-        const tagContainer = document.getElementById('tagContainer');
-        const youtubePlayer = document.getElementById('youtubePlayer');
+        resultCard.classList.remove('show');
+        youtubePlayer.src = ''; 
+        resultCard.style.display = 'block';
+        videoTitle.classList.add('shuffling');
 
-        function getEmbedUrl(url) {
-            if (!url) return '';
-            let videoId = '';
-            if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes('v=')) {
-                videoId = url.split('v=')[1].split('&')[0];
-            }
-            return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
-        }
-
-        drawBtn.addEventListener('click', () => {
-            // 偵錯提示：如果資料依然沒載入成功，會在主控台(F12)提示你
-            if (!videoData || videoData.length === 0) {
-                alert('哎呀!出了一點問題呢');
-                return;
-            }
-
-            drawBtn.disabled = true;
-            drawBtn.innerText = "等一下下...";
+        let shuffleCount = 0;
+        const interval = setInterval(() => {
+            const randomIdx = Math.floor(Math.random() * videoData.length);
+            videoTitle.innerText = videoData[randomIdx].title || "無標題";
+            shuffleCount++;
             
-            resultCard.classList.remove('show');
-            youtubePlayer.src = ''; 
-            resultCard.style.display = 'block';
-            videoTitle.classList.add('shuffling');
-
-            let shuffleCount = 0;
-            
-            const interval = setInterval(() => {
-                const randomIdx = Math.floor(Math.random() * videoData.length);
-                videoTitle.innerText = videoData[randomIdx].title || "無標題";
-                shuffleCount++;
+            if (shuffleCount > 12) {
+                clearInterval(interval);
                 
-                if (shuffleCount > 12) {
-                    clearInterval(interval);
-                    
-                    const finalSelection = videoData[Math.floor(Math.random() * videoData.length)];
-                    
-                    videoTitle.innerText = finalSelection.title || "無標題";
-                    videoText.innerText = finalSelection.text || finalSelection.description || "";
-                    youtubePlayer.src = getEmbedUrl(finalSelection.url);
-                    
-                    tagContainer.innerHTML = '';
-                    if (finalSelection.tags && finalSelection.tags.length > 0) {
-                        finalSelection.tags.forEach(tag => {
-                            const span = document.createElement('span');
-                            span.classList.add('tag-badge');
-                            span.innerText = `#${tag}`;
-                            tagContainer.appendChild(span);
-                        });
-                    }
-
-                    videoTitle.classList.remove('shuffling');
-                    resultCard.classList.add('show');
-                    
-                    drawBtn.disabled = false;
-                    drawBtn.innerText = "再抽一集！";
+                const finalSelection = videoData[Math.floor(Math.random() * videoData.length)];
+                
+                videoTitle.innerText = finalSelection.title || "無標題";
+                videoText.innerText = finalSelection.text || "";
+                youtubePlayer.src = getEmbedUrl(finalSelection.url);
+                
+                // 清空並重新產生標籤
+                tagContainer.innerHTML = '';
+                if (finalSelection.tags && Array.isArray(finalSelection.tags)) {
+                    finalSelection.tags.forEach(tag => {
+                        const span = document.createElement('span');
+                        span.classList.add('tag-badge');
+                        span.innerText = `#${tag}`;
+                        tagContainer.appendChild(span);
+                    });
                 }
-            }, 80);
-        });
-    </script>
+
+                videoTitle.classList.remove('shuffling');
+                resultCard.classList.add('show');
+                
+                drawBtn.disabled = false;
+                drawBtn.innerText = "再抽一集！";
+            }
+        }, 80);
+    });
+</script>
+
 </body>
 </html>
