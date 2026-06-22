@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>抽籤機</title>
-    <style>
+    
+ <style>
         /* 🌎 全域基礎樣式 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -124,16 +125,25 @@
             border: 0;
         }
 
+        /* 📝 調整後的便利貼風格樣式 */
         .card p.video-text {
             white-space: pre-wrap;
-            color: #555;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            background: #fafafa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 3px solid #cbd5e1;
+            color: #4a4a4a;
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 25px auto; /* 增加上下間距，讓便利貼立體感更明顯 */
+            width: 92%; /* 稍微縮小寬度，讓微幅旋轉時不會超出外框 */
+            
+            /* 便利貼經典配色與陰影 */
+            background: #fff9db; /* 柔和經典的溫暖淺黃色 */
+            padding: 20px 25px;
+            border-radius: 2px; /* 傳統便利貼是接近直角的 */
+            border-left: none; /* 🔴 移除原本的左邊引導線 */
+            
+            /* 模擬便利貼紙張的邊緣陰影 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06), 
+                        2px 2px 5px rgba(0, 0, 0, 0.04);}
+         
         }
 
         /* 🏷️ 標籤雲樣式 */
