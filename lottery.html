@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>抽籤機</title>
+    <title>抽籤</title>
     
  <style>
         /* 🌎 全域基礎樣式 */
@@ -125,29 +125,31 @@
             border: 0;
         }
 
-        /* 📝 調整後的便利貼風格樣式 */
-       /* 📝 完美平衡手機與電腦的便利貼風格樣式 */
+
+/* 📝 完美適應手機、不爆框、不歪斜，且下方留有安全距離的便利貼 */
 .card p.video-text {
     white-space: pre-wrap;
     color: #4a4a4a;
     font-size: 15px;
     line-height: 1.7;
     
-    /* 調整間距：自動適應寬度，在手機上絕不爆框 */
+    /* 1. 寬度自適應，左右不設 margin，徹底解決手機爆框問題 */
     width: auto; 
-    margin: 20px 0; /* 上下留出 20px 空間，左右貼齊（由 padding 留白） */
+    margin-top: 20px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 25px; /* 💡 關鍵：加強下方間距，把標籤雲優雅地推開 */
     
-    /* 便利貼經典配色與陰影（無歪斜） */
-    background: #fff9db; /* 柔和經典的溫暖淺黃色 */
+    /* 2. 便利貼經典配色與平整陰影 */
+    background: #fff9db; /* 柔和淺黃色 */
     padding: 20px;
-    border-radius: 4px; /* 微圓角，看起來更精緻 */
+    border-radius: 4px; /* 精緻微圓角 */
     border-left: none; /* 移除左邊引導線 */
     
-    /* 平整的紙張陰影 */
+    /* 3. 平整紙張陰影 */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 
                 0 1px 3px rgba(0, 0, 0, 0.03);
-
-}
+    }
         }
 
         /* 🏷️ 標籤雲樣式 */
