@@ -152,25 +152,30 @@
     }
         }
 
-        /* 🏷️ 標籤雲樣式 */
-        .tag-container {
-            width: 100%;
-            margin: 0; 
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: flex-start; 
-        }
+     
+     /* 🏷️ 標籤雲容器：解決手機上換行擠在一起的問題 */
+.tag-container {
+    width: 100%;
+    margin: 0; 
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;    /* 💡 關鍵：強制設定換行時，上下排標籤的「行距」為 10px */
+    column-gap: 8px;   /* 左右標籤之間的間距 */
+    justify-content: flex-start; 
+}
 
-        .tag-badge {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 12px;
-            color: #666;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
-        }
+/* 標籤本體微調（讓文字更有呼吸空間） */
+.tag-badge {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 6px 14px; /* 稍微增加內襯，讓標籤更圓潤好看 */
+    font-size: 13px;   /* 稍微放大一點點，閱讀更清晰 */
+    color: #666;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+    display: inline-block;
+    white-space: nowrap; /* 確保單個標籤內的文字不會自己斷行 */
+}
 
         .shuffling {
             animation: pulse 0.1s infinite alternate;
