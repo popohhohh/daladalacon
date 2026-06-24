@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影片觀看排行榜</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 30px 5%; 
+            background: #f8f9fa;
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .rank-container {
+            width: 100%;
+            max-width: 900px; 
+        }
+        h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        /* 💡 移除原本的狀態列樣式，改為極簡的純文字載入提示 */
+        .loading {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            padding: 40px;
+        }
+        
+        .rank-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .rank-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 16px;
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #eaeaea;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .rank-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+        }
+        
+        .rank-number {
+            font-size: 18px;
+            font-weight: bold;
+            width: 32px; 
+            color: #a0a0a0;
+            text-align: left; 
+            flex-shrink: 0;
+        }
+        .rank-item:nth-child(1) .rank-number { color: #d4af37; font-size: 24px; } 
+        .rank-item:nth-child(2) .rank-number { color: #94a3b8; font-size: 21px; } 
+        .rank-item:nth-child(3) .rank-number { color: #b45309; font-size: 18px; } 
+        
+        .rank-thumbnail {
+            width: 120px;
+            height: 68px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #eee;
+        }
+        .rank-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; 
+        }
+        .rank-title {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            line-height: 1.4;
+            width: 100%;
+        }
+        .rank-title a {
+            text-decoration: none;
+            color: #1a1a1a;
+            transition: color 0.15s ease;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .rank-title a:hover {
+            color: #0056b3;
+        }
+        
+        .rank-views {
+            display: inline-block;
+            font-size: 12px;
+            color: #666;
+            background: #f2f2f2;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            white-space: nowrap; 
+        }
+        
+        /* 💡 頁尾：統一使用無特效的低調淺灰色 */
+        footer {
+            font-size: 12px;
+            color: #b3b3b3;
+            text-align: center;
+            padding: 40px 0 20px 0;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            h1 { font-size: 20px; margin-bottom: 16px; }
+            .rank-item { padding: 10px; margin-bottom: 12px; gap: 0; }
+            .rank-number { width: 24px; font-size: 14px; text-align: left; }
+            .rank-item:nth-child(1) .rank-number { font-size: 20px; }
+            .rank-item:nth-child(2) .rank-number { font-size: 18px; }
+            .rank-item:nth-child(3) .rank-number { font-size: 16px; }
+            .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; }
+            .rank-title { font-size: 13.5px; margin-bottom: 4px; line-height: 1.35; }
+            .rank-views { font-size: 10.5px; padding: 2px 6px; }
+            footer { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="rank-container">
+    <h1>🏅影片觀看數總排行榜🏅</h1>
+    <div id="loading" class="loading">正在深度掃描全頻道影片中，請稍候...</div>
+    <ul id="rankList" class="rank-list"></ul>
+
+    <footer id="footerStatus"> 
+    </footer>
+</div>
+
+<script>
+    const API_KEY = 'AIzaSyCX_pIy_cIh8c5YY0v9PKhIaZ-Mb-0aejQ';
+    const CHANNEL_ID = 'UC8TtAsZE51ekqffnNASo7DA';
+    const UPLOADS_PLAYLIST_ID = CHANNEL_ID.replace(/^UC/, 'UU');
+    
+    // 更新快取版本名稱以套用 15 個排行的新規則
+    const CACHE_KEY = 'yt_ultimate_rank_15items_v6'; 
+    const CACHE_TIME_KEY = 'yt_ultimate_rank_15items_time_v6';
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000; 
+
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    function formatViews(num) {
+        return parseInt(num).toLocaleString('zh-TW');
+    }
+
+    function parseDurationToSeconds(duration) {
+        const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+        if (!match) return 0;
+        const hours = parseInt(match[1] || 0);
+        const minutes = parseInt(match[2] || 0);
+        const seconds = parseInt(match[3] || 0);
+        return (hours * 3600) + (minutes * 60) + seconds;
+    }
+
+    // 💡 簡化提示：更新載入時的文字，不使用動畫進度條
+    function updateProgress(text) {
+        document.getElementById('loading').innerHTML = text;
+    }
+
+    function renderList(videos, statusText) {
+        const listEl = document.getElementById('rankList');
+        const loadingEl = document.getElementById('loading');
+        const footerStatusEl = document.getElementById('footerStatus');
+        
+        listEl.innerHTML = '';
+        loadingEl.style.display = 'none';
+        
+        // 💡 渲染完列表後，將時間狀態優雅地灌進頁尾
+        footerStatusEl.innerHTML = `榜單每日更新，已排除短影音<br><span style="color: #b3b3b3;">${statusText}</span>`;
+
+        videos.forEach((video, index) => {
+            const li = document.createElement('li');
+            li.className = 'rank-item';
+            li.innerHTML = `
+                <div class="rank-number">${index + 1}</div>
+                <img class="rank-thumbnail" src="${video.thumbnail}" alt="${video.title}">
+                <div class="rank-info">
+                    <h3 class="rank-title">
+                        <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank">${video.title}</a>
+                    </h3>
+                    <div class="rank-views">🔥 觀看次數：${formatViews(video.views)} 次</div>
+                </div>
+            `;
+            listEl.appendChild(li);
+        });
+    }
+
+    async function getAllVideoIds() {
+        let videoIds = [];
+        let nextPageToken = '';
+        
+        do {
+            const url = `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${UPLOADS_PLAYLIST_ID}&part=contentDetails&maxResults=50&pageToken=${nextPageToken}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            if (data.error) throw new Error(data.error.message);
+            
+            const ids = data.items.map(item => item.contentDetails.videoId);
+            videoIds = videoIds.concat(ids);
+            
+            updateProgress(`🔍 正在讀取影片資料庫... (${videoIds.length} 支影片)`);
+            nextPageToken = data.nextPageToken || '';
+            
+            await sleep(150);
+        } while (nextPageToken);
+        
+        return videoIds;
+    }
+
+    async function getVideoDetails(videoIds) {
+        let allDetails = [];
+        
+        for (let i = 0; i < videoIds.length; i += 50) {
+            const chunk = videoIds.slice(i, i + 50).join(',');
+            const url = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${chunk}&part=snippet,statistics,contentDetails`;
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            if (data.items) {
+                allDetails = allDetails.concat(data.items);
+            }
+            
+            updateProgress(`📊 正在分析全頻道觀看次數... (${Math.min(i + 50, videoIds.length)} / ${videoIds.length})`);
+            
+            await sleep(200);
+        }
+        return allDetails;
+    }
+
+    async function fetchYouTubeData() {
+        try {
+            updateProgress('🚀 正在與 YouTube 連線中...');
+            const allIds = await getAllVideoIds();
+            const rawDetails = await getVideoDetails(allIds);
+
+            // 💡 調整切片：.slice(0, 15) 改抓前 15 名
+            const videos = rawDetails
+                .map(item => ({
+                    id: item.id,
+                    title: item.snippet.title,
+                    thumbnail: item.snippet.thumbnails.medium ? item.snippet.thumbnails.medium.url : (item.snippet.thumbnails.default ? item.snippet.thumbnails.default.url : ''),
+                    views: item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0,
+                    durationSeconds: parseDurationToSeconds(item.contentDetails.duration)
+                }))
+                .filter(video => video.durationSeconds > 60)
+                .sort((a, b) => b.views - a.views)
+                .slice(0, 15);
+
+            const now = Date.now();
+            localStorage.setItem(CACHE_KEY, JSON.stringify(videos));
+            localStorage.setItem(CACHE_TIME_KEY, now);
+
+            const timeString = new Date(now).toLocaleString('zh-TW');
+            renderList(videos, `資料已即時更新（時間：${timeString}）`);
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">資料載入失敗，可能已達每日 API 額度上限。</span>';
+        }
+    }
+
+    function init() {
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+        const now = Date.now();
+
+        if (cachedData && cachedTime && (now - cachedTime < TWENTY_FOUR_HOURS)) {
+            const videos = JSON.parse(cachedData);
+            const timeString = new Date(parseInt(cachedTime)).toLocaleString('zh-TW');
+            renderList(videos, `資料更新時間：${timeString}（每日僅更新一次）`);
+        } else {
+            fetchYouTubeData();
+        }
+    }
+
+    init();
+</script>
+
+</body>
+</html>
+
