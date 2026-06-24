@@ -101,7 +101,7 @@
     async function init() {
         try {
             // 讀取同目錄下的 json
-            const res = await fetch(‘rank.json');
+            const res = await fetch('rank.json');
             const data = await res.json();
             
             globalVideosData = data.videos;
