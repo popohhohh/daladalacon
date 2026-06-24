@@ -110,7 +110,7 @@
             document.getElementById('filterTabs').style.display = 'flex';
             
             const timeString = new Date(data.updateTime).toLocaleString('zh-TW');
-            document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 自動更新<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
+            document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 每日自動更新<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
             
             renderList();
         } catch (error) {
