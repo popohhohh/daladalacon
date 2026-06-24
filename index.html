@@ -389,15 +389,23 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
 
 </head>
 <body>
-<div class="sidebar-tabs-container">
-    <a href="lottery.html" class="sidebar-tab-btn">
-        <span>🛸 抽籤</span>
-    </a>
-    <a href="rank.html" class="sidebar-tab-btn">
-        <span>🏆 排行榜</span>
-    </a>
-</div>
 
+<div class="sidebar-tabs-container">
+
+    <a href="lottery.html" 
+       class="sidebar-tab-btn" 
+       onclick="gtag('event', 'click_sidebar_menu', { 'button_name': 'lottery_button' });">
+       🛸抽籤
+    </a>
+
+    <a href="rank.html" 
+       class="sidebar-tab-btn" 
+       onclick="gtag('event', 'click_sidebar_menu', { 'button_name': 'rank_button' });">
+       🏆排行榜
+    </a>
+
+</div>
+     
 <!-- ==========================================
      🔍 區塊一：搜尋與標籤雲區
      ========================================== -->
