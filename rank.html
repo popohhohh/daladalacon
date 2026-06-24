@@ -29,7 +29,7 @@
 <body>
 
 <div class="rank-container">
-    <h1>YouTube 歷史影片總排行榜</h1>
+    <h1>🏅 影片各類排行榜🏅 </h1>
     
     <div class="filter-tabs" id="filterTabs" style="display: none;">
         <button class="tab-btn active" onclick="switchSort('views')">🔥 觀看最多</button>
@@ -43,7 +43,7 @@
     <ul id="rankList" class="rank-list"></ul>
 
     <footer id="footerStatus">
-        © 由 GitHub Actions 每日自動更新
+         由 GitHub Actions 每日自動更新榜單👾
     </footer>
 </div>
 
@@ -110,7 +110,7 @@
             document.getElementById('filterTabs').style.display = 'flex';
             
             const timeString = new Date(data.updateTime).toLocaleString('zh-TW');
-            document.getElementById('footerStatus').innerHTML = `© 全頻道歷史總排行（由 GitHub Actions 自動更新）<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
+            document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 自動更新）<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
             
             renderList();
         } catch (error) {
@@ -123,5 +123,7 @@
 </script>
 </body>
 </html>
+
+
 
 
