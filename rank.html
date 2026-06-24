@@ -63,7 +63,7 @@
         } else {
             let longVideos = globalVideosData.filter(v => v.durationSeconds > 60);
             if (currentSortType === 'engagement') {
-                displayVideos = longVideos.filter(v => v.views >= 1000).sort((a, b) => b.engagement - a.engagement);
+                displayVideos = longVideos.filter(v => v.views >= 10000).sort((a, b) => b.engagement - a.engagement);
             } else {
                 displayVideos = longVideos.sort((a, b) => b[currentSortType] - a[currentSortType]);
             }
