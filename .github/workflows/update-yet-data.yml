@@ -1,0 +1,108 @@
+name: 24h YouTube Data Auto Update
+
+on:
+  schedule:
+    - cron: '0 16 * * *' # 每天國際標準時 16:00 (台灣時間半夜 00:00) 自動執行
+  workflow_dispatch: # 允許你隨時手動點擊按鈕強制更新
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Run YouTube Fetcher Script
+      env:
+        YT_API_KEY: ${{ secrets.YT_API_KEY }}
+      run: |
+        cat << 'EOF' > fetch_yt.js
+        const fs = require('fs');
+        const API_KEY = process.env.YT_API_KEY;
+        const CHANNEL_ID = 'UC8TtAsZE51ekqffnNASo7DA';
+        const UPLOADS_PLAYLIST_ID = CHANNEL_ID.replace(/^UC/, 'UU');
+
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        function parseDurationToSeconds(duration) {
+            const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+            if (!match) return 0;
+            return (parseInt(match[1] || 0) * 3600) + (parseInt(match[2] || 0) * 60) + parseInt(match[3] || 0);
+        }
+
+        async function getAllVideoIds() {
+            let videoIds = [];
+            let nextPageToken = '';
+            do {
+                const url = `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${UPLOADS_PLAYLIST_ID}&part=contentDetails&maxResults=50&pageToken=${nextPageToken}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                videoIds = videoIds.concat(data.items.map(item => item.contentDetails.videoId));
+                nextPageToken = data.nextPageToken || '';
+                await sleep(150);
+            } while (nextPageToken);
+            return videoIds;
+        }
+
+        async function getVideoDetails(videoIds) {
+            let allDetails = [];
+            for (let i = 0; i < videoIds.length; i += 50) {
+                const chunk = videoIds.slice(i, i + 50).join(',');
+                const url = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${chunk}&part=snippet,statistics,contentDetails`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.items) allDetails = allDetails.concat(data.items);
+                await sleep(200);
+            }
+            return allDetails;
+        }
+
+        async function main() {
+            try {
+                console.log('🚀 Starting deep scan...');
+                const allIds = await getAllVideoIds();
+                const rawDetails = await getVideoDetails(allIds);
+                
+                const processedVideos = rawDetails.map(item => {
+                    const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
+                    const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
+                    const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
+                    const engagement = views > 0 ? ((likes + comments) / views) * 100 : 0;
+                    return {
+                        id: item.id,
+                        title: item.snippet.title,
+                        thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '',
+                        views, likes, comments, engagement,
+                        durationSeconds: parseDurationToSeconds(item.contentDetails.duration)
+                    };
+                });
+
+                const payload = {
+                    updateTime: new Date().toISOString(),
+                    videos: processedVideos
+                };
+
+                // 💡 這裡已修改為輸出 rank.json
+                fs.writeFileSync('rank.json', JSON.stringify(payload, null, 2));
+                console.log('✅ rank.json generated successfully!');
+            } catch (err) {
+                console.error('❌ Error:', err);
+                process.exit(1);
+            }
+        }
+        main();
+        EOF
+        node fetch_yt.js
+
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add rank.json
+        git diff-index --quiet HEAD || (git commit -m "🔄 自動更新 YouTube 排行榜數據 [skip ci]" && git push)
