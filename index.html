@@ -304,59 +304,83 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
   .event-action { padding: 5px 10px; font-size: 11px; min-width: 58px; align-self: flex-end; margin-top: 4px; }
   .music-grid { grid-template-columns: 1fr; }
 }
-/* 🎯 右上角圓角長方形抽籤按鈕樣式 */
-.lottery-fixed-btn {
+
+/* 🗂️ 右側書籤群組外殼 */
+.sidebar-tabs-container {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  /* 📐 調整為長方形的寬高與內距 */
-  padding: 8px 16px;
-  min-width: 60px;
-  height: auto;
-  /* 🔲 設定優雅的圓角（可依喜好調整，8px-12px 看起來很精緻） */
-  border-radius: 8px; 
+  top: 160px; /* 距離頂部高度，可依首頁版面自行上下調整 */
+  right: 0;
+  display: flex;
+  flex-direction: column; 
+  gap: 12px; /* 直書標籤之間的上下間距 */
+  z-index: 999;
+}
+
+/* 🏷️ 直書書籤按鈕主體 */
+.sidebar-tab-btn {
+  display: flex;
+  flex-direction: column; /* 讓 Emoji 保持在文字上方 */
+  align-items: center;
+  justify-content: center;
   
-  /* ⚗️ 低調透明米咖啡色漸層與毛玻璃效果 */
-  background: linear-gradient(135deg, rgba(225, 212, 196, 0.75), rgba(198, 181, 160, 0.75));
+  /* 📐 關鍵優化：寬度大幅縮小，改用上下長條狀 */
+  padding: 14px 6px 14px 8px; /* 緊貼右邊，縮減寬度內距 */
+  width: auto;
+  height: auto;
+  
+  /* 🔤 核心：啟動直書模式，字體直直站立 */
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  
+  /* 書籤效果：圓角緊縮，右邊切平貼邊 */
+  border-radius: 6px 0 0 6px; 
+  
+  /* ⚗️ 沿用你的低調透明米咖啡色漸層與毛玻璃效果 */
+  background: linear-gradient(135deg, rgba(255, 200, 122, 0.5), rgba(255, 248, 220, 0.8));
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px); /* 支援 Safari 瀏覽器 */
+  -webkit-backdrop-filter: blur(4px);
   
   /* 🎨 文字顏色與字型設定 */
   color: #6d5c4b !important;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none !important;
-  letter-spacing: 1px; /* 讓文字稍微調寬，增加質感 */
+  letter-spacing: 3px; /* 直書加上字距，質感會大幅提升 */
+  line-height: 1;
   
-  /* 居中對齊與陰影 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(198, 181, 160, 0.25);
+  /* 邊框與陰影 */
   border: 1px solid rgba(255, 255, 255, 0.4);
-  z-index: 999;
+  border-right: none; 
+  box-shadow: -2px 4px 10px rgba(198, 181, 160, 0.15);
+  
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* 滑鼠懸停效果 */
-.lottery-fixed-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(198, 181, 160, 0.4);
-  background: linear-gradient(135deg, rgba(218, 204, 187, 0.9), rgba(190, 172, 150, 0.9));
+/* 滑鼠懸停效果：貼心地往左微微滑出 3px */
+.sidebar-tab-btn:hover {
+  transform: translateX(-3px); 
+  box-shadow: -3px 4px 12px rgba(198, 181, 160, 0.3);
+  background: linear-gradient(135deg, rgba(218, 204, 187, 0.95), rgba(190, 172, 150, 0.95));
 }
 
 /* 按下時的效果 */
-.lottery-fixed-btn:active {
-  transform: translateY(0);
+.sidebar-tab-btn:active {
+  transform: translateX(-1px);
 }
 
-/* 📱 行動裝置優化：在手機上稍微縮小，避免擋到內容 */
+/* 📱 手機版 RWD 微調：在小螢幕上更加隱形低調 */
 @media (max-width: 600px) {
-  .lottery-fixed-btn {
-    top: 15px;
-    right: 15px;
-    padding: 6px 12px;
-    font-size: 13px;
+  .sidebar-tabs-container {
+    top: 190px; 
+  }
+  .sidebar-tab-btn {
+    padding: 10px 4px 10px 6px; /* 手機版進一步把寬度壓到極限 */
+    font-size: 11px;
+    letter-spacing: 2px;
+    border-radius: 5px 0 0 5px;
+  }
+  .sidebar-tab-btn:hover {
+    transform: translateX(-1px);
   }
 }
 }
@@ -365,7 +389,14 @@ footer { font-size: 11px; color: #888888; text-align: center; padding: 40px 0 20
 
 </head>
 <body>
-<a href="lottery.html" class="lottery-fixed-btn">抽籤🛸</a>
+<div class="sidebar-tabs-container">
+    <a href="lottery.html" class="sidebar-tab-btn">
+        <span>🛸 抽籤</span>
+    </a>
+    <a href="rank.html" class="sidebar-tab-btn">
+        <span>🏆 排行榜</span>
+    </a>
+</div>
 
 <!-- ==========================================
      🔍 區塊一：搜尋與標籤雲區
@@ -914,5 +945,4 @@ function initTags() {
 
 </body>
 </html>
-
 
