@@ -943,7 +943,7 @@ function initTags() {
   const tagCloud = document.getElementById("tag-cloud");
   if (!tagCloud) return;
   tagCloud.innerHTML = ""; 
-  const priorityTags = ["會員專屬"];
+  const priorityTags = ["你從海裡來", "會員專屬"];
   const allTagsFromData = data.flatMap(item => item.tags || []);
   const otherTags = [...new Set(allTagsFromData)].filter(tag => !priorityTags.includes(tag));
   const randomSupplement = otherTags.sort(() => 0.5 - Math.random()).slice(0, 5);
