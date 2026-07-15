@@ -4,117 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>影片各類排行榜</title>
-<style>
-    body { 
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-        padding: 30px 5%; 
-        background: #f8f9fa; 
-        color: #333; 
-        margin: 0; 
-        display: flex; 
-        justify-content: center; 
-    }
-    .rank-container { 
-        width: 100%; 
-        max-width: 900px; 
-    }
-    h1 { 
-        font-size: 24px; 
-        font-weight: bold; 
-        color: #1a1a1a; 
-        margin-bottom: 24px; 
-        text-align: center; 
-    }
-    
-    /* 💻 網頁版（預設）：按鈕自然橫向排列，置中對齊，不擁擠 */
-    .filter-tabs { 
-        display: flex; 
-        justify-content: center; 
-        flex-wrap: wrap; 
-        gap: 10px; 
-        margin-bottom: 24px; 
-    }
-    .tab-btn { 
-        padding: 10px 18px; 
-        font-size: 14px; 
-        font-weight: 600; 
-        border-radius: 8px; 
-        border: 1px solid rgba(255,255,255,0.4); 
-        background: rgba(255,255,255,0.6); 
-        color: #6d5c4b; 
-        cursor: pointer; 
-        transition: all 0.2s; 
-        white-space: nowrap; 
-    }
-    .tab-btn.active { 
-        background: linear-gradient(135deg, rgba(225,212,196,0.9), rgba(198,181,160,0.9)); 
-        color: #524335; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    
-    /* 💡 補充說明的淡灰色樣式 */
-    .rank-desc { 
-        text-align: center; 
-        font-size: 13px; 
-        color: #8c8c8c; 
-        margin: -10px 0 24px 0; 
-        line-height: 1.6;
-        transition: opacity 0.3s ease;
-        opacity: 0;
-        display: none;
-    }
-    .rank-desc.show {
-        display: block;
-        opacity: 1;
-    }
-    
-    .loading { text-align: center; font-size: 14px; color: #888; padding: 40px; }
-    .rank-list { list-style: none; padding: 0; margin: 0; }
-    .rank-item { display: flex; align-items: center; padding: 20px; margin-bottom: 16px; background: white; border-radius: 14px; border: 1px solid #eaeaea; }
-    .rank-number { font-size: 18px; font-weight: bold; width: 32px; color: #a0a0a0; }
-    .rank-item:nth-child(1) .rank-number { color: #d4af37; font-size: 24px; }
-    .rank-thumbnail { width: 120px; height: 68px; object-fit: cover; border-radius: 8px; margin-right: 18px; flex-shrink: 0; }
-    .rank-info { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
-    .rank-title { margin: 0 0 8px 0; font-size: 16px; }
-    .rank-title a { text-decoration: none; color: #1a1a1a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .rank-views { display: inline-block; font-size: 12px; color: #666; background: #f2f2f2; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
-    footer { font-size: 12px; color: #999999; text-align: center; padding: 40px 0 20px 0; line-height: 1.6; }
-    
-    /* 📱 手機版（螢幕寬度 600px 以下）：啟用專屬優化 */
-    @media (max-width: 600px) { 
-        body { padding: 12px; } 
-        h1 { font-size: 20px; margin-bottom: 16px; } 
+    <style>
+        /* 基礎全域設定 */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 40px 20px; 
+            background: #f8f9fa; 
+            color: #333; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+        }
+        .rank-container { 
+            width: 100%; 
+            max-width: 960px; 
+        }
+        h1 { 
+            font-size: 26px; 
+            font-weight: bold; 
+            color: #1a1a1a; 
+            margin-bottom: 24px; 
+            text-align: center; 
+        }
         
-        /* 手機版才強制轉為 3 欄網格 */
+        /* ================================================= */
+        /* 💻 網頁版（預設）：按鈕橫向排開，間距剛好，絕不重疊 */
+        /* ================================================= */
         .filter-tabs { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 6px; 
-            margin-bottom: 16px;
+            display: none; /* 初始化由 JS 控制改為 flex */
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            margin-bottom: 24px; 
         }
-        .tab-btn {
-            padding: 8px 4px;
-            font-size: 11.5px;
-            text-align: center;
+        .tab-btn { 
+            display: inline-block;
+            padding: 10px 20px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            border-radius: 8px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            background: #ffffff; 
+            color: #6d5c4b; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            white-space: nowrap; /* 避免文字斷行 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .tab-btn:hover {
+            background: #fdfcfb;
+            border-color: rgba(0,0,0,0.15);
+        }
+        .tab-btn.active { 
+            background: linear-gradient(135deg, rgba(225,212,196,0.9), rgba(198,181,160,0.9)); 
+            color: #524335; 
+            border-color: transparent;
+            box-shadow: 0 3px 10px rgba(198,181,160,0.3);
         }
         
-        .rank-desc {
-            margin: -4px 4px 16px 4px;
-            font-size: 11px;
+        /* 💡 補充說明的淡灰色樣式 */
+        .rank-desc { 
+            text-align: center; 
+            font-size: 13px; 
+            color: #8c8c8c; 
+            margin: -10px 0 24px 0; 
+            line-height: 1.6;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            display: none;
+        }
+        .rank-desc.show {
+            display: block;
+            opacity: 1;
         }
         
-        .rank-item { padding: 10px; } 
-        .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; } 
-        .rank-title { font-size: 13.5px; } 
-    }
-</style>
+        /* 排行榜列表樣式 */
+        .loading { text-align: center; font-size: 14px; color: #888; padding: 40px; }
+        .rank-list { list-style: none; padding: 0; margin: 0; }
+        .rank-item { display: flex; align-items: center; padding: 20px; margin-bottom: 16px; background: white; border-radius: 14px; border: 1px solid #eaeaea; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .rank-number { font-size: 18px; font-weight: bold; width: 32px; color: #a0a0a0; }
+        .rank-item:nth-child(1) .rank-number { color: #d4af37; font-size: 24px; }
+        .rank-thumbnail { width: 120px; height: 68px; object-fit: cover; border-radius: 8px; margin-right: 18px; flex-shrink: 0; }
+        .rank-info { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+        .rank-title { margin: 0 0 8px 0; font-size: 16px; }
+        .rank-title a { text-decoration: none; color: #1a1a1a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .rank-title a:hover { color: #524335; }
+        .rank-views { display: inline-block; font-size: 12px; color: #666; background: #f2f2f2; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+        footer { font-size: 12px; color: #999999; text-align: center; padding: 40px 0 20px 0; line-height: 1.6; }
+        
+        /* ================================================= */
+        /* 📱 手機版（寬度 600px 以下）：強制轉為 3 欄網格 */
+        /* ================================================= */
+        @media (max-width: 600px) { 
+            body { padding: 16px 12px; } 
+            h1 { font-size: 20px; margin-bottom: 16px; } 
+            
+            .filter-tabs { 
+                display: grid !important; /* 強制覆蓋 flex */
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 6px; 
+                margin-bottom: 16px;
+            }
+            .tab-btn {
+                padding: 8px 2px;
+                font-size: 11px;
+                text-align: center;
+                border-radius: 6px;
+            }
+            
+            .rank-desc {
+                margin: -4px 4px 16px 4px;
+                font-size: 11px;
+            }
+            
+            .rank-item { padding: 10px; margin-bottom: 10px; } 
+            .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; } 
+            .rank-title { font-size: 13px; margin-bottom: 4px; } 
+        }
+    </style>
 </head>
 <body>
 
 <div class="rank-container">
-    <h1>🏅 影片各類排行榜🏅 </h1>
+    <h1>🏅 影片各類排行榜 🏅</h1>
     
-    <div class="filter-tabs" id="filterTabs" style="display: none;">
+    <!-- 移除原本的行內 style="display: none;" 改由 CSS 與 JS 管理 -->
+    <div class="filter-tabs" id="filterTabs">
         <button class="tab-btn active" onclick="switchSort('views')">🔥 觀看最多</button>
         <button class="tab-btn" onclick="switchSort('likes')">👍 按讚最多</button>
         <button class="tab-btn" onclick="switchSort('comments')">💬 留言最多</button>
@@ -123,7 +138,7 @@
         <button class="tab-btn" onclick="switchSort('songs')">🎵 金曲榜</button>
     </div>
 
-    <!-- 💡 專門用來放置金曲榜說明的區塊 -->
+    <!-- 💡 專門用來放置說明的區塊 -->
     <div id="rankDesc" class="rank-desc"></div>
     
     <div id="loading" class="loading">正在讀取最新排行榜數據...</div>
@@ -227,12 +242,12 @@
 
         const descEl = document.getElementById('rankDesc');
         
-        // 💡 根據不同的標籤顯示對應的淡灰色補充說明
+        // 根據不同的標籤顯示對應的淡灰色補充說明
         if (type === 'songs') {
-            descEl.innerHTML = '💡 純享板及現場版本的「純觀看次數」合併計算';
+            descEl.innerHTML = '💡 純享版及現場版的「純觀看次數」合併計算';
             descEl.classList.add('show');
         } else if (type === 'engagement') {
-            descEl.innerHTML = '💡(按讚數 + 留言數) / 觀看次數 × 100%，僅篩選觀看數達1萬次以上之影片';
+            descEl.innerHTML = '💡 (按讚數 + 留言數) / 觀看次數 × 100%，僅篩選觀看數達1萬次以上之影片';
             descEl.classList.add('show');
         } else {
             descEl.classList.remove('show');
@@ -276,7 +291,9 @@
             cachedUpdateTime = data.updateTime;
             
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('filterTabs').style.display = 'grid'; 
+            
+            // 💡 改用 JS 動態賦予網頁版預設的 display: flex 屬性
+            document.getElementById('filterTabs').style.display = 'flex'; 
             
             renderList();
         } catch (error) {
@@ -287,7 +304,6 @@
 
     init();
 </script>
-
 </body>
 </html>
 
