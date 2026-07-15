@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>影片各類排行榜</title>
     <style>
-        /* 保持原本所有的 CSS 樣式與結構 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 30px 5%; background: #f8f9fa; color: #333; margin: 0; display: flex; justify-content: center; }
         .rank-container { width: 100%; max-width: 900px; }
         h1 { font-size: 24px; font-weight: bold; color: #1a1a1a; margin-bottom: 20px; text-align: center; }
+        
+        /* 核心改動：利用 CSS Grid 強制所有螢幕下都維持乾淨的橫向排列或對稱比例 */
         .filter-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-        .tab-btn { padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.6); color: #6d5c4b; cursor: pointer; transition: all 0.2s; }
+        .tab-btn { padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.6); color: #6d5c4b; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         .tab-btn.active { background: linear-gradient(135deg, rgba(225,212,196,0.9), rgba(198,181,160,0.9)); color: #524335; }
+        
         .loading { text-align: center; font-size: 14px; color: #888; padding: 40px; }
         .rank-list { list-style: none; padding: 0; margin: 0; }
         .rank-item { display: flex; align-items: center; padding: 20px; margin-bottom: 16px; background: white; border-radius: 14px; border: 1px solid #eaeaea; }
@@ -23,7 +25,27 @@
         .rank-title a { text-decoration: none; color: #1a1a1a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .rank-views { display: inline-block; font-size: 12px; color: #666; background: #f2f2f2; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
         footer { font-size: 12px; color: #999999; text-align: center; padding: 40px 0 20px 0; line-height: 1.6; }
-        @media (max-width: 600px) { body { padding: 12px; } h1 { font-size: 20px; } .rank-item { padding: 10px; } .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; } .rank-title { font-size: 13.5px; } }
+        
+        /* 📱 手機板 RWD 核心優化：強制 6 個按鈕平分成「2 行 × 3 列」 */
+        @media (max-width: 600px) { 
+            body { padding: 12px; } 
+            h1 { font-size: 20px; } 
+            
+            .filter-tabs { 
+                display: grid; 
+                grid-template-columns: repeat(3, 1fr); /* 強制每行三個 */
+                gap: 6px; 
+            }
+            .tab-btn {
+                padding: 8px 4px; /* 縮減左右內距，防止文字溢出 */
+                font-size: 11.5px; /* 微調字型大小確保完美收納 */
+                text-align: center;
+            }
+            
+            .rank-item { padding: 10px; } 
+            .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; } 
+            .rank-title { font-size: 13.5px; } 
+        }
     </style>
 </head>
 <body>
@@ -32,13 +54,13 @@
     <h1>🏅 影片各類排行榜🏅 </h1>
     
     <div class="filter-tabs" id="filterTabs" style="display: none;">
-        <!-- 保留原本所有的標籤，並在第一位新增「🎵 金曲榜」 -->
-        <button class="tab-btn active" onclick="switchSort('songs')">🎵 金曲榜</button>
-        <button class="tab-btn" onclick="switchSort('views')">🔥 觀看最多</button>
+        <!-- 調整順序：「觀看最多」設回預設第一個，「🎵 金曲榜」排到最後面 -->
+        <button class="tab-btn active" onclick="switchSort('views')">🔥 觀看最多</button>
         <button class="tab-btn" onclick="switchSort('likes')">👍 按讚最多</button>
         <button class="tab-btn" onclick="switchSort('comments')">💬 留言最多</button>
         <button class="tab-btn" onclick="switchSort('engagement')">❤️ 互動率最高</button>
         <button class="tab-btn" onclick="switchSort('shorts')">📱 shorts觀看最多</button>
+        <button class="tab-btn" onclick="switchSort('songs')">🎵 金曲榜</button>
     </div>
     
     <div id="loading" class="loading">正在讀取最新排行榜數據...</div>
@@ -50,12 +72,11 @@
 </div>
 
 <script>
-    // 建立快取，避免重複呼叫 json 檔案
     let cachedVideosData = null;
     let cachedSongsData = null;
     let cachedUpdateTime = '';
 
-    let currentSortType = 'songs'; // 預設改為顯示金曲榜
+    let currentSortType = 'views'; // 配合金曲榜移到最後，預設改回觀看最多
 
     function formatNumber(num) { return parseInt(num).toLocaleString('zh-TW'); }
 
@@ -66,11 +87,10 @@
         let displayItems = [];
 
         // --------------------------------------------------
-        // 分流 1：處理新擴充的「🎵 金曲榜」資料 (來自 song_rank.json)
+        // 分流 1：處理最後一項「🎵 金曲榜」資料 (來自 song_rank.json)
         // --------------------------------------------------
         if (currentSortType === 'songs') {
             if (!cachedSongsData) return;
-            // 後端已經幫我們做好觀看數排序，直接取前 15 名
             displayItems = cachedSongsData.slice(0, 15).map(song => {
                 const mainVideoId = song.relatedVideoIds && song.relatedVideoIds.length > 0 ? song.relatedVideoIds[0] : '';
                 return {
@@ -93,7 +113,6 @@
             } else {
                 let longVideos = cachedVideosData.filter(v => v.durationSeconds > 60);
                 if (currentSortType === 'engagement') {
-                    // 維持你原本的 10000 次觀看限制條件
                     displayVideos = longVideos.filter(v => v.views >= 10000).sort((a, b) => b.engagement - a.engagement);
                 } else {
                     displayVideos = longVideos.sort((a, b) => b[currentSortType] - a[currentSortType]);
@@ -116,7 +135,7 @@
             });
         }
 
-        // 渲染 DOM
+        // 渲染畫面
         displayItems.forEach((item, index) => {
             const li = document.createElement('li');
             li.className = 'rank-item';
@@ -131,7 +150,7 @@
             listEl.appendChild(li);
         });
 
-        // 更新更新時間
+        // 更新腳部時間戳記
         const timeString = new Date(cachedUpdateTime).toLocaleString('zh-TW');
         document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 每日自動更新<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
     }
@@ -166,28 +185,27 @@
             renderList();
         } catch (error) {
             console.error(error);
-            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">無法讀取該榜單數據，請確認 JSON 是否已在後台生成。</span>';
+            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">無法讀取該榜單數據，請確認後台 JSON 是否已正確生成。</span>';
         }
     }
 
     // 初始化頁面
     async function init() {
         try {
-            // 預設一進來直接讀取新版歌曲排行榜 (song_rank.json)
-            const res = await fetch('song_rank.json');
+            // 因為預設改回觀看最多，所以進來先讀取影片排行 (rank.json)
+            const res = await fetch('rank.json');
             const data = await res.json();
             
-            cachedSongsData = data.songs;
+            cachedVideosData = data.videos;
             cachedUpdateTime = data.updateTime;
             
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('filterTabs').style.display = 'flex';
+            document.getElementById('filterTabs').style.display = 'grid'; // 手機網格配置
             
             renderList();
         } catch (error) {
-            console.error("嘗試讀取歌曲排行榜失敗，正切換至預設影片排行...", error);
-            // 備用防呆：如果 song_rank.json 還不存在，自動跳轉載入傳統觀看排行
-            switchSort('views');
+            console.error(error);
+            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">排行榜數據尚未生成，請至 GitHub 觸發第一次 Actions 執行。</span>';
         }
     }
 
@@ -195,5 +213,3 @@
 </script>
 </body>
 </html>
-
-
