@@ -89,7 +89,7 @@
         .rank-title { margin: 0 0 8px 0; font-size: 16px; }
         .rank-title a { text-decoration: none; color: #1a1a1a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .rank-title a:hover { color: #524335; }
-        .rank-views { display: inline-block; font-size: 12px; color: #666; background: #f2f2f2; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+        .rank-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; /* 讓徽章自動靠底部對齊 */ } /* 原本的觀看數/數據徽章調整 */ .rank-views { display: inline-block; font-size: 12px; color: #524335; background: #f5f0eb; padding: 4px 10px; border-radius: 6px; white-space: nowrap; font-weight: 500; } /* 📅 新增的上片日期徽章 */ .rank-date { display: inline-block; font-size: 12px; color: #666; background: #f2f2f2; padding: 4px 10px; border-radius: 6px; white-space: nowrap; } 
         footer { font-size: 12px; color: #999999; text-align: center; padding: 40px 0 20px 0; line-height: 1.6; }
         
         /* ================================================= */
@@ -120,6 +120,7 @@
             .rank-item { padding: 10px; margin-bottom: 10px; } 
             .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; } 
             .rank-title { font-size: 13px; margin-bottom: 4px; } 
+.rank-badges { gap: 4px; } .rank-views, .rank-date { font-size: 10px; padding: 3px 6px; } 
         }
     </style>
 </head>
@@ -158,7 +159,22 @@
 
     function formatNumber(num) { return parseInt(num).toLocaleString('zh-TW'); }
 
- function renderList() {
+// 💡 輔助函式：將 ISO 日期字串轉換成 2026/07/15 格式
+    function formatDate(dateStr) {
+        if (!dateStr) return '未知日期';
+        try {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr; // 如果解析失敗就回傳原字串
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}/${mm}/${dd}`;
+        } catch (e) {
+            return '未知日期';
+        }
+    }
+
+    function renderList() {
         const listEl = document.getElementById('rankList');
         listEl.innerHTML = '';
         
@@ -172,27 +188,30 @@
             displayItems = cachedSongsData.slice(0, 15).map(song => {
                 const videoIds = song.relatedVideoIds || [];
                 
-                // 1. 點擊連結：一律使用最熱門的第一個 ID (index 0)
+                // 1. 點擊連結：使用最熱門的第一個 ID (index 0)
                 const linkVideoId = videoIds.length > 0 ? videoIds[0] : '';
                 
-                // 2. 縮圖來源：如果有 2 支以上的影片，縮圖改拿第 2 個 ID (現場版)；只有 1 支則拿第 1 個 ID
+                // 2. 縮圖來源：優先使用第 2 個 ID (現場版) 避開純音源；只有 1 支則拿第 1 個 ID
                 let thumbnailVideoId = '';
                 if (videoIds.length > 1) {
-                    thumbnailVideoId = videoIds[1]; // 捨棄第一個純音源，拿第二個現場版
+                    thumbnailVideoId = videoIds[1];
                 } else if (videoIds.length === 1) {
                     thumbnailVideoId = videoIds[0];
                 }
 
-                // 3. 組合縮圖網址 (如果拿到了 ID 就去抓 YT 預設高品質縮圖，否則用原本的 song.thumbnail 備用)
                 const finalThumbnail = thumbnailVideoId 
                     ? `https://i.ytimg.com/vi/${thumbnailVideoId}/hqdefault.jpg` 
                     : song.thumbnail;
+
+                // 3. 取得日期：金曲榜若有 publishedAt / date 欄位就拿，否則留空
+                const rawDate = song.publishedAt || song.date || '';
 
                 return {
                     id: linkVideoId,
                     title: song.title,
                     thumbnail: finalThumbnail,
-                    badgeText: `🎧 歌曲累計收聽：${formatNumber(song.views)} 次`
+                    badgeText: `🔥 歌曲累計總觀看：${formatNumber(song.views)} 次`,
+                    dateText: rawDate ? `📅 上片日：${formatDate(rawDate)}` : ''
                 };
             });
         } 
@@ -221,11 +240,15 @@
                 if (currentSortType === 'comments') badgeText = `💬 留言數量：${formatNumber(video.comments)} 則`;
                 if (currentSortType === 'engagement') badgeText = `❤️ 粉絲互動率：${video.engagement.toFixed(2)}%`;
 
+                // 取得影片發布日期 (相容 publishedAt、publishDate 或 date)
+                const rawDate = video.publishedAt || video.publishDate || video.date || '';
+
                 return {
                     id: video.id,
                     title: video.title,
                     thumbnail: video.thumbnail,
-                    badgeText: badgeText
+                    badgeText: badgeText,
+                    dateText: rawDate ? `📅 上片日：${formatDate(rawDate)}` : ''
                 };
             });
         }
@@ -234,12 +257,19 @@
         displayItems.forEach((item, index) => {
             const li = document.createElement('li');
             li.className = 'rank-item';
+            
+            // 💡 如果該筆資料有日期，就顯示日期徽章
+            const dateBadgeHtml = item.dateText ? `<div class="rank-date">${item.dateText}</div>` : '';
+
             li.innerHTML = `
                 <div class="rank-number">${index + 1}</div>
                 <img class="rank-thumbnail" src="${item.thumbnail}" alt="${item.title}">
                 <div class="rank-info">
                     <h3 class="rank-title"><a href="https://www.youtube.com/watch?v=${item.id}" target="_blank">${item.title}</a></h3>
-                    <div class="rank-views">${item.badgeText}</div>
+                    <div class="rank-badges">
+                        <div class="rank-views">${item.badgeText}</div>
+                        ${dateBadgeHtml}
+                    </div>
                 </div>
             `;
             listEl.appendChild(li);
@@ -323,5 +353,7 @@
 </script>
 </body>
 </html>
+
+
 
 
