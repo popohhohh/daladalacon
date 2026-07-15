@@ -1,23 +1,23 @@
 name: 24h YouTube Data Auto Update
-
+ 
 on:
   schedule:
-    - cron: '0 16 * * *' # 每天國際標準時 16:00 (台灣時間半夜 00:00) 自動執行
+	- cron: '0 16 * * *' # 每天國際標準時 16:00 (台灣時間半夜 00:00) 自動執行
   workflow_dispatch: # 允許你隨時手動點擊按鈕強制更新
-
+ 
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
+	- name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Set up Node.js
+ 
+	- name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 20
-
-    - name: Run YouTube Fetcher Script
+ 
+	- name: Run YouTube Fetcher Script
       env:
         YT_API_KEY: ${{ secrets.YT_API_KEY }}
       run: |
@@ -26,90 +26,176 @@ jobs:
         const API_KEY = process.env.YT_API_KEY;
         const CHANNEL_ID = 'UC8TtAsZE51ekqffnNASo7DA';
         const UPLOADS_PLAYLIST_ID = CHANNEL_ID.replace(/^UC/, 'UU');
-
+ 
+        // ==========================================
+        // 🛠️ 歌曲對照表設定區 🛠️
+        // 請在這裡把「同一首歌曲」的所有影片 ID 設定在一起
+        // 格式：'歌曲識別名稱': ['影片ID_1', '影片ID_2', ...]
+        // ==========================================
+        const SONG_MAPPING = {
+            '歌曲A': ['VIDEO_ID_BGM_A', 'VIDEO_ID_COMEDY_A'],
+            '歌曲B': ['VIDEO_ID_BGM_B', 'VIDEO_ID_COMEDY_B'],
+        };
+ 
+        // 建立反向查詢表
+        const videoToSongMap = {};
+        for (const [songTitle, videoIds] of Object.entries(SONG_MAPPING)) {
+            videoIds.forEach(id => {
+            	videoToSongMap[id] = songTitle;
+            });
+        }
+ 
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
+ 
         function parseDurationToSeconds(duration) {
-            // 🛡️ 防禦機制：若 duration 為空、不存在或非字串，直接安全回傳 0 
             if (!duration || typeof duration !== 'string') return 0;
-            
             const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
             if (!match) return 0;
             return (parseInt(match[1] || 0) * 3600) + (parseInt(match[2] || 0) * 60) + parseInt(match[3] || 0);
         }
-
+ 
         async function getAllVideoIds() {
             let videoIds = [];
             let nextPageToken = '';
             do {
-                const url = `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${UPLOADS_PLAYLIST_ID}&part=contentDetails&maxResults=50&pageToken=${nextPageToken}`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.error) throw new Error(data.error.message);
-                videoIds = videoIds.concat(data.items.map(item => item.contentDetails.videoId));
-                nextPageToken = data.nextPageToken || '';
-                await sleep(150);
+            	const url = `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${UPLOADS_PLAYLIST_ID}&part=contentDetails&maxResults=50&pageToken=${nextPageToken}`;
+            	const res = await fetch(url);
+            	const data = await res.json();
+            	if (data.error) throw new Error(data.error.message);
+            	videoIds = videoIds.concat(data.items.map(item => item.contentDetails.videoId));
+            	nextPageToken = data.nextPageToken || '';
+            	await sleep(150);
             } while (nextPageToken);
             return videoIds;
         }
-
+ 
         async function getVideoDetails(videoIds) {
             let allDetails = [];
             for (let i = 0; i < videoIds.length; i += 50) {
-                const chunk = videoIds.slice(i, i + 50).join(',');
-                const url = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${chunk}&part=snippet,statistics,contentDetails`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.items) allDetails = allDetails.concat(data.items);
-                await sleep(200);
+            	const chunk = videoIds.slice(i, i + 50).join(',');
+            	const url = `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${chunk}&part=snippet,statistics,contentDetails`;
+            	const res = await fetch(url);
+            	const data = await res.json();
+            	if (data.items) allDetails = allDetails.concat(data.items);
+            	await sleep(200);
             }
             return allDetails;
         }
-
+ 
         async function main() {
             try {
-                console.log('🚀 Starting deep scan...');
-                const allIds = await getAllVideoIds();
-                const rawDetails = await getVideoDetails(allIds);
-                
-                const processedVideos = rawDetails.map(item => {
-                    const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
-                    const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
-                    const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
-                    const engagement = views > 0 ? ((likes + comments) / views) * 100 : 0;
-                    
-                    // 🛡️ 防禦機制：確保 contentDetails 安全存在
-                    const durationStr = item.contentDetails ? item.contentDetails.duration : '';
-
-                    return {
-                        id: item.id,
-                        title: item.snippet.title,
-                        thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '',
-                        views, likes, comments, engagement,
-                        durationSeconds: parseDurationToSeconds(durationStr)
-                    };
-                });
-
-                const payload = {
-                    updateTime: new Date().toISOString(),
-                    videos: processedVideos
-                };
-
-                // 💡 這裡已修改為輸出 rank.json
-                fs.writeFileSync('rank.json', JSON.stringify(payload, null, 2));
-                console.log('✅ rank.json generated successfully!');
+            	console.log('🚀 Starting deep scan...');
+            	const allIds = await getAllVideoIds();
+            	const rawDetails = await getVideoDetails(allIds);
+            	
+            	// --------------------------------------------------
+            	// 1️⃣ 第一部分：保持原樣，處理「單一影片」資料 (原 rank.json 邏輯)
+            	// --------------------------------------------------
+            	const processedVideos = rawDetails.map(item => {
+                	const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
+                	const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
+                	const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
+                	const engagement = views > 0 ? ((likes + comments) / views) * 100 : 0;
+                	const durationStr = item.contentDetails ? item.contentDetails.duration : '';
+                	return {
+                    	id: item.id,
+                    	title: item.snippet.title,
+                    	thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '',
+                    	views, likes, comments, engagement,
+                    	durationSeconds: parseDurationToSeconds(durationStr)
+                	};
+            	});
+ 
+            	const originalPayload = {
+                	updateTime: new Date().toISOString(),
+                	videos: processedVideos
+            	};
+            	
+            	// 輸出原本的單一影片檔案，完全不影響舊報表
+            	fs.writeFileSync('rank.json', JSON.stringify(originalPayload, null, 2));
+            	console.log('✅ rank.json (Original Video Data) saved!');
+ 
+            	// --------------------------------------------------
+            	// 2️⃣ 第二部分：合併同曲目影片，處理「歌曲排行榜」資料
+            	// --------------------------------------------------
+            	const songAggregates = {};
+ 
+            	rawDetails.forEach(item => {
+                	const videoId = item.id;
+                	const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
+                	const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
+                	const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
+                	const durationStr = item.contentDetails ? item.contentDetails.duration : '';
+                	const durationSeconds = parseDurationToSeconds(durationStr);
+ 
+                	const songKey = videoToSongMap[videoId] || item.snippet.title;
+ 
+                	if (!songAggregates[songKey]) {
+                    	songAggregates[songKey] = {
+                        	title: songKey,
+                        	isMerged: videoToSongMap[videoId] ? true : false,
+                        	videoIds: [videoId],
+                        	thumbnails: [item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || ''],
+                        	views: 0,
+                        	likes: 0,
+                        	comments: 0,
+                        	maxDurationSeconds: 0
+                    	};
+                	} else {
+                        songAggregates[songKey].videoIds.push(videoId);
+                    	const thumb = item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '';
+                    	if (thumb) songAggregates[songKey].thumbnails.push(thumb);
+                	}
+ 
+                    songAggregates[songKey].views += views;
+                    songAggregates[songKey].likes += likes;
+                    songAggregates[songKey].comments += comments;
+                	if (durationSeconds > songAggregates[songKey].maxDurationSeconds) {
+                        songAggregates[songKey].maxDurationSeconds = durationSeconds;
+                	}
+            	});
+ 
+            	let processedSongs = Object.values(songAggregates).map(song => {
+                	const engagement = song.views > 0 ? ((song.likes + song.comments) / song.views) * 100 : 0;
+                	return {
+                    	title: song.title,
+                    	isMerged: song.isMerged,
+                    	relatedVideoIds: song.videoIds,
+                    	thumbnail: song.thumbnails[0] || '',
+                    	views: song.views,
+                    	likes: song.likes,
+                    	comments: song.comments,
+                    	engagement: parseFloat(engagement.toFixed(2)),
+                    	durationSeconds: song.maxDurationSeconds
+                	};
+            	});
+ 
+            	// 歌曲依合併後的總觀看數排序
+            	processedSongs.sort((a, b) => b.views - a.views);
+ 
+            	const songPayload = {
+                	updateTime: new Date().toISOString(),
+                	songs: processedSongs
+            	};
+ 
+            	// 產出全新的歌曲排行榜專用檔案
+                fs.writeFileSync('song_rank.json', JSON.stringify(songPayload, null, 2));
+            	console.log('✅ song_rank.json (Song Leaderboard Data) saved!');
+ 
             } catch (err) {
-                console.error('❌ Error:', err);
-                process.exit(1);
+            	console.error('❌ Error:', err);
+            	process.exit(1);
             }
         }
         main();
         EOF
         node fetch_yt.js
-
-    - name: Commit and Push changes
+ 
+	- name: Commit and Push changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add rank.json
-        git diff-index --quiet HEAD || (git commit -m "🔄 自動更新 YouTube 排行榜數據 [skip ci]" && git push)
+        git add rank.json song_rank.json
+        git diff-index --quiet HEAD || (git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 [skip ci]" && git push)
+
+
