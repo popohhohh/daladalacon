@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>影片各類排行榜</title>
     <style>
-        /* [這裡維持你原先所有的 CSS 樣式不變，為節省版面以下省略] */
+        /* 保持原本所有的 CSS 樣式與結構 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 30px 5%; background: #f8f9fa; color: #333; margin: 0; display: flex; justify-content: center; }
         .rank-container { width: 100%; max-width: 900px; }
         h1 { font-size: 24px; font-weight: bold; color: #1a1a1a; margin-bottom: 20px; text-align: center; }
@@ -32,7 +32,9 @@
     <h1>🏅 影片各類排行榜🏅 </h1>
     
     <div class="filter-tabs" id="filterTabs" style="display: none;">
-        <button class="tab-btn active" onclick="switchSort('views')">🔥 觀看最多</button>
+        <!-- 保留原本所有的標籤，並在第一位新增「🎵 金曲榜」 -->
+        <button class="tab-btn active" onclick="switchSort('songs')">🎵 金曲榜</button>
+        <button class="tab-btn" onclick="switchSort('views')">🔥 觀看最多</button>
         <button class="tab-btn" onclick="switchSort('likes')">👍 按讚最多</button>
         <button class="tab-btn" onclick="switchSort('comments')">💬 留言最多</button>
         <button class="tab-btn" onclick="switchSort('engagement')">❤️ 互動率最高</button>
@@ -43,13 +45,17 @@
     <ul id="rankList" class="rank-list"></ul>
 
     <footer id="footerStatus">
-         由 GitHub Actions 每日自動更新榜單👾
+        由 GitHub Actions 每日自動更新榜單👾
     </footer>
 </div>
 
 <script>
-    let globalVideosData = []; 
-    let currentSortType = 'views'; 
+    // 建立快取，避免重複呼叫 json 檔案
+    let cachedVideosData = null;
+    let cachedSongsData = null;
+    let cachedUpdateTime = '';
+
+    let currentSortType = 'songs'; // 預設改為顯示金曲榜
 
     function formatNumber(num) { return parseInt(num).toLocaleString('zh-TW'); }
 
@@ -57,65 +63,131 @@
         const listEl = document.getElementById('rankList');
         listEl.innerHTML = '';
         
-        let displayVideos = [];
-        if (currentSortType === 'shorts') {
-            displayVideos = globalVideosData.filter(v => v.durationSeconds <= 60).sort((a, b) => b.views - a.views);
-        } else {
-            let longVideos = globalVideosData.filter(v => v.durationSeconds > 60);
-            if (currentSortType === 'engagement') {
-                displayVideos = longVideos.filter(v => v.views >= 10000).sort((a, b) => b.engagement - a.engagement);
+        let displayItems = [];
+
+        // --------------------------------------------------
+        // 分流 1：處理新擴充的「🎵 金曲榜」資料 (來自 song_rank.json)
+        // --------------------------------------------------
+        if (currentSortType === 'songs') {
+            if (!cachedSongsData) return;
+            // 後端已經幫我們做好觀看數排序，直接取前 15 名
+            displayItems = cachedSongsData.slice(0, 15).map(song => {
+                const mainVideoId = song.relatedVideoIds && song.relatedVideoIds.length > 0 ? song.relatedVideoIds[0] : '';
+                return {
+                    id: mainVideoId,
+                    title: song.title,
+                    thumbnail: song.thumbnail,
+                    badgeText: `🔥 歌曲總觀看：${formatNumber(song.views)} 次`
+                };
+            });
+        } 
+        // --------------------------------------------------
+        // 分流 2：處理原本的單一影片排行資料 (來自 rank.json)
+        // --------------------------------------------------
+        else {
+            if (!cachedVideosData) return;
+            let displayVideos = [];
+
+            if (currentSortType === 'shorts') {
+                displayVideos = cachedVideosData.filter(v => v.durationSeconds <= 60).sort((a, b) => b.views - a.views);
             } else {
-                displayVideos = longVideos.sort((a, b) => b[currentSortType] - a[currentSortType]);
+                let longVideos = cachedVideosData.filter(v => v.durationSeconds > 60);
+                if (currentSortType === 'engagement') {
+                    // 維持你原本的 10000 次觀看限制條件
+                    displayVideos = longVideos.filter(v => v.views >= 10000).sort((a, b) => b.engagement - a.engagement);
+                } else {
+                    displayVideos = longVideos.sort((a, b) => b[currentSortType] - a[currentSortType]);
+                }
             }
+
+            displayItems = displayVideos.slice(0, 15).map(video => {
+                let badgeText = '';
+                if (currentSortType === 'views' || currentSortType === 'shorts') badgeText = `🔥 觀看次數：${formatNumber(video.views)} 次`;
+                if (currentSortType === 'likes') badgeText = `👍 按讚次數：${formatNumber(video.likes)} 次`;
+                if (currentSortType === 'comments') badgeText = `💬 留言數量：${formatNumber(video.comments)} 則`;
+                if (currentSortType === 'engagement') badgeText = `❤️ 粉絲互動率：${video.engagement.toFixed(2)}%`;
+
+                return {
+                    id: video.id,
+                    title: video.title,
+                    thumbnail: video.thumbnail,
+                    badgeText: badgeText
+                };
+            });
         }
 
-        displayVideos.slice(0, 15).forEach((video, index) => {
-            let badgeText = '';
-            if (currentSortType === 'views' || currentSortType === 'shorts') badgeText = `🔥 觀看次數：${formatNumber(video.views)} 次`;
-            if (currentSortType === 'likes') badgeText = `👍 按讚次數：${formatNumber(video.likes)} 次`;
-            if (currentSortType === 'comments') badgeText = `💬 留言數量：${formatNumber(video.comments)} 則`;
-            if (currentSortType === 'engagement') badgeText = `❤️ 粉絲互動率：${video.engagement.toFixed(2)}%`;
-
+        // 渲染 DOM
+        displayItems.forEach((item, index) => {
             const li = document.createElement('li');
             li.className = 'rank-item';
             li.innerHTML = `
                 <div class="rank-number">${index + 1}</div>
-                <img class="rank-thumbnail" src="${video.thumbnail}" alt="${video.title}">
+                <img class="rank-thumbnail" src="${item.thumbnail}" alt="${item.title}">
                 <div class="rank-info">
-                    <h3 class="rank-title"><a href="https://www.youtube.com/watch?v=${video.id}" target="_blank">${video.title}</a></h3>
-                    <div class="rank-views">${badgeText}</div>
+                    <h3 class="rank-title"><a href="https://www.youtube.com/watch?v=${item.id}" target="_blank">${item.title}</a></h3>
+                    <div class="rank-views">${item.badgeText}</div>
                 </div>
             `;
             listEl.appendChild(li);
         });
+
+        // 更新更新時間
+        const timeString = new Date(cachedUpdateTime).toLocaleString('zh-TW');
+        document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 每日自動更新<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
     }
 
-    function switchSort(type) {
+    async function switchSort(type) {
         currentSortType = type;
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        renderList(); 
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('rankList').innerHTML = '';
+
+        try {
+            if (type === 'songs') {
+                if (!cachedSongsData) {
+                    const res = await fetch('song_rank.json');
+                    const data = await res.json();
+                    cachedSongsData = data.songs;
+                    cachedUpdateTime = data.updateTime;
+                }
+            } else {
+                if (!cachedVideosData) {
+                    const res = await fetch('rank.json');
+                    const data = await res.json();
+                    cachedVideosData = data.videos;
+                    cachedUpdateTime = data.updateTime;
+                }
+            }
+            document.getElementById('loading').style.display = 'none';
+            renderList();
+        } catch (error) {
+            console.error(error);
+            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">無法讀取該榜單數據，請確認 JSON 是否已在後台生成。</span>';
+        }
     }
 
-    // ⚡ 核心進化：不 call YouTube 了，直接秒讀後台生好的 rank.json 檔案！
+    // 初始化頁面
     async function init() {
         try {
-            // 讀取同目錄下的 json
-            const res = await fetch('rank.json');
+            // 預設一進來直接讀取新版歌曲排行榜 (song_rank.json)
+            const res = await fetch('song_rank.json');
             const data = await res.json();
             
-            globalVideosData = data.videos;
+            cachedSongsData = data.songs;
+            cachedUpdateTime = data.updateTime;
             
             document.getElementById('loading').style.display = 'none';
             document.getElementById('filterTabs').style.display = 'flex';
             
-            const timeString = new Date(data.updateTime).toLocaleString('zh-TW');
-            document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 每日自動更新<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
-            
             renderList();
         } catch (error) {
-            console.error(error);
-            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">排行榜數據尚未生成，請至 GitHub 觸發第一次 Actions 執行。</span>';
+            console.error("嘗試讀取歌曲排行榜失敗，正切換至預設影片排行...", error);
+            // 備用防呆：如果 song_rank.json 還不存在，自動跳轉載入傳統觀看排行
+            switchSort('views');
         }
     }
 
@@ -123,7 +195,5 @@
 </script>
 </body>
 </html>
-
-
 
 
