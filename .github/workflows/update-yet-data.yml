@@ -96,7 +96,7 @@ jobs:
                   const rawDetails = await getVideoDetails(allIds);
                   
                   // --------------------------------------------------
-                  // 1️⃣ 第一部分：保持原樣，處理「單一影片」資料 (原 rank.json 邏輯)
+                  // 1️⃣ 第一部分：處理「單一影片」資料 (原 rank.json 邏輯，已加入 publishedAt)
                   // --------------------------------------------------
                   const processedVideos = rawDetails.map(item => {
                       const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
@@ -108,6 +108,7 @@ jobs:
                           id: item.id,
                           title: item.snippet.title,
                           thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '',
+                          publishedAt: item.snippet.publishedAt || '', // ✨ 新增：發布日期 (例如: "2024-05-20T12:00:00Z")
                           views, likes, comments, engagement,
                           durationSeconds: parseDurationToSeconds(durationStr)
                       };
@@ -119,18 +120,15 @@ jobs:
                   };
                   
                   fs.writeFileSync('rank.json', JSON.stringify(originalPayload, null, 2));
-                  console.log('✅ rank.json (Original Video Data) saved!');
+                  console.log('✅ rank.json (Original Video Data with publishedAt) saved!');
 
                   // --------------------------------------------------
-                  // 2️⃣ 第二部分：合併同曲目影片，處理「歌曲排行榜」資料 (已加入嚴格歌曲過濾)
+                  // 2️⃣ 第二部分：合併同曲目影片 (已加入 publishedAt 合併邏輯)
                   // --------------------------------------------------
                   const songAggregates = {};
 
                   rawDetails.forEach(item => {
                       const videoId = item.id;
-                      
-                      // 🌟【核心修正】：檢查此影片是否被定義在歌曲對照表（SONG_MAPPING）中
-                      // 如果沒有對應的歌曲名稱，說明這不是歌曲影片（例如日常/Vlog/短片等），直接跳過不納入金曲榜
                       const songKey = videoToSongMap[videoId];
                       if (!songKey) return; 
 
@@ -139,22 +137,25 @@ jobs:
                       const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
                       const durationStr = item.contentDetails ? item.contentDetails.duration : '';
                       const durationSeconds = parseDurationToSeconds(durationStr);
+                      const publishedAt = item.snippet.publishedAt || '';
 
                       if (!songAggregates[songKey]) {
                           songAggregates[songKey] = {
                               title: songKey,
-                              isMerged: true, // 既然有對照表，標記為已合併
+                              isMerged: true,
                               videoIds: [videoId],
                               thumbnails: [item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || ''],
                               views: 0,
                               likes: 0,
                               comments: 0,
-                              maxDurationSeconds: 0
+                              maxDurationSeconds: 0,
+                              dates: [publishedAt] // ✨ 收集該歌所有關聯影片的發布日期
                           };
                       } else {
                           songAggregates[songKey].videoIds.push(videoId);
                           const thumb = item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '';
                           if (thumb) songAggregates[songKey].thumbnails.push(thumb);
+                          if (publishedAt) songAggregates[songKey].dates.push(publishedAt);
                       }
 
                       songAggregates[songKey].views += views;
@@ -167,11 +168,17 @@ jobs:
 
                   let processedSongs = Object.values(songAggregates).map(song => {
                       const engagement = song.views > 0 ? ((song.likes + song.comments) / song.views) * 100 : 0;
+                      
+                      // 💡 排序發布日期，取出「最早發布」的日期作為該合輯歌曲的主發布日期
+                      const validDates = song.dates.filter(d => d).sort();
+                      const earliestPublishDate = validDates.length > 0 ? validDates[0] : '';
+
                       return {
                           title: song.title,
                           isMerged: song.isMerged,
                           relatedVideoIds: song.videoIds,
                           thumbnail: song.thumbnails[0] || '',
+                          publishedAt: earliestPublishDate, // ✨ 新增：合併後的歌曲首發日期
                           views: song.views,
                           likes: song.likes,
                           comments: song.comments,
@@ -189,7 +196,7 @@ jobs:
                   };
 
                   fs.writeFileSync('song_rank.json', JSON.stringify(songPayload, null, 2));
-                  console.log('✅ song_rank.json (Song Leaderboard Data) saved!');
+                  console.log('✅ song_rank.json (Song Leaderboard Data with publishedAt) saved!');
 
               } catch (err) {
                   console.error('❌ Error:', err);
@@ -205,6 +212,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add rank.json song_rank.json
-          git diff-index --quiet HEAD || (git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 [skip ci]" && git push)
+          git diff-index --quiet HEAD || (git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]" && git push)
 
 
