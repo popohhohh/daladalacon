@@ -252,7 +252,7 @@
                     id: linkVideoId,
                     title: song.title,
                     thumbnail: finalThumbnail,
-                    badgeText: `🔥 歌曲累計總觀看：${formatNumber(song.views)} 次`,
+                    badgeText: `🎧 歌曲累計總收聽：${formatNumber(song.views)} 次`,
                     dateText: rawDate ? formatDate(rawDate) : '' // ✨ 移除前綴與 icon，只留純日期
                 };
             });
@@ -332,10 +332,10 @@
         const descEl = document.getElementById('rankDesc');
         
         if (type === 'songs') {
-            descEl.innerHTML = '💡 純享版及現場版的「純觀看次數」合併計算';
+            descEl.innerHTML = '💡 純享版及現場版的「觀看次數」合併計算';
             descEl.classList.add('show');
         } else if (type === 'engagement') {
-            descEl.innerHTML = '💡 (按讚數 + 留言數) / 觀看次數 × 100%，僅篩選觀看數達1萬次以上之影片';
+            descEl.innerHTML = '💡 (按讚數+留言數)/觀看次數×100%，僅篩選觀看數達1萬次以上之影片';
             descEl.classList.add('show');
         } else {
             descEl.classList.remove('show');
