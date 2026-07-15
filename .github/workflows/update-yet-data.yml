@@ -30,6 +30,9 @@ jobs:
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         function parseDurationToSeconds(duration) {
+            // 🛡️ 防禦機制：若 duration 為空、不存在或非字串，直接安全回傳 0 
+            if (!duration || typeof duration !== 'string') return 0;
+            
             const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
             if (!match) return 0;
             return (parseInt(match[1] || 0) * 3600) + (parseInt(match[2] || 0) * 60) + parseInt(match[3] || 0);
@@ -74,12 +77,16 @@ jobs:
                     const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
                     const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
                     const engagement = views > 0 ? ((likes + comments) / views) * 100 : 0;
+                    
+                    // 🛡️ 防禦機制：確保 contentDetails 安全存在
+                    const durationStr = item.contentDetails ? item.contentDetails.duration : '';
+
                     return {
                         id: item.id,
                         title: item.snippet.title,
                         thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '',
                         views, likes, comments, engagement,
-                        durationSeconds: parseDurationToSeconds(item.contentDetails.duration)
+                        durationSeconds: parseDurationToSeconds(durationStr)
                     };
                 });
 
