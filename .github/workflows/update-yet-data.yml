@@ -3,7 +3,7 @@ name: 24h YouTube Data Auto Update
 on:
   schedule:
     - cron: '0 16 * * *' # 每天國際標準時 16:00 (台灣時間半夜 00:00) 自動執行
-  workflow_dispatch: # 允許你隨時手動點擊按鈕強制更新
+  workflow_dispatch: # 允許隨時手動點擊按鈕強制更新
 
 jobs:
   build-and-update:
@@ -122,24 +122,28 @@ jobs:
                   console.log('✅ rank.json (Original Video Data) saved!');
 
                   // --------------------------------------------------
-                  // 2️⃣ 第二部分：合併同曲目影片，處理「歌曲排行榜」資料
+                  // 2️⃣ 第二部分：合併同曲目影片，處理「歌曲排行榜」資料 (已加入嚴格歌曲過濾)
                   // --------------------------------------------------
                   const songAggregates = {};
 
                   rawDetails.forEach(item => {
                       const videoId = item.id;
+                      
+                      // 🌟【核心修正】：檢查此影片是否被定義在歌曲對照表（SONG_MAPPING）中
+                      // 如果沒有對應的歌曲名稱，說明這不是歌曲影片（例如日常/Vlog/短片等），直接跳過不納入金曲榜
+                      const songKey = videoToSongMap[videoId];
+                      if (!songKey) return; 
+
                       const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
                       const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
                       const comments = item.statistics.commentCount ? parseInt(item.statistics.commentCount) : 0;
                       const durationStr = item.contentDetails ? item.contentDetails.duration : '';
                       const durationSeconds = parseDurationToSeconds(durationStr);
 
-                      const songKey = videoToSongMap[videoId] || item.snippet.title;
-
                       if (!songAggregates[songKey]) {
                           songAggregates[songKey] = {
                               title: songKey,
-                              isMerged: videoToSongMap[videoId] ? true : false,
+                              isMerged: true, // 既然有對照表，標記為已合併
                               videoIds: [videoId],
                               thumbnails: [item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || ''],
                               views: 0,
@@ -176,6 +180,7 @@ jobs:
                       };
                   });
 
+                  // 依據歌曲總觀看數由高到低排序
                   processedSongs.sort((a, b) => b.views - a.views);
 
                   const songPayload = {
