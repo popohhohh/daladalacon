@@ -189,10 +189,10 @@
         
         // 💡 根據不同的標籤顯示對應的淡灰色補充說明
         if (type === 'songs') {
-            descEl.innerHTML = '💡 純享板及現場版本的「純觀看次數」合併計算';
+            descEl.innerHTML = '💡 由純享版及現場版的「純觀看次數」合併計算';
             descEl.classList.add('show');
         } else if (type === 'engagement') {
-            descEl.innerHTML = '💡(按讚數 + 留言數) / 觀看次數 × 100%，僅篩選觀看數達 10,000 次以上之影片';
+            descEl.innerHTML = '💡(按讚數 + 留言數) / 觀看次數 × 100%，僅篩選觀看數達1萬次以上之影片';
             descEl.classList.add('show');
         } else {
             descEl.classList.remove('show');
