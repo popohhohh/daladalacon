@@ -33,8 +33,15 @@ jobs:
         // 格式：'歌曲識別名稱': ['影片ID_1', '影片ID_2', ...]
         // ==========================================
         const SONG_MAPPING = {
-            '歌曲A': ['VIDEO_ID_BGM_A', 'VIDEO_ID_COMEDY_A'],
-            '歌曲B': ['VIDEO_ID_BGM_B', 'VIDEO_ID_COMEDY_B'],
+            'Dirty Baby': ['gvkijPmbl-g', 'VJShzIWUVvQ'],
+            '明天我會是更好的人嗎': ['crWGEFec9jM', 'N6-IoasXsPk'],
+  '北七': ['r1qUpvtTHlk', 'El6CgTIbdfg'],
+  '啊～': ['s4HcWjeUW40', 'BsdxH-fPCpA'],
+  '初老的證明題': ['EqDoZplwxUk', '0VhNVcUf7hk'],
+  '不放棄先生': ['Nd3Ts0dgkMI', 'TkzaUIbq_ko'],
+  '我不在你的眼裡': ['N5iwakHAYl8', 'IViVCxSffG4'],
+  '我只會打全壘打': ['mWd1W61nDX8', 'wV9S4WgConk'],
+  '爛尾': ['Ass__jb93sc', '-uX87w2XOnw'],
         };
  
         // 建立反向查詢表
