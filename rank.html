@@ -158,7 +158,7 @@
 
     function formatNumber(num) { return parseInt(num).toLocaleString('zh-TW'); }
 
-    function renderList() {
+ function renderList() {
         const listEl = document.getElementById('rankList');
         listEl.innerHTML = '';
         
@@ -170,12 +170,29 @@
         if (currentSortType === 'songs') {
             if (!cachedSongsData) return;
             displayItems = cachedSongsData.slice(0, 15).map(song => {
-                const mainVideoId = song.relatedVideoIds && song.relatedVideoIds.length > 0 ? song.relatedVideoIds[0] : '';
+                const videoIds = song.relatedVideoIds || [];
+                
+                // 1. 點擊連結：一律使用最熱門的第一個 ID (index 0)
+                const linkVideoId = videoIds.length > 0 ? videoIds[0] : '';
+                
+                // 2. 縮圖來源：如果有 2 支以上的影片，縮圖改拿第 2 個 ID (現場版)；只有 1 支則拿第 1 個 ID
+                let thumbnailVideoId = '';
+                if (videoIds.length > 1) {
+                    thumbnailVideoId = videoIds[1]; // 捨棄第一個純音源，拿第二個現場版
+                } else if (videoIds.length === 1) {
+                    thumbnailVideoId = videoIds[0];
+                }
+
+                // 3. 組合縮圖網址 (如果拿到了 ID 就去抓 YT 預設高品質縮圖，否則用原本的 song.thumbnail 備用)
+                const finalThumbnail = thumbnailVideoId 
+                    ? `https://i.ytimg.com/vi/${thumbnailVideoId}/hqdefault.jpg` 
+                    : song.thumbnail;
+
                 return {
-                    id: mainVideoId,
+                    id: linkVideoId,
                     title: song.title,
-                    thumbnail: song.thumbnail,
-                    badgeText: `🔥 歌曲累計總觀看：${formatNumber(song.views)} 次`
+                    thumbnail: finalThumbnail,
+                    badgeText: `🎧 歌曲累計收聽：${formatNumber(song.views)} 次`
                 };
             });
         } 
