@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KTV動態字幕</title>
+  <style>
+    /* 基礎全域設定 (延續主頁面風格) */
+    :root {
+      /* KTV 填色設定 */
+     --ktv-base-color: #ADADAD; 
+      --ktv-fill-color: #6d5c4b;  /* 唱到的字：莫蘭迪棕色 */
+    }
+
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif; 
+      padding: 40px 20px; 
+      background: #f8f9fa; 
+      color: #333; 
+      margin: 0; 
+      display: flex; 
+      justify-content: center; 
+    }
+
+    .container { 
+      width: 100%; 
+      max-width: 960px; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 { 
+      font-size: 26px; 
+      font-weight: bold; 
+      color: #1a1a1a; 
+      margin-top: 0;
+      margin-bottom: 24px; 
+      text-align: center; 
+    }
+
+    /* 歌曲選擇下拉選單 */
+    .song-selector-container {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+
+    .song-select {
+      width: 100%;
+      padding: 10px 16px;
+      padding-right: 42px; /* 留出右側放置 🔻 圖示的空間 */
+      font-size: 15px;
+      font-weight: 600;
+      color: #524335;
+      background-color: #ffffff;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      /* 使用 SVG 繪製的 🔻 倒三角形，色系搭配莫蘭迪棕色 */
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236d5c4b'%3e%3cpath d='M12 16l-6-6h12z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 18px;
+    }
+
+    .song-select:hover, .song-select:focus {
+      border-color: rgba(0,0,0,0.25);
+      box-shadow: 0 3px 8px rgba(198,181,160,0.2);
+    }
+
+    /* 播放器容器 (16:9 比例) */
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #eaeaea;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* KTV 字幕顯示區 */
+    .subtitle-box {
+      width: 100%;
+      min-height: 140px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #eaeaea;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* KTV 唱字效果核心 CSS */
+    .current-line {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1.4;
+      
+      /* 建立雙色漸層背景 */
+      background: linear-gradient(
+        to right, 
+        var(--ktv-fill-color) var(--progress, 0%), 
+        var(--ktv-base-color) var(--progress, 0%)
+      );
+      
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      
+      filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.05));
+    }
+
+    /* 下一句預告 */
+    .next-line {
+      font-size: 1.05rem;
+      color: #8c8c8c;
+      margin-top: 10px;
+      min-height: 1.4rem;
+    }
+
+    footer { 
+      font-size: 12px; 
+      color: #999999; 
+      text-align: center; 
+      padding: 40px 0 20px 0; 
+      line-height: 1.6; 
+    }
+
+    /* ================================================= */
+    /* 📱 手機版（寬度 600px 以下）適應 */
+    /* ================================================= */
+    @media (max-width: 600px) { 
+      body { padding: 16px 12px; } 
+      h1 { font-size: 20px; margin-bottom: 16px; } 
+      
+      .song-selector-container { margin-bottom: 14px; }
+      .song-select { font-size: 13px; padding: 8px 36px 8px 12px; background-size: 16px; }
+      
+      .video-container {
+        border-radius: 10px;
+        margin-bottom: 14px;
+      }
+      
+      .subtitle-box {
+        padding: 16px 12px;
+        min-height: 110px;
+        border-radius: 10px;
+      }
+      
+      .current-line { font-size: 1.3rem; }
+      .next-line { font-size: 0.9rem; margin-top: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎤歡唱大包廂</h1>
+
+    <!-- 歌曲選擇下拉選單 -->
+    <div class="song-selector-container">
+      <select id="songSelect" class="song-select" onchange="changeSong(this.value)">
+        <option value="lanwei">爛尾</option>
+        <!-- 未來有新歌曲可以直接在這裡新增 <option> -->
+      </select>
+    </div>
+
+    <!-- YouTube 播放器容器 -->
+    <div class="video-container">
+      <div id="player"></div>
+    </div>
+
+    <!-- 字幕顯示區 -->
+    <div class="subtitle-box">
+      <div class="current-line" id="current-text">♫</div>
+      <div class="next-line" id="next-text"></div>
+    </div>
+
+    <footer>
+      ～來賓請掌聲鼓勵～
+    </footer>
+  </div>
+
+  <script>
+    // 歌曲資料庫 (未來可擴充新歌曲)
+    const playlist = {
+      lanwei: {
+        videoId: '-uX87w2XOnw',
+        lyrics: [
+          { time: 48.71, text: "妳站在斑馬線的盡頭" },
+          { time: 51.24, text: "美麗的讓夕陽都忘了沈沒" },
+          { time: 54.37, text: "微風吹過" },
+          { time: 55.36, text: "你輕輕揮揮手" },
+          { time: 57.64, text: "疲憊的我" },
+          { time: 58.53, text: "拾起了笑容" },
+          { time: 62.49, text: "你奔向我" },
+          { time: 65.33, text: "擦身而過" },
+          { time: 67.3, text: "原來你擁抱的是" },
+          { time: 68.94, text: "我身後的" },
+          { time: 70.73, text: "你的男朋友" },
+          { time: 75, text: " " },   
+          { time: 84.38, text: "失眠的我在不夜的街頭" },
+          { time: 87.6, text: "跟著沒有出口的霓虹" },
+          { time: 90.18, text: "喝著一瓶快見底的酒" },
+          { time: 93.02, text: "像一隻戒不掉垃圾桶的浣熊" },
+          { time: 97.89, text: "溫柔的你" },
+          { time: 100.86, text: "拉住了我" },
+          { time: 102.73, text: "在我耳邊說" },
+          { time: 104.18, text: "這位先生" },
+          { time: 105.9, text: "身分證麻煩一下喔" },
+          { time: 100, text: " " },   
+          { time: 112.76, text: "這場相遇" },
+          { time: 115.49, text: "或許我們應該錯過" },
+          { time: 118.49, text: " " },
+          { time: 119.0, text: "在吧台喝著一百零一杯調酒" },
+          { time: 121.82, text: "細數著內心一百零一個前女友" },
+          { time: 124.44, text: "一百零一次分手" },
+          { time: 125.92, text: "似乎有點多" },
+          { time: 127.41, text: "哪一任還恨著我 愛著我或忘了我" },
+          { time: 131.93, text: "忽然一個女生" },
+          { time: 134.85, text: "帶著一群89" },
+          { time: 138.47, text: "打了我一百零一拳說" },
+          { time: 139.77, text: "哥哥對不起" },
+          { time: 140.51, text: "是人家認錯" },
+          { time: 144.51, text: " " },
+          { time: 147.21, text: "每一次相遇" },
+          { time: 148.33, text: "我都會想起" },
+          { time: 149.53, text: "想起那個時候錯過的你" },
+          { time: 152.78, text: "到底是錯過了" },
+          { time: 154.09, text: "還是我錯了" },
+          { time: 156.01, text: "錯的我 錯過了你" },
+          { time: 160.96, text: "你的衣服各種款式顏色繽紛美麗" },
+          { time: 163.43, text: "每天拍照發IG" },
+          { time: 165.73, text: "我的除了黑色還是黑色黑色黑色" },
+          { time: 168.34, text: "都待在家裡無聊至極" },
+          { time: 171.73, text: "你去日本玩規劃行程" },
+          { time: 173.95, text: "要做沙盤推演簡報PTT" },
+          { time: 176.62, text: "我去埃及五天六夜可以每天騎駱駝" },
+          { time: 179.39, text: "看同一個木乃伊" },
+          { time: 182.63, text: "你問我等一下晚餐想吃什麼" },
+          { time: 184.56, text: "你說你什麼都可以" },
+          { time: 187.33, text: "那我說" },
+          { time: 188.16, text: "我也都可以" },
+          { time: 189.08, text: "你就生氣" },
+          { time: 190.1, text: "為什麼你可以我不可以" },
+          { time: 193.54, text: "你說生活的幸福在於快樂的我和你" },
+          { time: 196.13, text: "我對工作的沈迷只剩下自己和酒精" },
+          { time: 201.02, text: "還有菸癮" },
+          { time: 203.84, text: "你說夠了" },
+          { time: 204.43, text: "我說夠了" },
+          { time: 205.12, text: "我們夠了" },
+          { time: 205.74, text: "也都錯了 一切都夠了" },
+          { time: 209.35, text: "這句話卻成了最後的默契" },
+          { time: 216.35, text: " " },
+          { time: 218.72, text: "就算我們的旅程" },
+          { time: 223.0, text: "才正要開始" },
+          { time: 226.22, text: "卻已來到了終點" },
+          { time: 231.65, text: "這一個故事眼看只剩爛尾" },
+          { time: 240.05, text: "只為綻放的煙火" },
+          { time: 245.03, text: "終究是來不及抵達" },
+          { time: 247.37, text: "盛開的瞬間" },
+          { time: 500, text: "" } // 修改為最後停頓
+        ]
+      }
+    };
+
+    let player;
+    let currentSongKey = 'lanwei';
+    let lyricsData = playlist[currentSongKey].lyrics;
+
+    const currentTextEl = document.getElementById('current-text');
+    const nextTextEl = document.getElementById('next-text');
+
+    // 載入 YouTube API
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        videoId: playlist[currentSongKey].videoId,
+        playerVars: {
+          'playsinline': 1,
+          'rel': 0
+        },
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+
+    function onPlayerReady() {
+      setInterval(checkTime, 30);
+    }
+
+    // 切換歌曲邏輯
+    function changeSong(songKey) {
+      if (!playlist[songKey]) return;
+      currentSongKey = songKey;
+      lyricsData = playlist[songKey].lyrics;
+      
+      if (player && typeof player.loadVideoById === 'function') {
+        player.loadVideoById(playlist[songKey].videoId);
+      }
+      
+      currentTextEl.innerText = "♫";
+      nextTextEl.innerText = "";
+      currentTextEl.style.setProperty('--progress', '0%');
+    }
+
+    // 動態檢查時間與填色
+    function checkTime() {
+      if (!player || typeof player.getCurrentTime !== 'function') return;
+
+      const currentTime = player.getCurrentTime();
+
+      if (!lyricsData || lyricsData.length === 0) return;
+
+      // 前奏階段
+      if (currentTime < lyricsData[0].time) {
+        currentTextEl.innerText = "🎶";
+        nextTextEl.innerText = lyricsData[0].text;
+        currentTextEl.style.setProperty('--progress', '0%');
+        return;
+      }
+
+      // 尋找當前歌詞
+      let newIndex = lyricsData.findIndex((item, i) => {
+        const nextTime = lyricsData[i + 1] ? lyricsData[i + 1].time : Infinity;
+        return currentTime >= item.time && currentTime < nextTime;
+      });
+
+      if (newIndex !== -1) {
+        const currentLyric = lyricsData[newIndex];
+        currentTextEl.innerText = currentLyric.text || "♫";
+
+        if (lyricsData[newIndex + 1]) {
+          nextTextEl.innerText = lyricsData[newIndex + 1].text;
+        } else {
+          nextTextEl.innerText = "";
+        }
+
+        // 計算填色進度
+        const startTime = currentLyric.time;
+        const endTime = lyricsData[newIndex + 1] ? lyricsData[newIndex + 1].time : startTime + 5;
+        const duration = endTime - startTime;
+
+        let progress = ((currentTime - startTime) / duration) * 100;
+        progress = Math.min(Math.max(progress, 0), 100);
+
+        currentTextEl.style.setProperty('--progress', `${progress}%`);
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
