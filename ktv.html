@@ -8,7 +8,7 @@
     /* 基礎全域設定 (延續主頁面風格) */
     :root {
       /* KTV 填色設定 */
-     --ktv-base-color: #ADADAD; 
+      --ktv-base-color: #ADADAD; 
       --ktv-fill-color: #6d5c4b;  /* 唱到的字：莫蘭迪棕色 */
     }
 
@@ -114,23 +114,12 @@
       box-sizing: border-box;
     }
 
-    /* KTV 唱字效果核心 CSS */
+    /* 當前句：無漸層，直接單色變色 */
     .current-line {
       font-size: 1.8rem;
       font-weight: 800;
       line-height: 1.4;
-      
-      /* 建立雙色漸層背景 */
-      background: linear-gradient(
-        to right, 
-        var(--ktv-fill-color) var(--progress, 0%), 
-        var(--ktv-base-color) var(--progress, 0%)
-      );
-      
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      
+      color: var(--ktv-fill-color); /* 當前句直接填入莫蘭迪棕色 */
       filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.05));
     }
 
@@ -184,8 +173,17 @@
     <!-- 歌曲選擇下拉選單 -->
     <div class="song-selector-container">
       <select id="songSelect" class="song-select" onchange="changeSong(this.value)">
-        <option value="lanwei">爛尾</option>
-        <!-- 未來有新歌曲可以直接在這裡新增 <option> -->
+        <option value="fizzleout">爛尾</option>
+<option value="bettertomorrow">明天我會是更好的人嗎</option>
+<option value="aaa">啊～</option>
+<option value="dirtybaby">Dirty Baby</option>
+<option value="homerun">我只會打全壘打</option>
+<option value="invisible">我不在你的眼裡</option>
+<option value="gettingold">初老的證明題</option>
+<option value="nevergiveup">不放棄先生</option>
+<option value="dumb">北七</option>
+<option value="theconvict">刑者</option>
+
       </select>
     </div>
 
@@ -208,8 +206,9 @@
   <script>
     // 歌曲資料庫 (未來可擴充新歌曲)
     const playlist = {
-      lanwei: {
+      fizzleout: {
         videoId: '-uX87w2XOnw',
+startSeconds:13, 
         lyrics: [
           { time: 48.71, text: "妳站在斑馬線的盡頭" },
           { time: 51.24, text: "美麗的讓夕陽都忘了沈沒" },
@@ -232,7 +231,7 @@
           { time: 102.73, text: "在我耳邊說" },
           { time: 104.18, text: "這位先生" },
           { time: 105.9, text: "身分證麻煩一下喔" },
-          { time: 100, text: " " },   
+          { time: 108, text: " " },   
           { time: 112.76, text: "這場相遇" },
           { time: 115.49, text: "或許我們應該錯過" },
           { time: 118.49, text: " " },
@@ -283,103 +282,238 @@
           { time: 240.05, text: "只為綻放的煙火" },
           { time: 245.03, text: "終究是來不及抵達" },
           { time: 247.37, text: "盛開的瞬間" },
-          { time: 500, text: "" } // 修改為最後停頓
+          { time: 500, text: "" }
         ]
-      }
+      }, 
+theconvict: {
+    videoId: 'ZTtNbQ70m4s',
+    lyrics: [
+      { time: 16.42, text: "我終於忘了自己" },
+      { time: 19.16, text: "曾經是誰手裡握著的那把刀子" },
+      { time: 24.02, text: "刺透那些不知是否是無辜的軀體" },
+      { time: 32.03, text: "你終於不再想起" },
+      { time: 34.99, text: "那閉上眼仍無法不看見的死去" },
+      { time: 39.81, text: "但人們無法停止回憶" },
+      { time: 42.63, text: "直到緬懷也成為了酷刑" },
+      { time: 48.43, text: " " },
+      { time: 62.14, text: "你在你的地獄" },
+      { time: 64.09, text: "看著他的天堂" },
+      { time: 66.23, text: "怎麼知道他的地獄又是什麼模樣" },
+      { time: 71.17, text: "你在我的夢裡是一朵花" },
+      { time: 74.09, text: "但他手裡的花" },
+      { time: 75.51, text: "卻能將恐懼綻放" },
+      { time: 77.62, text: "你用你的無辜" },
+      { time: 79.62, text: "審判他的瘋狂" },
+      { time: 81.53, text: "卻不知道你的瘋狂就是對無辜的信仰" },
+      { time: 86.78, text: "我在你的眼裡是一粒沙" },
+      { time: 89.71, text: "但他手裡的沙" },
+      { time: 91.11, text: "卻能將仇恨埋葬" },
+      { time: 94.98, text: " " },
+      { time: 98.28, text: "你終於不再躲藏" },
+      { time: 101.35, text: "等候被遺忘而不是誰的原諒" },
+      { time: 106.25, text: "他求的不是懺悔" },
+      { time: 108.67, text: "而是有罪的標靶" },
+      { time: 114.02, text: "你終於學會了絕望" },
+      { time: 116.77, text: "置身事外的旁觀著自己的憂傷" },
+      { time: 122.55, text: "任人觀賞" },
+      { time: 126.75, text: "你墜落的模樣" },
+      { time: 132.31, text: " " },
+      { time: 144.07, text: "你在你的地獄" },
+      { time: 146.14, text: "看著他的天堂" },
+      { time: 148.21, text: "怎麼知道他的地獄又是什麼模樣" },
+      { time: 153.13, text: "你在我的夢裡是一朵花" },
+      { time: 156.06, text: "但他手裡的花" },
+      { time: 157.5, text: "卻能將恐懼綻放" },
+      { time: 159.55, text: "你用你的無辜" },
+      { time: 161.63, text: "審判他的瘋狂" },
+      { time: 163.57, text: "卻不知道你的瘋狂就是對無辜的信仰" },
+      { time: 168.74, text: "我在你的眼裡是一粒沙" },
+      { time: 171.59, text: "但他手裡的沙" },
+      { time: 173.09, text: "卻能將仇恨埋葬" },
+      { time: 177.02, text: "於是用犧牲互相掠奪" },
+      { time: 181.18, text: "再用遺忘來重獲自由" },
+      { time: 185.04, text: "以為自由就能擺脫掉因果" },
+      { time: 188.75, text: "卻一再透過別人手裡的刀" },
+      { time: 192.86, text: "劃開下一個出口" },
+      { time: 196.5, text: "儘管那又會是誰的傷口" },
+      { time: 200.43, text: "又會是誰的解脫" },
+      { time: 207.14, text: " " },
+      { time: 229.54, text: "你在你的地獄" },
+      { time: 231.44, text: "看著他的天堂" },
+      { time: 233.52, text: "怎麼知道他的地獄又是什麼模樣" },
+      { time: 238.43, text: "你在我的夢裡是一朵花" },
+      { time: 241.28, text: "但他手裡的花" },
+      { time: 242.88, text: "卻能將恐懼綻放" },
+      { time: 245.14, text: "你用你的無辜" },
+      { time: 246.86, text: "審判他的瘋狂" },
+      { time: 248.94, text: "卻不知道你的瘋狂就是對無辜的信仰" },
+      { time: 254.12, text: "我在你的眼裡是一粒沙" },
+      { time: 256.97, text: "但他手里的沙" },
+      { time: 258.48, text: "卻能將仇恨埋葬" },
+      { time: 500, text: "" }
+    ]
+ }, 
+bettertomorrow: {
+    videoId: 'N6-IoasXsPk',
+    lyrics: [
+          ]
+  },
+aaa: {
+    videoId: 'BsdxH-fPCpA',
+    lyrics: [
+          ]
+  },
+dirtybaby: {
+    videoId: 'VJShzIWUVvQ',
+    lyrics: [
+          ]
+  },
+homerun: {
+    videoId: 'wV9S4WgConk',
+    lyrics: [
+          ]
+  },
+invisible: {
+    videoId: 'IViVCxSffG4',
+    lyrics: [
+          ]
+  },
+gettingold: {
+    videoId: '0VhNVcUf7hk',
+    lyrics: [
+          ]
+  },
+nevergiveup: {
+    videoId: 'TkzaUIbq_ko',
+    lyrics: [
+          ]
+  },
+dumb: {
+    videoId: 'El6CgTIbdfg',
+    lyrics: [
+          ]
+  }
     };
 
     let player;
-    let currentSongKey = 'lanwei';
+    let currentSongKey = 'fizzleout';
     let lyricsData = playlist[currentSongKey].lyrics;
 
     const currentTextEl = document.getElementById('current-text');
     const nextTextEl = document.getElementById('next-text');
 
-    // 載入 YouTube API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+ // 載入 YouTube API
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        videoId: playlist[currentSongKey].videoId,
-        playerVars: {
-          'playsinline': 1,
-          'rel': 0
-        },
-        events: {
-          'onReady': onPlayerReady
-        }
-      });
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    videoId: playlist[currentSongKey].videoId,
+    playerVars: {
+      'playsinline': 1,
+      'rel': 0,
+      'cc_load_policy': 0,
+      'hl': 'zh-TW',
+      'start': playlist[currentSongKey].startSeconds || 0 // 👈 補上了逗號
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
     }
+  });
+}
 
-    function onPlayerReady() {
-      setInterval(checkTime, 30);
+// 關閉字幕的核心指令
+function disableCaptions() {
+  if (!player) return;
+  try {
+    // 1. 強制切換字幕軌道為關閉（特定 API 功能）
+    if (typeof player.setOption === 'function') {
+      player.setOption('captions', 'track', {});
     }
+    // 2. 直接卸載字幕模組（最為徹底）
+    if (typeof player.unloadModule === 'function') {
+      player.unloadModule('captions');
+    }
+  } catch (e) {
+    console.log("字幕關閉嘗試中...", e);
+  }
+}
 
-    // 切換歌曲邏輯
-    function changeSong(songKey) {
-      if (!playlist[songKey]) return;
-      currentSongKey = songKey;
-      lyricsData = playlist[songKey].lyrics;
-      
-      if (player && typeof player.loadVideoById === 'function') {
-        player.loadVideoById(playlist[songKey].videoId);
-      }
-      
-      currentTextEl.innerText = "♫";
+function onPlayerReady() {
+  disableCaptions();
+
+  // 👈 確保初次載入時能精準 Jump 到指定秒數
+  const startSec = playlist[currentSongKey].startSeconds || 0;
+  if (startSec > 0) {
+    player.seekTo(startSec, true);
+  }
+
+  setInterval(checkTime, 100);
+}
+
+// 當影片狀態改變（如按下播放時）再次確保字幕關閉
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.PLAYING) {
+    disableCaptions();
+  }
+}
+
+// 切換歌曲邏輯
+function changeSong(songKey) { 
+  if (!playlist[songKey]) return; 
+  currentSongKey = songKey; 
+  lyricsData = playlist[songKey].lyrics; 
+
+  if (player && typeof player.loadVideoById === 'function') { 
+    // 切換影片並從 startSeconds 開始
+    player.loadVideoById({ 
+      videoId: playlist[songKey].videoId, 
+      startSeconds: playlist[songKey].startSeconds || 0 
+    }); 
+    disableCaptions(); 
+  } 
+
+  currentTextEl.innerText = "♫"; 
+  nextTextEl.innerText = ""; 
+} 
+
+// 動態檢查時間並切換字幕
+function checkTime() {
+  if (!player || typeof player.getCurrentTime !== 'function') return;
+
+  const currentTime = player.getCurrentTime();
+
+  if (!lyricsData || lyricsData.length === 0) return;
+
+  // 前奏階段
+  if (currentTime < lyricsData[0].time) {
+    currentTextEl.innerText = "🎶";
+    nextTextEl.innerText = lyricsData[0].text;
+    return;
+  }
+
+  // 尋找當前歌詞
+  let newIndex = lyricsData.findIndex((item, i) => {
+    const nextTime = lyricsData[i + 1] ? lyricsData[i + 1].time : Infinity;
+    return currentTime >= item.time && currentTime < nextTime;
+  });
+
+  if (newIndex !== -1) {
+    const currentLyric = lyricsData[newIndex];
+    currentTextEl.innerText = currentLyric.text || "♫";
+
+    if (lyricsData[newIndex + 1]) {
+      nextTextEl.innerText = lyricsData[newIndex + 1].text;
+    } else {
       nextTextEl.innerText = "";
-      currentTextEl.style.setProperty('--progress', '0%');
     }
-
-    // 動態檢查時間與填色
-    function checkTime() {
-      if (!player || typeof player.getCurrentTime !== 'function') return;
-
-      const currentTime = player.getCurrentTime();
-
-      if (!lyricsData || lyricsData.length === 0) return;
-
-      // 前奏階段
-      if (currentTime < lyricsData[0].time) {
-        currentTextEl.innerText = "🎶";
-        nextTextEl.innerText = lyricsData[0].text;
-        currentTextEl.style.setProperty('--progress', '0%');
-        return;
-      }
-
-      // 尋找當前歌詞
-      let newIndex = lyricsData.findIndex((item, i) => {
-        const nextTime = lyricsData[i + 1] ? lyricsData[i + 1].time : Infinity;
-        return currentTime >= item.time && currentTime < nextTime;
-      });
-
-      if (newIndex !== -1) {
-        const currentLyric = lyricsData[newIndex];
-        currentTextEl.innerText = currentLyric.text || "♫";
-
-        if (lyricsData[newIndex + 1]) {
-          nextTextEl.innerText = lyricsData[newIndex + 1].text;
-        } else {
-          nextTextEl.innerText = "";
-        }
-
-        // 計算填色進度
-        const startTime = currentLyric.time;
-        const endTime = lyricsData[newIndex + 1] ? lyricsData[newIndex + 1].time : startTime + 5;
-        const duration = endTime - startTime;
-
-        let progress = ((currentTime - startTime) / duration) * 100;
-        progress = Math.min(Math.max(progress, 0), 100);
-
-        currentTextEl.style.setProperty('--progress', `${progress}%`);
-      }
+  }
     }
   </script>
 </body>
 </html>
-
-
 
 
