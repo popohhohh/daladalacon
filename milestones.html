@@ -9,18 +9,20 @@
     /* === 引入 辰宇落雁體 細體 (Chen Yuluoyan Thin) === */
     @font-face {
       font-family: 'ChenYuluoyanThin';
-      src: url("./ChenYuluoyan-2.0-Thin.ttf") format("truetype");
+      src: local('Chen Yuluoyan Thin'), 
+           local('ChenYuluoyan-Thin'),
+           url('https://raw.githubusercontent.com/Chenyu-otf/chenyuluoyan_thin/main/ChenYuluoyan-Thin.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
       font-display: swap;
     }
 
     /* === 全域與配色 === */
-    :root {
-      --bg-color: #F4F1EA;          /* 米亞麻質感底色 */
-      --text-main: #2C2C2C;         /* 沉穩深灰黑 */
-      --timeline-line: #D8D2C5;     /* 時間軸細線 */
-      --node-dot: #8C8275;          /* 日期小圓點顏色 */
+   :root {
+  --bg-color: #f8f9fa;
+  --text-main: #333333;
+  --timeline-line: #dfe3e8;
+  --node-dot: #7c8da6;
       
       --font-handwriting: 'ChenYuluoyanThin', -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
     }
@@ -46,18 +48,18 @@
 
     header h1 {
       font-family: var(--font-handwriting);
-      font-size: 3rem;
+      font-size: 3.5rem;
       font-weight: normal;
       letter-spacing: 3px;
-      color: #3A3530;
+      color: #2f3640;
       margin-bottom: 4px;
     }
 
     header p {
       font-family: var(--font-handwriting);
-      font-size: 1.6rem;
+      font-size: 1.2rem;
       letter-spacing: 4px;
-      color: #8C8275;
+      color: #7c8da6;
       text-transform: uppercase;
     }
 
@@ -123,7 +125,7 @@
 
     .date-header.year-start span {
       font-size: 1.8rem;
-      color: #FAF8F5;
+      color: #fff;
       background-color: #3A3530; /* 深色膠囊質感 */
       padding: 4px 22px;
       border-radius: 20px;
@@ -191,7 +193,7 @@
     .photo-frame {
       width: 100%;
       height: 240px;
-      background-color: #E8E5DF;
+      background-color: #eef1f5;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -209,7 +211,7 @@
 
     .caption {
       font-family: var(--font-handwriting);
-      font-size: 2.3rem;
+      font-size: 1.2rem;
       color: #1A1A1A;
       line-height: 1.3;
       padding: 4px 2px;
@@ -743,5 +745,7 @@
   </script>
 </body>
 </html>
+
+
 
 
