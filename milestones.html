@@ -158,16 +158,18 @@
     }
 
     .front h1 {
-      font-size: 2.1rem;
+      font-size: 2rem;           /* 稍微微調字體大小，避免溢出 */
       font-weight: normal;
-      letter-spacing: 4px;
+      letter-spacing: 2px;       /* 稍微縮小字距 */
       margin-bottom: 8px;
+      white-space: nowrap;       /* 強制不換行 */
     }
 
     .front p {
       font-size: 1.3rem;
       letter-spacing: 3px;
       color: #dfe3e8;
+      white-space: nowrap;       /* 強制不換行 */
     }
 
     /* 封面背面 (翻開後的左頁) */
