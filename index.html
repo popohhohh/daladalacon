@@ -833,7 +833,7 @@ function search(keyword) {
   clearTimeout(gaSearchTimer);
   gaSearchTimer = setTimeout(() => {
     if (typeof gtag === 'function' && cleanedKeyword.length > 0) {
-      gtag('event', 'view_search_results', { search_term: cleanedKeyword });
+      gtag('event', 'search', { search_term: cleanedKeyword });
     }
   }, 1000); 
   return results;
