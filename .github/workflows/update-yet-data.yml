@@ -19,11 +19,11 @@ jobs:
 
       - name: Run YouTube Fetcher Script
         env:
-          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }} # 👈 已更新為 GOOGLE_API_KEY
         run: |
           cat << 'EOF' > fetch_yt.js
           const fs = require('fs');
-          const API_KEY = process.env.YT_API_KEY;
+          const API_KEY = process.env.GOOGLE_API_KEY; // 👈 已更新對應變數
           const CHANNEL_ID = 'UC8TtAsZE51ekqffnNASo7DA';
           const UPLOADS_PLAYLIST_ID = CHANNEL_ID.replace(/^UC/, 'UU');
 
@@ -108,7 +108,7 @@ jobs:
                           id: item.id,
                           title: item.snippet.title,
                           thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || '',
-                          publishedAt: item.snippet.publishedAt || '', // ✨ 新增：發布日期 (例如: "2024-05-20T12:00:00Z")
+                          publishedAt: item.snippet.publishedAt || '', // ✨ 發布日期
                           views, likes, comments, engagement,
                           durationSeconds: parseDurationToSeconds(durationStr)
                       };
@@ -178,7 +178,7 @@ jobs:
                           isMerged: song.isMerged,
                           relatedVideoIds: song.videoIds,
                           thumbnail: song.thumbnails[0] || '',
-                          publishedAt: earliestPublishDate, // ✨ 新增：合併後的歌曲首發日期
+                          publishedAt: earliestPublishDate, // ✨ 合併後的歌曲首發日期
                           views: song.views,
                           likes: song.likes,
                           comments: song.comments,
@@ -213,5 +213,3 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add rank.json song_rank.json
           git diff-index --quiet HEAD || (git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]" && git push)
-
-
