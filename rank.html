@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影片各類排行榜</title>
+    <style>
+        /* 基礎全域設定 */
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif; 
+            padding: 40px 20px; 
+            background: #f8f9fa; 
+            color: #333; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+        }
+        .rank-container { 
+            width: 100%; 
+            max-width: 960px; 
+        }
+        h1 { 
+            font-size: 26px; 
+            font-weight: bold; 
+            color: #1a1a1a; 
+            margin-bottom: 24px; 
+            text-align: center; 
+        }
+        
+        /* ================================================= */
+        /* 💻 網頁版（預設）：按鈕橫向排開 */
+        /* ================================================= */
+        .filter-tabs { 
+            display: none; /* 初始化由 JS 控制改為 flex */
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            margin-bottom: 24px; 
+        }
+        .tab-btn { 
+            display: inline-block;
+            padding: 10px 20px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            border-radius: 8px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            background: #ffffff; 
+            color: #6d5c4b; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            white-space: nowrap; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .tab-btn:hover {
+            background: #fdfcfb;
+            border-color: rgba(0,0,0,0.15);
+        }
+        .tab-btn.active { 
+            background: linear-gradient(135deg, rgba(225,212,196,0.9), rgba(198,181,160,0.9)); 
+            color: #524335; 
+            border-color: transparent;
+            box-shadow: 0 3px 10px rgba(198,181,160,0.3);
+        }
+        
+        .rank-desc { 
+            text-align: center; 
+            font-size: 13px; 
+            color: #8c8c8c; 
+            margin: -10px 0 24px 0; 
+            line-height: 1.6;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            display: none;
+        }
+        .rank-desc.show {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* 排行榜列表樣式 */
+        .loading { text-align: center; font-size: 14px; color: #888; padding: 40px; }
+        .rank-list { list-style: none; padding: 0; margin: 0; }
+        
+        /* 🌟 調整：讓卡片變成相對定位基準，並增加右下角的 padding 空間避免文字重疊 */
+        .rank-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 20px; 
+            margin-bottom: 16px; 
+            background: white; 
+            border-radius: 14px; 
+            border: 1px solid #eaeaea; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
+            position: relative; 
+        }
+        
+        .rank-number { font-size: 18px; font-weight: bold; width: 32px; color: #a0a0a0; }
+        .rank-item:nth-child(1) .rank-number { color: #d4af37; font-size: 24px; }
+        .rank-thumbnail { width: 120px; height: 68px; object-fit: cover; border-radius: 8px; margin-right: 18px; flex-shrink: 0; }
+        .rank-info { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+        .rank-title { margin: 0 0 8px 0; font-size: 16px; width: 100%; }
+        .rank-title a { text-decoration: none; color: #1a1a1a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .rank-title a:hover { color: #524335; }
+        .rank-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; } 
+        
+        .rank-views { 
+            display: inline-block; 
+            font-size: 12px; 
+            color: #524335; 
+            background: #f5f0eb; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            white-space: nowrap; 
+            font-weight: 500; 
+        } 
+        
+        /* 📅 調整：改為絕對定位，無背景，字體變小變淡，貼在右下角 */
+        .rank-date { 
+            position: absolute;
+            right: 16px;
+            bottom: 12px;
+            font-size: 11px; 
+            color: #b0b0b0; /* 淺灰色 */
+            white-space: nowrap; 
+        } 
+        
+        footer { font-size: 12px; color: #999999; text-align: center; padding: 40px 0 20px 0; line-height: 1.6; }
+        
+        /* ================================================= */
+        /* 📱 手機版（寬度 600px 以下）：強制轉為 3 欄網格 */
+        /* ================================================= */
+        @media (max-width: 600px) { 
+            body { padding: 16px 12px; } 
+            h1 { font-size: 20px; margin-bottom: 16px; } 
+            
+            .filter-tabs { 
+                display: grid !important; 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 6px; 
+                margin-bottom: 16px;
+            }
+            .tab-btn {
+                padding: 8px 2px;
+                font-size: 11px;
+                text-align: center;
+                border-radius: 6px;
+            }
+            
+            .rank-desc {
+                margin: -4px 4px 16px 4px;
+                font-size: 11px;
+            }
+            
+            /* 🌟 手機版微調：因為卡片變小，縮小右下角日期字體 */
+            .rank-item { 
+                padding: 10px 10px 24px 10px; /* 下方留一點 padding 避免文字與日期重疊 */
+                margin-bottom: 10px; 
+            } 
+            .rank-thumbnail { width: 96px; height: 54px; margin-right: 10px; } 
+            .rank-title { font-size: 14px; margin-bottom: 4px; } 
+            .rank-badges { gap: 4px; } 
+            .rank-views { font-size: 11px; padding: 3px 6px; } 
+            
+            .rank-date {
+                right: 10px;
+                bottom: 6px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="rank-container">
+    <h1>🏅 影片各類排行榜 🏅</h1>
+    
+    <div class="filter-tabs" id="filterTabs">
+        <button class="tab-btn active" onclick="switchSort('views')">🔥 觀看最多</button>
+        <button class="tab-btn" onclick="switchSort('likes')">👍 按讚最多</button>
+        <button class="tab-btn" onclick="switchSort('comments')">💬 留言最多</button>
+        <button class="tab-btn" onclick="switchSort('engagement')">❤️ 互動率最高</button>
+        <button class="tab-btn" onclick="switchSort('shorts')">📱 shorts觀看最多</button>
+        <button class="tab-btn" onclick="switchSort('songs')">🎵 金曲榜</button>
+    </div>
+
+    <div id="rankDesc" class="rank-desc"></div>
+    
+    <div id="loading" class="loading">正在讀取最新排行榜數據...</div>
+    <ul id="rankList" class="rank-list"></ul>
+
+    <footer id="footerStatus">
+        由 GitHub Actions 每日自動更新榜單👾
+            <div style="margin-top: 20px; font-size: 0.9em;">
+    <a href="https://ko-fi.com/popohhohh" target="_blank" class="report-link" style="color: #000000; font-weight: bold; text-decoration: underline;">
+      如果喜歡這個工具，可以請我喝奶茶三兄弟🧋
+    </a>
+  </div>
+    
+  <div class="copyright" style="margin-top: 1px; font-size: 0.9em; opacity: 0.8;">
+    © 2026 popohhohh. All rights reserved.
+  </div>
+
+    
+    </footer>
+</div>
+
+<script>
+    let cachedVideosData = null;
+    let cachedSongsData = null;
+    let cachedUpdateTime = '';
+    let currentSortType = 'views'; 
+
+    function formatNumber(num) { return parseInt(num).toLocaleString('zh-TW'); }
+
+    // 輔助函式：將 ISO 日期字串轉換成 2026/07/15 格式
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr; 
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}/${mm}/${dd}`;
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function renderList() {
+        const listEl = document.getElementById('rankList');
+        listEl.innerHTML = '';
+        
+        let displayItems = [];
+
+        // --------------------------------------------------
+        // 分流 1：處理最後一項「🎵 金曲榜」資料 (來自 song_rank.json)
+        // --------------------------------------------------
+        if (currentSortType === 'songs') {
+            if (!cachedSongsData) return;
+            displayItems = cachedSongsData.slice(0, 15).map(song => {
+                const videoIds = song.relatedVideoIds || [];
+                
+                // 1. 點擊連結：使用最熱門的第一個 ID (index 0)
+                const linkVideoId = videoIds.length > 0 ? videoIds[0] : '';
+                
+                // 2. 縮圖來源：優先使用第 2 個 ID (現場版) 避開純音源；只有 1 支則拿第 1 個 ID
+                let thumbnailVideoId = '';
+                if (videoIds.length > 1) {
+                    thumbnailVideoId = videoIds[1];
+                } else if (videoIds.length === 1) {
+                    thumbnailVideoId = videoIds[0];
+                }
+
+                const finalThumbnail = thumbnailVideoId 
+                    ? `https://i.ytimg.com/vi/${thumbnailVideoId}/hqdefault.jpg` 
+                    : song.thumbnail;
+
+                // 3. 取得日期：金曲榜若有 publishedAt / date 欄位就拿，否則留空
+                const rawDate = song.publishedAt || song.date || '';
+
+                return {
+                    id: linkVideoId,
+                    title: song.title,
+                    thumbnail: finalThumbnail,
+                    badgeText: `🎧 累計總收聽：${formatNumber(song.views)} 次`,
+                    dateText: rawDate ? formatDate(rawDate) : '' // ✨ 移除前綴與 icon，只留純日期
+                };
+            });
+        } 
+        // --------------------------------------------------
+        // 分流 2：處理原本的單一影片排行資料 (來自 rank.json)
+        // --------------------------------------------------
+        else {
+            if (!cachedVideosData) return;
+            let displayVideos = [];
+
+            if (currentSortType === 'shorts') {
+                displayVideos = cachedVideosData.filter(v => v.durationSeconds <= 60).sort((a, b) => b.views - a.views);
+            } else {
+                let longVideos = cachedVideosData.filter(v => v.durationSeconds > 60);
+                if (currentSortType === 'engagement') {
+                    displayVideos = longVideos.filter(v => v.views >= 10000).sort((a, b) => b.engagement - a.engagement);
+                } else {
+                    displayVideos = longVideos.sort((a, b) => b[currentSortType] - a[currentSortType]);
+                }
+            }
+
+            displayItems = displayVideos.slice(0, 15).map(video => {
+                let badgeText = '';
+                if (currentSortType === 'views' || currentSortType === 'shorts') badgeText = `🔥 觀看次數：${formatNumber(video.views)} 次`;
+                if (currentSortType === 'likes') badgeText = `👍 按讚次數：${formatNumber(video.likes)} 次`;
+                if (currentSortType === 'comments') badgeText = `💬 留言數量：${formatNumber(video.comments)} 則`;
+                if (currentSortType === 'engagement') badgeText = `❤️ 粉絲互動率：${video.engagement.toFixed(2)}%`;
+
+                // 取得影片發布日期
+                const rawDate = video.publishedAt || video.publishDate || video.date || '';
+
+                return {
+                    id: video.id,
+                    title: video.title,
+                    thumbnail: video.thumbnail,
+                    badgeText: badgeText,
+                    dateText: rawDate ? formatDate(rawDate) : '' // ✨ 移除前綴與 icon，只留純日期
+                };
+            });
+        }
+
+        // 渲染畫面
+        displayItems.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'rank-item';
+            
+            // 💡 調整：日期不再包在 .rank-badges 裡面，而是獨立放在底部，套用新樣式
+            const dateHtml = item.dateText ? `<div class="rank-date">${item.dateText}</div>` : '';
+
+            li.innerHTML = `
+                <div class="rank-number">${index + 1}</div>
+                <img class="rank-thumbnail" src="${item.thumbnail}" alt="${item.title}" loading="lazy">
+                <div class="rank-info">
+                    <h3 class="rank-title"><a href="https://www.youtube.com/watch?v=${item.id}" target="_blank">${item.title}</a></h3>
+                    <div class="rank-badges">
+                        <div class="rank-views">${item.badgeText}</div>
+                    </div>
+                </div>
+                ${dateHtml}
+            `;
+            listEl.appendChild(li);
+        });
+
+        // 更新腳部時間戳記
+        const timeString = new Date(cachedUpdateTime).toLocaleString('zh-TW');
+        document.getElementById('footerStatus').innerHTML = `© 由 GitHub Actions 每日自動更新<br><span style="color: #b3b3b3;">資料更新時間：${timeString}</span>`;
+    }
+
+    async function switchSort(type) {
+        currentSortType = type;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+
+        const descEl = document.getElementById('rankDesc');
+        
+        if (type === 'songs') {
+            descEl.innerHTML = '💡 純享版及現場版的「觀看次數」合併計算';
+            descEl.classList.add('show');
+        } else if (type === 'engagement') {
+            descEl.innerHTML = '💡 (按讚數+留言數)/觀看次數×100%，僅篩選觀看數達1萬次以上之影片';
+            descEl.classList.add('show');
+        } else {
+            descEl.classList.remove('show');
+            descEl.innerHTML = '';
+        }
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('rankList').innerHTML = '';
+
+        try {
+            if (type === 'songs') {
+                if (!cachedSongsData) {
+                    const res = await fetch('song_rank.json');
+                    const data = await res.json();
+                    cachedSongsData = data.songs;
+                    cachedUpdateTime = data.updateTime;
+                }
+            } else {
+                if (!cachedVideosData) {
+                    const res = await fetch('rank.json');
+                    const data = await res.json();
+                    cachedVideosData = data.videos;
+                    cachedUpdateTime = data.updateTime;
+                }
+            }
+            document.getElementById('loading').style.display = 'none';
+            renderList();
+        } catch (error) {
+            console.error(error);
+            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">無法讀取該榜單數據，請確認後台 JSON 是否已正確生成。</span>';
+        }
+    }
+
+    // 初始化頁面
+    async function init() {
+        try {
+            const res = await fetch('rank.json');
+            const data = await res.json();
+            
+            cachedVideosData = data.videos;
+            cachedUpdateTime = data.updateTime;
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('filterTabs').style.display = 'flex'; 
+            
+            renderList();
+        } catch (error) {
+            console.error(error);
+            document.getElementById('loading').innerHTML = '<span style="color:#ff4d4d;">排行榜數據尚未生成，請至 GitHub 觸發第一次 Actions 執行。</span>';
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
+
+

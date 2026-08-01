@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KTV動態字幕</title>
+  <style>
+    /* 基礎全域設定 (延續主頁面風格) */
+    :root {
+      /* KTV 填色設定 */
+      --ktv-base-color: #ADADAD; 
+      --ktv-fill-color: #6d5c4b;  /* 唱到的字：莫蘭迪棕色 */
+    }
+
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif; 
+      padding: 40px 20px; 
+      background: #f8f9fa; 
+      color: #333; 
+      margin: 0; 
+      display: flex; 
+      justify-content: center; 
+    }
+
+    .container { 
+      width: 100%; 
+      max-width: 960px; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 { 
+      font-size: 26px; 
+      font-weight: bold; 
+      color: #1a1a1a; 
+      margin-top: 0;
+      margin-bottom: 24px; 
+      text-align: center; 
+    }
+
+    /* 歌曲選擇下拉選單 */
+    .song-selector-container {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+
+    .song-select {
+      width: 100%;
+      padding: 10px 16px;
+      padding-right: 42px; /* 留出右側放置 🔻 圖示的空間 */
+      font-size: 15px;
+      font-weight: 600;
+      color: #524335;
+      background-color: #ffffff;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      /* 使用 SVG 繪製的 🔻 倒三角形，色系搭配莫蘭迪棕色 */
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236d5c4b'%3e%3cpath d='M12 16l-6-6h12z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 18px;
+    }
+
+    .song-select:hover, .song-select:focus {
+      border-color: rgba(0,0,0,0.25);
+      box-shadow: 0 3px 8px rgba(198,181,160,0.2);
+    }
+
+    /* 播放器容器 (16:9 比例) */
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #eaeaea;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* KTV 字幕顯示區 */
+    .subtitle-box {
+      width: 100%;
+      min-height: 140px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #eaeaea;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* 當前句：無漸層，直接單色變色 */
+    .current-line {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--ktv-fill-color); /* 當前句直接填入莫蘭迪棕色 */
+      filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.05));
+    }
+
+    /* 下一句預告 */
+    .next-line {
+      font-size: 1.05rem;
+      color: #8c8c8c;
+      margin-top: 10px;
+      min-height: 1.4rem;
+    }
+
+    footer { 
+      font-size: 12px; 
+      color: #999999; 
+      text-align: center; 
+      padding: 40px 0 20px 0; 
+      line-height: 1.6; 
+    }
+
+    /* ================================================= */
+    /* 📱 手機版（寬度 600px 以下）適應 */
+    /* ================================================= */
+    @media (max-width: 600px) { 
+      body { padding: 16px 12px; } 
+      h1 { font-size: 20px; margin-bottom: 16px; } 
+      
+      .song-selector-container { margin-bottom: 14px; }
+      .song-select { font-size: 13px; padding: 8px 36px 8px 12px; background-size: 16px; }
+      
+      .video-container {
+        border-radius: 10px;
+        margin-bottom: 14px;
+      }
+      
+      .subtitle-box {
+        padding: 16px 12px;
+        min-height: 110px;
+        border-radius: 10px;
+      }
+      
+      .current-line { font-size: 1.3rem; }
+      .next-line { font-size: 0.9rem; margin-top: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎤歡唱大包廂</h1>
+
+    <!-- 歌曲選擇下拉選單 -->
+    <div class="song-selector-container">
+      <select id="songSelect" class="song-select" onchange="changeSong(this.value)">
+        <option value="fizzleout">爛尾</option>
+<option value="bettertomorrow">明天我會是更好的人嗎</option>
+<option value="aaa">啊～</option>
+<option value="dirtybaby">Dirty Baby</option>
+<option value="homerun">我只會打全壘打</option>
+<option value="invisible">我不在你的眼裡</option>
+<option value="gettingold">初老的證明題</option>
+<option value="nevergiveup">不放棄先生</option>
+<option value="dumb">北七</option>
+<option value="theconvict">刑者</option>
+
+      </select>
+    </div>
+
+    <!-- YouTube 播放器容器 -->
+    <div class="video-container">
+      <div id="player"></div>
+    </div>
+
+    <!-- 字幕顯示區 -->
+    <div class="subtitle-box">
+      <div class="current-line" id="current-text">♫</div>
+      <div class="next-line" id="next-text"></div>
+    </div>
+
+    <footer>
+
+      <div style="margin-top: 1px; font-size: 0.9em; opacity: 0.8;">
+    ※ 影片廣告來自YouTube設定，非本站收益 
+  </div>
+          <div style="margin-top: 1px; font-size: 0.9em;">
+    <a href="https://ko-fi.com/popohhohh" target="_blank" class="report-link" style="color: #000000; font-weight: bold; text-decoration: underline;">
+      如果喜歡這個工具，可以請我喝奶茶三兄弟🧋
+    </a>
+  </div>
+    
+  <div class="copyright" style="margin-top: 1px; font-size: 0.9em; opacity: 0.8;">
+    © 2026 popohhohh. All rights reserved.
+  </div>
+
+    </footer>
+  </div>
+
+  <script>
+    // 歌曲資料庫 (未來可擴充新歌曲)
+    const playlist = {
+      fizzleout: {
+        videoId: '-uX87w2XOnw',
+startSeconds:13, 
+        lyrics: [
+          { time: 48.71, text: "妳站在斑馬線的盡頭" },
+          { time: 51.24, text: "美麗的讓夕陽都忘了沈沒" },
+          { time: 54.37, text: "微風吹過" },
+          { time: 55.36, text: "你輕輕揮揮手" },
+          { time: 57.64, text: "疲憊的我" },
+          { time: 58.53, text: "拾起了笑容" },
+          { time: 62.49, text: "你奔向我" },
+          { time: 65.33, text: "擦身而過" },
+          { time: 67.3, text: "原來你擁抱的是" },
+          { time: 68.94, text: "我身後的" },
+          { time: 70.73, text: "你的男朋友" },
+          { time: 75, text: " " },   
+          { time: 84.38, text: "失眠的我在不夜的街頭" },
+          { time: 87.6, text: "跟著沒有出口的霓虹" },
+          { time: 90.18, text: "喝著一瓶快見底的酒" },
+          { time: 93.02, text: "像一隻戒不掉垃圾桶的浣熊" },
+          { time: 97.89, text: "溫柔的你" },
+          { time: 100.86, text: "拉住了我" },
+          { time: 102.73, text: "在我耳邊說" },
+          { time: 104.18, text: "這位先生" },
+          { time: 105.9, text: "身分證麻煩一下喔" },
+          { time: 108, text: " " },   
+          { time: 112.76, text: "這場相遇" },
+          { time: 115.49, text: "或許我們應該錯過" },
+          { time: 118.49, text: " " },
+          { time: 118.8, text: "在吧台喝著一百零一杯調酒" },
+          { time: 121.8, text: "內心裡數著一百零一個前女友" },
+          { time: 124.42, text: "一百零一次分手" },
+          { time: 125.92, text: "似乎有點多" },
+          { time: 127.4, text: "哪一任還恨著我 愛著我或忘了我" },
+          { time: 131.93, text: "忽然一個女生" },
+          { time: 134.85, text: "拉著一群89" },
+          { time: 138.47, text: "打了我一百零一拳說" },
+          { time: 139.77, text: "哥哥對不起" },
+          { time: 140.51, text: "是人家認錯" },
+          { time: 144.51, text: " " },
+          { time: 147.21, text: "每一次錯過" },
+          { time: 148.33, text: "我都會想起" },
+          { time: 149.53, text: "想起那個時候錯過的你" },
+          { time: 152.78, text: "到底是錯過了" },
+          { time: 154.09, text: "還是我錯了" },
+          { time: 156.01, text: "錯的我 錯過了你" },
+          { time: 160.96, text: "你的衣服各種款式顏色繽紛美麗" },
+          { time: 163.43, text: "每天拍照發IG" },
+          { time: 165.73, text: "我的除了黑色還是黑色黑色黑色" },
+          { time: 168.34, text: "都待在家裡無聊至極" },
+          { time: 171.73, text: "你去日本玩規劃行程" },
+          { time: 173.95, text: "要做沙盤推演簡報PTT" },
+          { time: 176.62, text: "我去埃及五天六夜可以每天騎駱駝" },
+          { time: 179.39, text: "看同一個木乃伊" },
+          { time: 182.63, text: "你問我等一下晚餐想吃什麼" },
+          { time: 184.56, text: "你說你什麼都可以" },
+          { time: 187.33, text: "那我說" },
+          { time: 188.16, text: "我也都可以" },
+          { time: 189.08, text: "你就生氣" },
+          { time: 190.1, text: "為什麼你可以我不可以" },
+          { time: 193.50, text: "你說生活的幸福在於快樂的我和你" },
+  { time: 196.03, text: "我對工作的沈迷只剩下自己和酒精" },
+  { time: 201.05, text: "還有菸癮" },
+  { time: 202.91, text: "你說夠了" },
+  { time: 204.48, text: "我說夠了" },
+  { time: 205.04, text: "我們夠了" },
+  { time: 205.75, text: "也都錯了 一切都夠了" },
+  { time: 209.13, text: "這句話卻成了最後的默契" },
+  { time: 218.43, text: "就算我們的旅程 才正要開始" },
+  { time: 226.12, text: "卻已來到了終點" },
+  { time: 230.63, text: "這一個故事眼看只剩爛尾" },
+  { time: 239.43, text: "只為綻放的煙火" },
+  { time: 244.81, text: "終究是來不及抵達" },
+  { time: 247.27, text: "盛開的瞬間" },
+  { time: 250.61, text: "問我後不後悔" },
+  { time: 252.62, text: "後不後悔" },
+  { time: 254.02, text: "我不後悔" },
+  { time: 256.42, text: "這是我和你錯過的完美" },
+  { time: 270.79, text: "的不完美詩篇" },
+  { time: 290.63, text: "次は、秋葉原" },
+  { time: 293.69, text: "秋葉原でございます" },
+  { time: 295.86, text: "お降りのお客様は" },
+  { time: 298.14, text: "あ、申し訳ございません" },
+  { time: 301.68, text: "当列車は、秋葉原には止まりません" },
+  { time: 306.59, text: "次は、大阪" },
+  { time: 309.09, text: "大阪でございます" },
+  { time: 311.83, text: "誠に申し訳ございませんでした" },
+  { time: 318.84, text: "花白的頭髮與蒼老的面容" },
+  { time: 321.51, text: "滿是淚水的母親 喊著我" },
+  { time: 324.29, text: "快醒醒吧 我的孩子" },
+  { time: 326.61, text: "喚醒了 躺在病床上的我" },
+  { time: 331.89, text: "護士小姐" },
+  { time: 334.76, text: "想安慰你" },
+  { time: 336.54, text: "對你說" },
+  { time: 337.97, text: "阿姨別難過" },
+  { time: 339.24, text: "你兒子在隔壁床別搞錯" },
+  { time: 346.30, text: "這場相遇" },
+  { time: 349.02, text: "或許我們應該錯過" },
+  { time: 352.29, text: "我望著黑夜裡的星空呼救" },
+  { time: 354.87, text: "一顆星閃爍" },
+  { time: 355.89, text: "快速地飛向我" },
+  { time: 357.61, text: "巨大的飛碟停在我的頭頂上" },
+  { time: 360.49, text: "一道光束籠罩著我" },
+  { time: 364.56, text: "我緩緩升起" },
+  { time: 366.73, text: "又慢慢降落" },
+  { time: 370.78, text: "原來被選中的不是我" },
+  { time: 372.56, text: "是旁邊的乳牛" },
+  { time: 379.41, text: "每一次錯過" },
+  { time: 380.32, text: "我都會想起" },
+  { time: 381.52, text: "想起那個時候錯過的你" },
+  { time: 384.74, text: "到底是錯過了" },
+  { time: 385.97, text: "還是我錯了" },
+  { time: 387.82, text: "錯的我錯過了你" },
+  { time: 392.72, text: "你每個週末都去看搞笑的comedy" },
+  { time: 395.00, text: "不管是漫才站台喜劇" },
+  { time: 397.47, text: "說實話" },
+  { time: 398.02, text: "我覺得" },
+  { time: 398.84, text: "什麼達康都是自以為有趣" },
+  { time: 400.77, text: "還不如看抖音" },
+  { time: 403.34, text: "你說想結婚買房" },
+  { time: 404.57, text: "加三個孩子一狗兩貓" },
+  { time: 406.14, text: "五隻綠鬣蜥" },
+  { time: 408.01, text: "我說婚約是人類文明" },
+  { time: 410.90, text: "最黑暗的陰謀和發明" },
+  { time: 414.00, text: "你的好脾氣" },
+  { time: 414.85, text: "溫柔體貼細膩" },
+  { time: 416.14, text: "但我們吵架歇斯底里" },
+  { time: 419.05, text: "我沒事就愛抱怨嘆氣撞牆壁" },
+  { time: 421.28, text: "一天到晚老是挑人毛病" },
+  { time: 424.46, text: "你談論民主自由獨立去他媽的習近平" },
+  { time: 427.11, text: "我說執政黨就是爛" },
+  { time: 428.38, text: "我對政治沒興趣" },
+  { time: 434.47, text: "你說夠了" },
+  { time: 435.18, text: "我說夠了" },
+  { time: 435.76, text: "我們夠了" },
+  { time: 436.47, text: "也都錯了" },
+  { time: 437.13, text: "一切都夠了" },
+  { time: 440.01, text: "這句話卻成了最後的默契" },
+  { time: 448.47, text: "就算我們的旅程才正要開始" },
+  { time: 455.84, text: "卻已來到了終點" },
+  { time: 461.37, text: "這一個故事眼看只剩爛尾" },
+  { time: 469.62, text: "只為綻放的煙火" },
+  { time: 474.82, text: "終究是來不及抵達" },
+  { time: 477.19, text: "盛開的瞬間" },
+  { time: 480.61, text: "問我後不後悔" },
+  { time: 482.58, text: "後不後悔" },
+  { time: 483.89, text: "我不後悔" },
+  { time: 486.37, text: "這是我和你錯過的完美" },
+  { time: 496.63, text: "的不完美詩篇" },
+  { time: 517.83, text: "第一次約會你和我約在公館" },
+  { time: 519.81, text: "我特別早起" },
+  { time: 522.62, text: "穿上新買的西裝" },
+  { time: 524.44, text: "提早抵達" },
+  { time: 525.34, text: "盼著你的身影" },
+  { time: 528.49, text: "一個小時過去" },
+  { time: 529.72, text: "你訊息我" },
+  { time: 531.04, text: "還好嗎 人在哪裡" },
+  { time: 534.48, text: "我在綠島公館村的將軍岩" },
+  { time: 539.37, text: "看著大海" },
+  { time: 540.86, text: "等著你" },
+          { time: 550, text: "～來賓請掌聲鼓勵～" }
+        ]
+      }, 
+theconvict: {
+    videoId: 'ZTtNbQ70m4s',
+    lyrics: [
+      { time: 16.42, text: "我終於忘了自己" },
+      { time: 19.16, text: "曾經是誰手裡握著的那把刀子" },
+      { time: 24.02, text: "刺透那些不知是否是無辜的軀體" },
+      { time: 32.03, text: "你終於不再想起" },
+      { time: 34.99, text: "那閉上眼仍無法不看見的死去" },
+      { time: 39.81, text: "但人們無法停止回憶" },
+      { time: 42.63, text: "直到緬懷也成為了酷刑" },
+      { time: 48.43, text: " " },
+      { time: 62.14, text: "你在你的地獄" },
+      { time: 64.09, text: "看著他的天堂" },
+      { time: 66.23, text: "怎麼知道他的地獄又是什麼模樣" },
+      { time: 71.17, text: "你在我的夢裡是一朵花" },
+      { time: 74.09, text: "但他手裡的花" },
+      { time: 75.51, text: "卻能將恐懼綻放" },
+      { time: 77.62, text: "你用你的無辜" },
+      { time: 79.62, text: "審判他的瘋狂" },
+      { time: 81.53, text: "卻不知道你的瘋狂就是對無辜的信仰" },
+      { time: 86.78, text: "我在你的眼裡是一粒沙" },
+      { time: 89.71, text: "但他手裡的沙" },
+      { time: 91.11, text: "卻能將仇恨埋葬" },
+      { time: 94.98, text: " " },
+      { time: 98.28, text: "你終於不再躲藏" },
+      { time: 101.35, text: "等候被遺忘而不是誰的原諒" },
+      { time: 106.25, text: "他求的不是懺悔" },
+      { time: 108.67, text: "而是有罪的標靶" },
+      { time: 114.02, text: "你終於學會了絕望" },
+      { time: 116.77, text: "置身事外的旁觀著自己的憂傷" },
+      { time: 122.55, text: "任人觀賞" },
+      { time: 126.75, text: "你墜落的模樣" },
+      { time: 132.31, text: " " },
+      { time: 144.07, text: "你在你的地獄" },
+      { time: 146.14, text: "看著他的天堂" },
+      { time: 148.21, text: "怎麼知道他的地獄又是什麼模樣" },
+      { time: 153.13, text: "你在我的夢裡是一朵花" },
+      { time: 156.06, text: "但他手裡的花" },
+      { time: 157.5, text: "卻能將恐懼綻放" },
+      { time: 159.55, text: "你用你的無辜" },
+      { time: 161.63, text: "審判他的瘋狂" },
+      { time: 163.57, text: "卻不知道你的瘋狂就是對無辜的信仰" },
+      { time: 168.74, text: "我在你的眼裡是一粒沙" },
+      { time: 171.59, text: "但他手裡的沙" },
+      { time: 173.09, text: "卻能將仇恨埋葬" },
+      { time: 177.02, text: "於是用犧牲互相掠奪" },
+      { time: 181.18, text: "再用遺忘來重獲自由" },
+      { time: 185.04, text: "以為自由就能擺脫掉因果" },
+      { time: 188.75, text: "卻一再透過別人手裡的刀" },
+      { time: 192.86, text: "劃開下一個出口" },
+      { time: 196.5, text: "儘管那又會是誰的傷口" },
+      { time: 200.43, text: "又會是誰的解脫" },
+      { time: 207.14, text: " " },
+      { time: 229.54, text: "你在你的地獄" },
+      { time: 231.44, text: "看著他的天堂" },
+      { time: 233.52, text: "怎麼知道他的地獄又是什麼模樣" },
+      { time: 238.43, text: "你在我的夢裡是一朵花" },
+      { time: 241.28, text: "但他手裡的花" },
+      { time: 242.88, text: "卻能將恐懼綻放" },
+      { time: 245.14, text: "你用你的無辜" },
+      { time: 246.86, text: "審判他的瘋狂" },
+      { time: 248.94, text: "卻不知道你的瘋狂就是對無辜的信仰" },
+      { time: 254.12, text: "我在你的眼裡是一粒沙" },
+      { time: 256.97, text: "但他手裡的沙" },
+      { time: 258.48, text: "卻能將仇恨埋葬" },
+      { time: 265, text: "" }
+    ]
+ }, 
+bettertomorrow: {
+    videoId: 'N6-IoasXsPk',
+  startSeconds:11, 
+    lyrics: [{ time: 26.31, text: "今天又被生活擊垮" },
+  { time: 32.12, text: "明天我還會是更好的人嗎" },
+  { time: 38.19, text: "有誰是否跟我一樣" },
+  { time: 44.02, text: "遠方的理想要多久才能到達" },
+  { time: 50.29, text: "多少次 低下頭 想放棄 就這樣結束了吧" },
+  { time: 56.65, text: "多少次的絕望" },
+  { time: 58.27, text: "想投降卻又掙扎" },
+  { time: 62.27, text: "請再給我多一點勇氣吧" },
+  { time: 66.40, text: "我不想去洗澡啊" },
+  { time: 70.04, text: "我不想去洗澡啊" },
+  { time: 73.45, text: "我不想去洗澡啊" },
+  { time: 75.27, text: "為什麼身體還在沙發上" },
+  { time: 79.95, text: "就先脫衣服吧" },
+  { time: 83.17, text: "連內褲都脫光吧" },
+  { time: 86.44, text: "但門鈴卻響啦" },
+  { time: 88.55, text: "為什麼你的餐點已經送達" },
+  { time: 98.80, text: "洗澡就明天再說吧" },
+  { time: 102.65, text: "多少次 低下頭 量體重 數字依舊沒有下降" },
+  { time: 109.13, text: "多少次 想運動 減脂肪 卻眼見它不斷增加" },
+  { time: 115.02, text: "請再給我多一點勇氣吧" },
+  { time: 119.03, text: "就先吃一口吧" },
+  { time: 122.43, text: "就先吃一口吧" },
+  { time: 125.72, text: "就先吃一口吧" },
+  { time: 127.80, text: "為什麼 宵夜快被我吃光" },
+  { time: 132.46, text: "吃最後一口吧" },
+  { time: 135.73, text: "吃最後一口吧" },
+  { time: 139.01, text: "吃最後一口吧" },
+  { time: 141.15, text: "為什麼我又打開冰箱" },
+  { time: 151.50, text: "身材就明天再說吧" },
+  { time: 155.05, text: "" },
+  { time: 168.49, text: "今天又被工作擊垮" },
+  { time: 175.18, text: "明天我還會是更好的人嗎" },
+  { time: 181.78, text: "有誰是否跟我一樣" },
+  { time: 188.34, text: "業績的要求要多少才能到達" },
+  { time: 195.21, text: "多少次 快遲到 下大雨 沒帶傘困在路上" },
+  { time: 201.76, text: "多少次 加夜班 一個人 想抽菸卻沒賴打" },
+  { time: 207.46, text: "請再給我多一點勇氣吧" },
+  { time: 211.61, text: "就幹別人的吧" },
+  { time: 215.01, text: "就幹別人的吧" },
+  { time: 218.24, text: "就幹別人的吧" },
+  { time: 220.22, text: "為什麼雨傘已經被幹光" },
+  { time: 224.96, text: "就先幹再說吧" },
+  { time: 228.13, text: "就先幹再說吧" },
+  { time: 231.48, text: "就先幹再說吧" },
+  { time: 233.51, text: "為什麼抽個煙警鈴就響" },
+  { time: 244.94, text: "多少次 被老闆 當狗罵 尊嚴在地上磨擦" },
+  { time: 251.22, text: "多少次 想賞他 一巴掌 甩上門就離職吧" },
+  { time: 256.74, text: "請再給我多一點勇氣吧" },
+  { time: 262.19, text: "就下跪道歉吧" },
+  { time: 265.64, text: "就下跪道歉吧" },
+  { time: 268.72, text: "就下跪道歉吧" },
+  { time: 270.81, text: "為什麼老闆你踩著我的臉啊" },
+  { time: 275.39, text: "就這麼下賤嗎" },
+  { time: 278.49, text: "就這麼下賤嗎" },
+  { time: 281.72, text: "就這麼下賤嗎" },
+  { time: 283.79, text: "為什麼我已經在舔皮鞋啦" },
+  { time: 293.77, text: "辭職就明天再說吧" },
+  { time: 299.69, text: "" },
+  { time: 311.04, text: "今天又被命運擊垮" },
+  { time: 317.58, text: "明天我會是洗過澡的人嗎" },
+  { time: 324.13, text: "有誰不想改變自己嗎" },
+  { time: 330.84, text: "洗澡的夢想我今天一定要抵達" },
+  { time: 337.72, text: "多少次 洗澡前 蹲廁所 一抬頭就是大強" },
+  { time: 344.12, text: "多少次 殺蟲劑 噴整罐 竟然都殺不死牠" },
+  { time: 349.67, text: "請再給我多一點勇氣吧" },
+  { time: 353.30, text: "就先大一半吧" },
+  { time: 356.42, text: "就先大一半吧" },
+  { time: 359.58, text: "就先大一半吧" },
+  { time: 362.17, text: "為什麼 衛生紙沒剩半張" },
+  { time: 366.30, text: "就這樣站起來吧" },
+  { time: 369.47, text: "先走去客廳啊" },
+  { time: 372.72, text: "找拖鞋保護自己啊" },
+  { time: 374.69, text: "為什麼 強哥已在我肩膀上" },
+  { time: 380.27, text: "" },
+  { time: 398.26, text: "多少次 大半夜 在廁所 遇見牠是緣分嗎" },
+  { time: 405.24, text: "多少次 快死亡 只要能活下來 就是堅強" },
+  { time: 412.26, text: "你要學的" },
+  { time: 413.94, text: "是我的勇氣啊" },
+  { time: 416.24, text: "就這樣活著吧" },
+  { time: 419.38, text: "就這樣活著吧" },
+  { time: 422.58, text: "就這樣活著吧" },
+  { time: 424.61, text: "殺不死你的使你堅強" },
+  { time: 429.01, text: "不洗澡也沒差吧" },
+  { time: 432.19, text: "想吃就多吃吧" },
+  { time: 435.56, text: "舔皮鞋我也甘願啊" },
+  { time: 437.54, text: "殺不死我的使我更強大" },
+  { time: 443.48, text: "" },
+  { time: 464.66, text: "現在我" },
+  { time: 466.24, text: "成為更好的人了吧" },
+    { time: 475, text: "～來賓請掌聲鼓勵～" }          
+          ]
+  },
+aaa: {
+    videoId: 'BsdxH-fPCpA',
+  startSeconds:12, 
+    lyrics: [
+      { time: 28.96, text: "你有你的模樣" },
+  { time: 32.77, text: "我也有我的形狀" },
+  { time: 36.03, text: "我們不一樣" },
+  { time: 38.20, text: "卻都需要陽光" },
+  { time: 41.26, text: "" },
+  { time: 44.13, text: "你有你的難過" },
+  { time: 47.94, text: "我也有我的悲傷" },
+  { time: 51.11, text: "我們不一樣" },
+  { time: 53.34, text: "卻都受著傷" },
+  { time: 59.46, text: "誰沒有傷口" },
+  { time: 62.91, text: "也都會流淚吧" },
+  { time: 66.71, text: "誰沒有痛過" },
+  { time: 69.38, text: "痛到生不如死的時候" },
+  { time: 73.06, text: "我們都會大聲嘶吼" },
+  { time: 76.77, text: "" },
+  { time: 77.76, text: "啊～" },
+  { time: 81.79, text: "為什麼腳趾頭踢到沙發" },
+  { time: 84.94, text: "啊～" },
+  { time: 88.92, text: "為什麼電腦當機沒存檔" },
+  { time: 92.09, text: "啊～" },
+  { time: 96.22, text: "為什麼吃東西咬到嘴巴" },
+  { time: 99.39, text: "啊" },
+  { time: 103.52, text: "為什麼這麼年輕就長痔瘡" },
+  { time: 107.11, text: "啊" },
+  { time: 117.69, text: "為什麼拉鏈會卡到叉叉" },
+  { time: 120.99, text: "啊" },
+  { time: 131.53, text: "為什麼放個屁就出來啦" },
+  { time: 134.91, text: "啊" },
+  { time: 145.41, text: "為什麼這首歌你只有啊" },
+  { time: 149.63, text: "" },
+  { time: 160.82, text: "誰沒有傷口" },
+  { time: 164.13, text: "也都會結痂吧" },
+  { time: 167.81, text: "誰沒有抓過" },
+  { time: 170.19, text: "癢了又抓 抓了又破" },
+  { time: 173.53, text: "破了又痛 痛了又啊～" },
+  { time: 177.68, text: "啊～" },
+  { time: 181.56, text: "為什麼牙醫給我拔錯牙" },
+  { time: 184.63, text: "啊" },
+  { time: 188.39, text: "為什麼女友記得我密碼" },
+  { time: 191.38, text: "啊" },
+  { time: 195.09, text: "為什麼開門爸媽在行房" },
+  { time: 198.26, text: "啊" },
+  { time: 201.71, text: "為什麼滑Tinder看到我阿嬤" },
+  { time: 205.41, text: "啊" },
+  { time: 215.26, text: "為什麼師傅可以輕一點嗎" },
+  { time: 218.67, text: "啊" },
+  { time: 228.69, text: "為什麼阿姨我不想跪趴" },
+  { time: 233.35, text: "啊" },
+  { time: 242.14, text: "為什麼這首你只有啊" },
+  { time: 247.79, text: "" },
+  { time: 251.29, text: "你只有啊" },
+  { time: 255.85, text: "為什麼你要拿出小喇叭" },
+  { time: 262.74, text: "為什麼一個屁都沒有啊" },
+  { time: 269.54, text: "為什麼練習根本沒用吧" },
+  { time: 276.34, text: "為什麼吹得這麼難聽啊" },
+  { time: 283.27, text: "為什麼最後還是走音啦" },
+  { time: 286.42, text: "啊～啊～啊～啊～啊～" },
+  { time: 294.77, text: "為什麼這麼痛啊GOD～" },
+  { time: 302.95, text: "" },
+  { time: 307.32, text: "你和我都是痛的共同體" },
+  { time: 314.13, text: "早該逃離卻又麻痺了自己" },
+  { time: 321.13, text: "你和我都是痛的共同體" },
+  { time: 328.13, text: "早該逃離卻又對他上了癮" },
+       { time: 340, text: "～來賓請掌聲鼓勵～" }
+          ]
+  },
+dirtybaby: {
+    videoId: 'VJShzIWUVvQ',
+  startSeconds:101, 
+    lyrics: [
+      { time: 116.48, text: "瞇瞇眼 小酒窩" },
+  { time: 119.14, text: "還有一雙小手手" },
+  { time: 122.08, text: "哭一哭 賣個萌" },
+  { time: 124.86, text: "全世界都愛上我" },
+  { time: 130.26, text: "你們腦波也太弱" },
+  { time: 138.41, text: "大過年 除夕夜" },
+  { time: 141.08, text: "親戚全都圍著我" },
+  { time: 143.82, text: "真受不了你們的老人臭" },
+  { time: 147.79, text: "" },
+  { time: 168.92, text: "這衣服 有夠醜" },
+  { time: 172.57, text: "像是人工色素的熱狗" },
+  { time: 176.32, text: "紙尿布 圍兜兜" },
+  { time: 180.04, text: "真想脫掉 三點全露" },
+  { time: 183.84, text: "剛出生 不太會走" },
+  { time: 187.61, text: "一步兩步撞到頭" },
+  { time: 190.37, text: "撞到頭撞到頭撞到頭撞到頭" },
+  { time: 194.17, text: "撞到頭" },
+  { time: 195.29, text: "幹 是不會來扶我" },
+  { time: 197.69, text: "快看我抱我親我拍拍我" },
+  { time: 201.30, text: "拍照打卡上傳十萬人追蹤" },
+  { time: 205.07, text: "快看我抱我親我拍拍我" },
+  { time: 208.84, text: "你們老了才有人給你送終" },
+  { time: 212.55, text: "快看我抱我親我拍拍我" },
+  { time: 215.77, text: "不然我會暴走" },
+  { time: 218.00, text: "反正我的時間比你們多" },
+  { time: 222.90, text: "聽到沒有" },
+  { time: 226.27, text: "還是沒人在理我" },
+  { time: 230.00, text: "你們他媽的耳聾" },
+  { time: 232.69, text: "" },
+  { time: 234.04, text: "everybody" },
+  { time: 235.47, text: "" },
+  { time: 244.96, text: "look at me" },
+  { time: 245.66, text: "eyes on me" },
+  { time: 246.64, text: "I am the king in the house" },
+  { time: 248.16, text: "I am the baby king" },
+  { time: 250.61, text: "我的口水一直流一直流下去" },
+  { time: 254.39, text: "流到了肚子上" },
+  { time: 255.67, text: "過來給我舔乾淨" },
+  { time: 257.79, text: "舔乾淨" },
+  { time: 258.69, text: "舔乾淨" },
+  { time: 259.54, text: "過來給我舔乾淨" },
+  { time: 261.49, text: "就是你" },
+  { time: 262.42, text: "就是你" },
+  { time: 263.39, text: "過來給我舔乾淨" },
+  { time: 265.59, text: "今晚的菜色讓人看不下去" },
+  { time: 269.35, text: "一口又一口的餵我" },
+  { time: 271.09, text: "看我把它吐滿地" },
+  { time: 272.87, text: "吐滿地" },
+  { time: 273.66, text: "吐滿地" },
+  { time: 274.72, text: "我他媽全部吐滿地" },
+  { time: 276.51, text: "就是你" },
+  { time: 277.35, text: "就是你" },
+  { time: 278.34, text: "煮這甚麼爛東西" },
+  { time: 280.62, text: "我滾到地上" },
+  { time: 282.05, text: "用自己來拖地" },
+  { time: 284.42, text: "再爬到餐桌上" },
+  { time: 285.82, text: "一屁股坐湯裡" },
+  { time: 288.29, text: "胡蘿蔔青椒苦瓜" },
+  { time: 289.64, text: "都給我當廚餘" },
+  { time: 291.97, text: "把嘴巴打開" },
+  { time: 293.24, text: "我幫你們全部倒進去" },
+  { time: 294.69, text: "I am so dirty baby" },
+  { time: 298.49, text: "I am your dirty baby" },
+  { time: 302.17, text: "I am so dirty baby" },
+  { time: 306.30, text: "I am so dirty baby" },
+  { time: 310.65, text: "我的奶嘴一直掉一直掉下去" },
+  { time: 314.44, text: "你還不跪下去" },
+  { time: 315.79, text: "給我咬起來" },
+  { time: 316.74, text: "當我賞給你" },
+  { time: 318.29, text: "賞給你" },
+  { time: 319.13, text: "賞給你" },
+  { time: 319.71, text: "當我賞給你" },
+  { time: 321.56, text: "要記得先殺菌" },
+  { time: 323.26, text: "用紫外線殺菌" },
+  { time: 325.69, text: "那邊的表哥" },
+  { time: 326.73, text: "喝甚麼可樂不加冰" },
+  { time: 329.34, text: "我先乾為敬" },
+  { time: 330.58, text: "三杯克寧奶粉加生啤" },
+  { time: 333.11, text: "那邊的小姐姐" },
+  { time: 334.56, text: "我要坐你大腿玩親親" },
+  { time: 336.11, text: "還是你坐我大腿上" },
+  { time: 338.22, text: "一起看YOYO TV" },
+  { time: 339.68, text: "I am so dirty baby" },
+  { time: 343.46, text: "I am your dirty baby" },
+  { time: 347.16, text: "I am so dirty baby" },
+  { time: 350.86, text: "I am your dirty baby" },
+  { time: 355.61, text: "那隻貓看我的眼神有點攻擊性" },
+  { time: 359.31, text: "我等等就把牠" },
+  { time: 360.91, text: "埋到貓砂裡" },
+  { time: 363.16, text: "那邊的老爺爺" },
+  { time: 364.54, text: "不要再飄來飄去" },
+  { time: 366.08, text: "看我砸了祢的牌位" },
+  { time: 367.89, text: "用童子尿超度祢" },
+  { time: 369.76, text: "I am so dirty" },
+  { time: 373.37, text: "I am your dirty baby" },
+  { time: 377.26, text: "I am so dirty" },
+  { time: 379.74, text: "pee on you" },
+  { time: 381.62, text: "dirty baby" },
+  { time: 385.25, text: "Tell me baby" },
+  { time: 386.92, text: "I am your baby" },
+  { time: 389.07, text: "dirty baby" },
+       { time: 420, text: "～來賓請掌聲鼓勵～" }
+          ]
+  },
+homerun: {
+    videoId: 'wV9S4WgConk',
+  startSeconds:13, 
+    lyrics: [{ time: 14.08, text: "Woo~oh oh~oh oh oh" },
+{ time: 23.71, text: "Woo~oh oh~oh oh oh" },
+{ time: 30.93, text: "我只會打全壘打!" },
+{ time: 32.69, text: "Woo~oh oh~oh oh oh" },
+{ time: 36.21, text: "Woo~oh oh~oh oh oh" },
+{ time: 41.96, text: "九局下半 落後三分" },
+{ time: 45.16, text: "拯救危機是我的宿命" },
+{ time: 49.09, text: "滿壘局面 吶喊激情" },
+{ time: 51.98, text: "我天生神力" },
+{ time: 54.01, text: "我只會打全壘打" },
+{ time: 56.09, text: "我深呼吸" },
+{ time: 57.61, text: "進到了flow裡" },
+{ time: 59.26, text: "像有超能力連時間幾乎暫停" },
+{ time: 63.92, text: "一切都逃不過我的觀察力" },
+{ time: 74.56, text: "投手的下巴好像有一顆超大的痣" },
+{ time: 78.74, text: "捕手的呼吸聲像我以前養的西施" },
+{ time: 83.15, text: "打擊區的白線好像畫得不是很直" },
+{ time: 87.21, text: "裁判的體香劑是草莓味還是荔枝" },
+{ time: 90.87, text: "教練的暗號手勢看起來在比中指" },
+{ time: 94.5, text: "板凳區清潔阿姨開始打掃和收拾" },
+{ time: 98.27, text: "我的球棒靠近看原來這麼大一支" },
+{ time: 101.92, text: "我的思緒像一首打油詩不好意思" },
+{ time: 105.17, text: "No 為什麼如此分心" },
+{ time: 110.94, text: "明明你這麼靠近" },
+{ time: 114.35, text: "我卻無法克制自己" },
+{ time: 116.52, text: "不去在意那些無關緊要的事情" },
+{ time: 120.14, text: "No 為什麼如此分心" },
+{ time: 125.32, text: "明明你這麼靠近" },
+{ time: 128.69, text: "難道是我不肯承認" },
+{ time: 130.87, text: "把你當作了理所當然的空氣" },
+{ time: 137.97, text: "Strike!" },
+{ time: 140.38, text: "Woo~oh oh~oh oh oh" },
+{ time: 143.92, text: "Woo~oh oh~oh oh oh" },
+{ time: 149.22, text: "落空落空我在放空" },
+{ time: 150.9, text: "好球好球 一好球" },
+{ time: 152.6, text: "我他媽到底在想什麼" },
+{ time: 154.62, text: "我要打全壘打" },
+{ time: 157.23, text: "我要打全壘打" },
+{ time: 163.62, text: "一壘上的隊友他褲子膝蓋有點黑" },
+{ time: 167.33, text: "二壘上的隊友他宿醉還在打哈欠" },
+{ time: 171.13, text: "三壘上的隊友拿手機自拍還比耶" },
+{ time: 174.97, text: "他腳邊有一隻土撥鼠在吃麵包屑" },
+{ time: 178.57, text: "剛剛被蚊子叮的地方還沒塗口水" },
+{ time: 182.25, text: "早餐吃完之後的我還沒有用牙線" },
+{ time: 185.93, text: "右手小拇指的指甲三個月沒有剪" },
+{ time: 189.58, text: "昨天去玩夜店瞳孔放大片忘了卸" },
+{ time: 195.65, text: "No 為什麼如此分心" },
+{ time: 201.37, text: "明明你這麼靠近" },
+{ time: 204.71, text: "我卻無法克制自己" },
+{ time: 206.86, text: "不去在意那些無關緊要的事情" },
+{ time: 210.45, text: "No 為什麼如此分心" },
+{ time: 215.53, text: "明明你這麼靠近" },
+{ time: 218.81, text: "難道是我不肯承認" },
+{ time: 221.01, text: "把你當作了理所當然的空氣" },
+{ time: 230.99, text: "Strike!" },
+{ time: 233.4, text: "Woo~oh oh~oh oh oh" },
+{ time: 236.4, text: "Woo~oh oh~oh oh oh" },
+{ time: 241.63, text: "落空落空我在放空" },
+{ time: 243.34, text: "好球好球 兩好球" },
+{ time: 245.06, text: "我他媽到底在想什麼" },
+{ time: 247.06, text: "我要打全壘打" },
+{ time: 249.7, text: "我要打全壘打" },
+{ time: 253.04, text: "我要打全壘打" },
+{ time: 261.02, text: "啦啦隊裡有一個女生舞步全跳錯" },
+{ time: 264.49, text: "觀眾席還有人求婚真不會看時候" },
+{ time: 268.22, text: "旁邊的情侶已經熱吻了三個鐘頭" },
+{ time: 271.89, text: "原來是我的好哥們和我的前女友" },
+{ time: 275.45, text: "家裡的地上有一塊磁磚它有點PO" },
+{ time: 278.85, text: "冰箱裡過期的美乃滋 我忘了丟" },
+{ time: 282.59, text: "浴室裡的水龍頭轉了三圈還是鬆" },
+{ time: 286.07, text: "前幾天訂的MOMO今天沒辦法收" },
+{ time: 289.55, text: "老婆的瑜伽教練腹肌真的有點多" },
+{ time: 292.89, text: "女兒的每個對象刺青上都有關公" },
+{ time: 296.37, text: "岳母她每次看著我都會含情脈脈" },
+{ time: 299.75, text: "兒子的偶像不是我是大谷翔平No" },
+{ time: 308.52, text: "是大谷翔平不是我" },
+{ time: 319.02, text: "打擊出去" },
+{ time: 322.49, text: "越飛越遠" },
+{ time: 324.14, text: "越飛越遠" },
+{ time: 326.99, text: "出、去、啦!" },
+{ time: 330.63, text: "Woo~oh oh~oh oh oh" },
+{ time: 334.18, text: "Woo~oh oh~oh oh oh" },
+{ time: 339.69, text: "滿貫滿貫全壘打" },
+{ time: 341.46, text: "重砲炸裂全壘打" },
+{ time: 343.19, text: "就說我只會打全壘打" },
+{ time: 345.07, text: "怎麼樣我都打全壘打" },
+{ time: 350.72, text: "一壘 二壘 三壘 我慢慢走" },
+{ time: 352.54, text: "一分 兩分 三分 不急著收" },
+{ time: 358.06, text: "看板的螢幕裂痕有點多" },
+{ time: 359.57, text: "等一下要提醒他們記得修" },
+{ time: 365.21, text: "家裡冷氣風量有點弱" },
+{ time: 367.07, text: "主機冷媒該不會有點漏" },
+{ time: 372.47, text: "也許窗戶關不緊有點縫" },
+{ time: 374.04, text: "或是我自己不小心按到送風" },
+{ time: 377.82, text: "隊友們的擁抱制服有點臭" },
+{ time: 379.47, text: "不用把我拋起來因為有點重" },
+{ time: 381.12, text: "我承認我的分心太失控" },
+{ time: 382.94, text: "但是那些全壘打真的太愛我" },
+{ time: 386.1, text: "我只會打全壘打" },
+{ time: 389.75, text: "我只會打全壘打" },
+      { time: 420, text: "～來賓請掌聲鼓勵～" }
+
+          ]
+  },
+invisible: {
+    videoId: 'IViVCxSffG4',
+  startSeconds:13, 
+    lyrics: [{ time: 26.31, text: "一個人去買永和豆漿" },
+  { time: 32.91, text: "服務生丟菜單要我自己劃" },
+  { time: 35.81, text: "點了燒餅油條加鹹豆漿" },
+  { time: 38.62, text: "他給我蛋餅菜包加無糖紅茶" },
+  { time: 42.34, text: "一個人去逛了迪卡儂" },
+  { time: 45.19, text: "看到還不錯的防曬外套" },
+  { time: 48.15, text: "試衣間裡的我想換XXL" },
+  { time: 51.27, text: "店員卻進來看鏡子擠痘痘" },
+  { time: 55.97, text: "原來在你的眼裡" },
+  { time: 58.97, text: "我的存在感趨近於零" },
+  { time: 62.69, text: "原來在你的眼裡" },
+  { time: 65.17, text: "我只是空氣而已" },
+  { time: 69.56, text: "和女朋友一起去看恐怖電影" },
+  { time: 72.52, text: "她被嚇到的時候 手握超緊" },
+  { time: 75.54, text: "結果她握的是旁邊刺青弟弟" },
+  { time: 78.58, text: "握著我的是" },
+  { time: 79.83, text: "另一個阿姨" },
+  { time: 81.51, text: "還記得跟你去吃沙茶火鍋" },
+  { time: 84.49, text: "店員帶著你去坐了一人座" },
+  { time: 87.56, text: "你一鍋我一鍋也沒什麼" },
+  { time: 90.19, text: "但隔壁的卻吃起了我點的肉" },
+  { time: 93.39, text: "原來在你的眼裡" },
+  { time: 96.34, text: "我不在你的眼裡" },
+  { time: 99.66, text: "我～只是盤子而已" },
+  { time: 105.82, text: "我～我就在你眼前" },
+  { time: 112.21, text: "你～你他媽是瞎了眼" },
+  { time: 119.73, text: "下班回家發現你和別人在床上" },
+  { time: 125.62, text: "我站在旁邊玩傳說對決贏了一百場" },
+  { time: 131.32, text: "我累了躺下你們三個直接壓在我身上" },
+  { time: 139.82, text: "原來在你的眼裡" },
+  { time: 141.67, text: "我只是一張床墊而已" },
+  { time: 146.21, text: "我就在這裡卻又不在這裡" },
+  { time: 150.24, text: "矛盾的不在場證明" },
+  { time: 155.47, text: "" },
+  { time: 169.36, text: "幼稚園的我玩捉迷藏" },
+  { time: 171.75, text: "站在桌子上也沒人找到過" },
+  { time: 174.84, text: "放學爸爸媽媽來接我" },
+  { time: 177.52, text: "就牽著我旁邊的同學走" },
+  { time: 180.39, text: "蚊子 降落在我的肩膀" },
+  { time: 183.22, text: "一隻兩隻三隻不叮我也不癢" },
+  { time: 186.30, text: "小強停在我額頭上" },
+  { time: 189.24, text: "我老爸直接拿拖鞋來打" },
+  { time: 192.19, text: "原來在你的眼裡" },
+  { time: 195.05, text: "我的存在感趨近於零" },
+  { time: 198.07, text: "原來在你的眼裡" },
+  { time: 200.35, text: "我只是牆壁而已" },
+  { time: 204.38, text: "老師說有問題嗎 我舉手" },
+  { time: 207.04, text: "他問了十次之後卻搖搖頭" },
+  { time: 210.37, text: "學校大隊接力 下一棒是我" },
+  { time: 212.92, text: "我的上一棒卻直接略過我" },
+  { time: 215.84, text: "籃球比賽我都不用防守" },
+  { time: 218.62, text: "四局比完也都沒拿過球" },
+  { time: 221.77, text: "場上十個人再多一個我" },
+  { time: 224.50, text: "同學裁判從來都沒發現過" },
+  { time: 227.50, text: "原來在你的眼裡" },
+  { time: 230.45, text: "我不在你的眼裡" },
+  { time: 233.45, text: "我～只是背景而已" },
+  { time: 239.73, text: "我～我就在你眼前" },
+  { time: 245.58, text: "你～你他媽是瞎了眼" },
+  { time: 252.79, text: "失戀的我騎著機車 時速一百六" },
+  { time: 258.34, text: "我在國道三號測速照相" },
+  { time: 261.71, text: "一張罰單都沒有" },
+  { time: 264.49, text: "路邊臨檢都闖過去" },
+  { time: 267.48, text: "警察只是偏頭痛" },
+  { time: 272.78, text: "原來在你的眼裡" },
+  { time: 274.66, text: "我只是一陣冷風而已" },
+  { time: 279.16, text: "我就在這裡卻又不在這裡" },
+  { time: 288.41, text: "我去銀行櫃檯把槍掏出來" },
+  { time: 290.93, text: "指著行員要他馬上給我三千萬" },
+  { time: 293.73, text: "他直接按鈴叫下一位的號碼牌" },
+  { time: 296.56, text: "一個阿婆把我擠開亮出菜刀來" },
+  { time: 299.42, text: "還在我的槍管上面掛她的菜籃" },
+  { time: 302.34, text: "大家都自動自發把金庫全打開" },
+  { time: 305.13, text: "看著她用鈔票把我口袋塞滿滿" },
+  { time: 308.02, text: "阿婆一邊提著我一邊騎Ubike" },
+  { time: 313.72, text: "原來在你的眼裡" },
+  { time: 315.61, text: "我只是一個菜籃而已" },
+  { time: 319.98, text: "我就在這裡卻又不在這裡" },
+  { time: 324.14, text: "矛盾的不在場證明" },
+  { time: 328.49, text: "" },
+  { time: 341.24, text: "一個人去逛了IKEA" },
+  { time: 343.86, text: "看到自己喜歡的沙發" },
+  { time: 346.73, text: "想說試看看來坐一下" },
+  { time: 349.61, text: "一對情侶直接坐在我身上" },
+  { time: 352.56, text: "一個人去唱KTV" },
+  { time: 355.41, text: "走進別人包廂點了《針線情》" },
+  { time: 358.46, text: "想用麥克風唱出我的傷心" },
+  { time: 361.33, text: "但沒有一個人聽見我的聲音" },
+  { time: 364.57, text: "唱沒幾句歌就被人卡下去" },
+  { time: 369.87, text: "" },
+  { time: 371.52, text: "原來在你的眼裡" },
+  { time: 373.97, text: "我的存在感趨近於零" },
+  { time: 378.62, text: "原來在你的眼裡" },
+  { time: 383.42, text: "" },
+  { time: 387.42, text: "我不在你的眼裡" },
+              { time: 392, text: "～來賓請掌聲鼓勵～" }
+          ]
+  },
+gettingold: {
+    videoId: '0VhNVcUf7hk',
+  startSeconds:11, 
+    lyrics: [{ time: 43.67, text: "輕狂的回憶" },
+  { time: 47.00, text: "忽明忽滅" },
+  { time: 50.31, text: "回頭是那青春的餘焰" },
+  { time: 56.91, text: "曾經的義無反顧" },
+  { time: 59.74, text: "也懂了力不從心的妥協" },
+  { time: 65.61, text: "跟著別人說著" },
+  { time: 67.91, text: "已是不惑之年" },
+  { time: 70.59, text: "而鏡子裡的笑容" },
+  { time: 73.59, text: "仍藏著疑惑的眼" },
+  { time: 77.18, text: "" },
+  { time: 79.44, text: "終於到你有了點年紀" },
+  { time: 82.99, text: "才明白" },
+  { time: 84.71, text: "找不到的答案" },
+  { time: 86.74, text: "一直都在那裡" },
+  { time: 90.62, text: "" },
+  { time: 92.77, text: "找不到的眼鏡" },
+  { time: 97.19, text: "原來一直都在頭頂" },
+  { time: 102.61, text: "找不到的手機" },
+  { time: 106.79, text: "原來一直握在手裡" },
+  { time: 112.16, text: "找不到的充電器" },
+  { time: 116.24, text: "原來一直都在插座上" },
+  { time: 121.57, text: "找不到的遙控器" },
+  { time: 125.81, text: "原來一直都在屁股的縫縫裡" },
+  { time: 131.74, text: "找不到的理想" },
+  { time: 133.41, text: "原來你一直都在假裝" },
+  { time: 136.62, text: "找不到的愛人" },
+  { time: 138.32, text: "原來一直都在別人身旁" },
+  { time: 142.30, text: "初老的證明題" },
+  { time: 144.81, text: "不斷提醒" },
+  { time: 145.77, text: "我已不年輕" },
+  { time: 146.90, text: "我已不年輕" },
+  { time: 148.14, text: "但我撇過頭去" },
+  { time: 152.19, text: "初老的證明題" },
+  { time: 154.64, text: "不斷提醒" },
+  { time: 155.65, text: "我已不年輕" },
+  { time: 156.82, text: "我已不年輕" },
+  { time: 158.10, text: "能不能作弊" },
+  { time: 160.94, text: "" },
+  { time: 166.56, text: "如果人生終究是得要繼續" },
+  { time: 170.50, text: "你要學著忘記" },
+  { time: 172.94, text: "讓自己輕一輕" },
+  { time: 176.95, text: "打開了冰箱" },
+  { time: 181.43, text: "忘了要拿什麼東西" },
+  { time: 186.97, text: "張開了嘴巴" },
+  { time: 191.09, text: "忘了想說什麼事情" },
+  { time: 196.47, text: "坐在馬桶上面" },
+  { time: 200.67, text: "忘了要大什麼東西" },
+  { time: 206.17, text: "難得叫了小姐" },
+  { time: 210.45, text: "忘了脫光光要做什麼事情" },
+  { time: 216.37, text: "到了家門口" },
+  { time: 217.90, text: "忘了鑰匙還在機車上" },
+  { time: 220.45, text: "想回去拿卻記不得" },
+  { time: 222.85, text: "那機車停在哪" },
+  { time: 225.25, text: "定位搜尋發現它" },
+  { time: 227.80, text: "正前往彰化" },
+  { time: 230.05, text: "想罵髒話" },
+  { time: 231.22, text: "卻只記得" },
+  { time: 232.27, text: "什麼什麼什麼什麼你媽" },
+  { time: 238.45, text: "初老的證明題" },
+  { time: 240.95, text: "不斷提醒" },
+  { time: 241.97, text: "我已不年輕" },
+  { time: 243.18, text: "我已不年輕" },
+  { time: 244.39, text: "但我不懂反省" },
+  { time: 248.46, text: "初老的證明題" },
+  { time: 250.86, text: "不斷提醒" },
+  { time: 251.84, text: "我已不年輕" },
+  { time: 253.04, text: "我已不年輕" },
+  { time: 254.29, text: "能不能作弊" },
+  { time: 256.56, text: "" },
+  { time: 262.17, text: "光是坐下起立 膝蓋就發出聲音" },
+  { time: 264.61, text: "光是搭個電梯 耳鳴就一天不停" },
+  { time: 267.57, text: "光是打個噴嚏 竟然會同時放屁" },
+  { time: 271.71, text: "光是爬個樓梯 就快要喘到窒息" },
+  { time: 274.16, text: "光是社交聯誼 就讓人虛脫無力" },
+  { time: 277.12, text: "光是看個A片 兩個小時過去還沒硬" },
+  { time: 282.31, text: "初老的證明題" },
+  { time: 284.77, text: "不斷提醒" },
+  { time: 285.79, text: "我已不年輕" },
+  { time: 286.95, text: "我已不年輕" },
+  { time: 288.25, text: "但有什麼關係" },
+  { time: 290.25, text: "<Rap>" },
+  { time: 290.93, text: "流行的韓劇 看了十分鐘就沒耐心" },
+  { time: 293.37, text: "流行的短影音 只剩美女還有共鳴" },
+  { time: 295.73, text: "流行的饒舌歌 速度太快我只聽得到" },
+  { time: 298.10, text: "check check check 這一句" },
+  { time: 299.97, text: "什麼吉依卡哇" },
+  { time: 300.91, text: "我只聽過咻比嘟哇" },
+  { time: 302.37, text: "什麼虛擬貨幣" },
+  { time: 303.20, text: "我只會買保健食品" },
+  { time: 304.68, text: "什麼Chat GPT" },
+  { time: 305.73, text: "我只會上PTT" },
+  { time: 306.81, text: "能跟上的流行" },
+  { time: 307.82, text: "只剩流感和流鼻涕" },
+  { time: 310.70, text: "初老的證明題" },
+  { time: 316.68, text: "我已不年輕" },
+  { time: 320.65, text: "初老的證明題" },
+  { time: 325.38, text: "" },
+  { time: 341.71, text: "輕狂的回憶忽明忽滅" },
+  { time: 343.90, text: "回頭是我那青春的餘焰" },
+  { time: 347.23, text: "曾經的義無反顧" },
+  { time: 348.58, text: "也懂了什麼叫力不從心的妥協" },
+  { time: 352.31, text: "跟著別人說著" },
+  { time: 355.02, text: "已是不惑之年" },
+  { time: 357.89, text: "鏡子裡的笑容" },
+  { time: 360.57, text: "仍藏著疑惑的眼" },
+              { time: 375, text: "～來賓請掌聲鼓勵～" }
+          ]
+  
+  },
+nevergiveup: {
+    videoId: 'TkzaUIbq_ko',
+  startSeconds:25, 
+    lyrics: [{ time: 28.21, text: "<intro>" },
+  { time: 29.24, text: "Ladies and gentlemen" },
+  { time: 32.76, text: "你這輩子多少都放棄過什麼" },
+  { time: 35.62, text: "你放棄過" },
+  { time: 36.44, text: "你放棄過" },
+  { time: 37.97, text: "我也放棄過" },
+  { time: 41.11, text: "但接下來這個男人" },
+  { time: 42.71, text: "This man, this real man" },
+  { time: 46.34, text: "他從不放棄" },
+  { time: 47.61, text: "他堅持到底" },
+  { time: 49.13, text: "他 never stop" },
+  { time: 50.86, text: "他會 keep going" },
+  { time: 53.49, text: "讓我們歡迎 Mr. Never Give Up" },
+  { time: 64.81, text: "I will keep it baby" },
+  { time: 67.76, text: "You can't stop me" },
+  { time: 71.49, text: "Come on" },
+  { time: 72.51, text: "我的襪子破了五個洞" },
+  { time: 75.72, text: "除了小拇指" },
+  { time: 77.12, text: "其他都在外頭" },
+  { time: 78.44, text: "Oh yeah~" },
+  { time: 80.46, text: "我還想穿著它" },
+  { time: 81.67, text: "跑幾場馬拉松" },
+  { time: 84.23, text: "Run run don't stop baby" },
+  { time: 86.09, text: "他還沒放棄" },
+  { time: 87.49, text: "我怎麼能夠放手" },
+  { time: 89.69, text: "I won't give it up I won't give it up Uh~" },
+  { time: 93.18, text: "我的內褲像被狗咬過" },
+  { time: 96.69, text: "遮住的地方只剩屁股溝" },
+  { time: 101.56, text: "我還想夾著它" },
+  { time: 102.82, text: "再去找幾個妞" },
+  { time: 105.09, text: "I got the balls I got the balls" },
+  { time: 107.28, text: "它還沒放棄" },
+  { time: 108.61, text: "我怎麼能夠放手" },
+  { time: 110.87, text: "I won't give it up" },
+  { time: 112.36, text: "I won't give it up" },
+  { time: 116.32, text: "我不放棄 我還要繼續" },
+  { time: 119.22, text: "你別懷疑" },
+  { time: 120.73, text: "別讓他們限制你的心" },
+  { time: 123.42, text: "你要相信你的可能性" },
+  { time: 126.82, text: "所謂的極限只是另一場的騙局" },
+  { time: 130.48, text: "I won't give it up" },
+  { time: 132.03, text: "I won't give it up" },
+  { time: 134.11, text: "內褲和襪子你都別想丟掉它" },
+  { time: 137.54, text: "I won't give it up" },
+  { time: 139.13, text: "I won't give it up" },
+  { time: 141.26, text: "我可以失去你" },
+  { time: 142.64, text: "但不能沒有它" },
+  { time: 145.99, text: "" },
+  { time: 149.04, text: "I will keep it" },
+  { time: 152.49, text: "You can't stop me" },
+  { time: 156.33, text: "Come on" },
+  { time: 157.29, text: "我的衛生紙" },
+  { time: 158.59, text: "放口袋被洗過" },
+  { time: 160.64, text: "皺得像石頭" },
+  { time: 162.42, text: "攤開還可以用" },
+  { time: 165.72, text: "我還想留給你" },
+  { time: 166.81, text: "擦去眼淚與難過" },
+  { time: 169.66, text: "Don't cry baby don't cry" },
+  { time: 171.69, text: "它還沒放棄" },
+  { time: 173.02, text: "我怎麼能夠放手" },
+  { time: 175.26, text: "I won't give it up" },
+  { time: 176.79, text: "I won't give it up" },
+  { time: 178.94, text: "我的麥香紅" },
+  { time: 180.36, text: "就算喝完後" },
+  { time: 182.41, text: "只要還有吸管" },
+  { time: 184.21, text: "我再吸三個鐘頭" },
+  { time: 187.39, text: "我還想咬著它" },
+  { time: 188.72, text: "一直到我臨終" },
+  { time: 191.21, text: "Over my dead body" },
+  { time: 193.19, text: "它還沒放棄" },
+  { time: 194.62, text: "我怎麼能夠放手" },
+  { time: 196.92, text: "I won't give it up" },
+  { time: 198.50, text: "I won't give it up" },
+  { time: 202.54, text: "我不放棄 我還要繼續" },
+  { time: 205.49, text: "你別懷疑" },
+  { time: 207.07, text: "別讓他們限制你的心" },
+  { time: 209.84, text: "你要相信你的可能性" },
+  { time: 213.36, text: "所謂的極限只是另一場的騙局" },
+  { time: 217.05, text: "I won't give it up" },
+  { time: 218.52, text: "I won't give it up" },
+  { time: 220.57, text: "吸管和衛生紙你都別想丟掉它" },
+  { time: 224.37, text: "I won't give it up" },
+  { time: 225.80, text: "I won't give it up" },
+  { time: 227.94, text: "我可以失去你" },
+  { time: 229.34, text: "但不能沒有它" },
+  { time: 232.69, text: "" },
+  { time: 235.87, text: "I will keep it" },
+  { time: 239.31, text: "You can't stop me" },
+  { time: 243.51, text: "Come on" },
+  { time: 244.51, text: "🕺🕺🕺🕺🕺" },
+  { time: 258.62, text: "我現在要跳舞" },
+  { time: 260.33, text: "我現在要跳舞" },
+  { time: 262.31, text: "我跳的是什麼舞" },
+  { time: 264.07, text: "就是什麼舞" },
+  { time: 266.01, text: "你說這是扭屁股" },
+  { time: 267.77, text: "這是扭屁股" },
+  { time: 269.79, text: "我是在拉內褲" },
+  { time: 271.42, text: "那條破內褲" },
+  { time: 273.48, text: "我的破機車" },
+  { time: 275.32, text: "冬天發不動" },
+  { time: 277.01, text: "我踩踩踩踩踩踩踩" },
+  { time: 279.14, text: "踩過了幾個秋" },
+  { time: 281.09, text: "我還想騎著它" },
+  { time: 282.67, text: "去買麥香紅" },
+  { time: 284.86, text: "我踩踩踩踩踩" },
+  { time: 286.47, text: "踩到了白了頭" },
+  { time: 288.24, text: "我的腎結石" },
+  { time: 290.17, text: "一直跟著我" },
+  { time: 291.89, text: "我痛痛痛痛痛痛痛" },
+  { time: 293.82, text: "我照樣吃火鍋" },
+  { time: 296.05, text: "我還想帶著它" },
+  { time: 297.61, text: "再去吃燒肉" },
+  { time: 299.74, text: "我痛痛痛痛痛" },
+  { time: 301.34, text: "痛痛痛吃痛" },
+  { time: 303.40, text: "它還沒放棄" },
+  { time: 304.79, text: "我怎麼能夠放手" },
+  { time: 307.05, text: "I won't give it up" },
+  { time: 308.70, text: "I won't give it up" },
+  { time: 313.45, text: "" },
+  { time: 316.77, text: "我不放棄" },
+  { time: 318.45, text: "我還要繼續 你別懷疑" },
+  { time: 321.46, text: "別讓他們限制你的心" },
+  { time: 324.42, text: "你要相信你的可能性" },
+  { time: 328.04, text: "所謂的極限只是另一場的騙局" },
+  { time: 331.72, text: "I won't give it up" },
+  { time: 333.43, text: "I won't give it up" },
+  { time: 335.49, text: "機車和腎結石你都別想丟掉它" },
+  { time: 339.17, text: "I won't give it up" },
+  { time: 340.78, text: "I won't give it up" },
+  { time: 342.87, text: "我可以失去你" },
+  { time: 344.22, text: "但不能沒有它" },
+  { time: 348.15, text: "" },
+  { time: 348.15, text: "他的腳在抖" },
+  { time: 350.05, text: "他的腳在抖" },
+  { time: 351.85, text: "他沒有跟節奏" },
+  { time: 353.49, text: "也沒有要中風" },
+  { time: 355.58, text: "他的腳在抖" },
+  { time: 357.43, text: "這男人不怕窮" },
+  { time: 359.32, text: "他就是不受控" },
+  { time: 360.95, text: "要抖到世紀末" },
+  { time: 363.03, text: "他的肝在抖" },
+  { time: 365.00, text: "他的肝在抖" },
+  { time: 366.78, text: "他總是在工作都沒有放假過" },
+  { time: 370.66, text: "他的肝在抖" },
+  { time: 372.36, text: "這男人死不休" },
+  { time: 374.61, text: "他覺得甘霖娘" },
+  { time: 376.26, text: "老雞掰咖賀" },
+  { time: 379.31, text: "" },
+  { time: 381.86, text: "I won't give it up" },
+  { time: 383.71, text: "I won't give it up" },
+  { time: 385.81, text: "抖腳和爆肝你都別想丟掉它" },
+  { time: 389.26, text: "I won't give it up" },
+  { time: 391.18, text: "I won't give it up" },
+  { time: 393.24, text: "我可以失去你" },
+  { time: 394.71, text: "但不能沒有它" },
+  { time: 398.54, text: "" },
+  { time: 401.36, text: "I will keep it" },
+  { time: 404.64, text: "You can'stop me" },
+  { time: 408.47, text: "Come on" },
+  { time: 411.45, text: "What?" },
+  { time: 413.27, text: "" },
+  { time: 416.72, text: "還要唱什麼" },
+  { time: 418.62, text: "還要唱什麼" },
+  { time: 420.47, text: "你不放過我" },
+  { time: 422.34, text: "你不放過我" },
+  { time: 424.29, text: "不要看著我" },
+  { time: 426.22, text: "不要看著我" },
+  { time: 428.14, text: "拜託你住手" },
+  { time: 430.07, text: "拜託你住手" },
+  { time: 432.14, text: "他還沒放棄" },
+  { time: 433.59, text: "我怎麼能夠放手" },
+  { time: 437.45, text: "I won't give it up" },
+              { time: 441, text: "～來賓請掌聲鼓勵～" }
+          ]
+  },
+dumb: {
+    videoId: 'El6CgTIbdfg',
+  startSeconds:11, 
+    lyrics: [
+{ time: 13.56, text: "<intro>" },
+  { time: 26.00, text: "おねがいします" },
+  { time: 37.24, text: "有些男人像毒藥" },
+  { time: 39.31, text: "遇到了" },
+  { time: 41.26, text: "想戒卻戒不掉" },
+  { time: 43.91, text: "有些男人像瀉藥" },
+  { time: 46.44, text: "遇到了" },
+  { time: 47.93, text: "記得拉乾淨就好" },
+  { time: 50.04, text: "" },
+  { time: 69.82, text: "妳說妳想去看星星" },
+  { time: 73.37, text: "想抱著他看流星雨" },
+  { time: 77.44, text: "他溫柔地看著妳說" },
+  { time: 80.64, text: "我明天中午帶妳去" },
+  { time: 83.21, text: "中午哪來的星星" },
+  { time: 88.07, text: "難道是太陽那顆星" },
+  { time: 91.59, text: "兩個人戴著墨鏡站在屋頂" },
+  { time: 95.77, text: "出門前說慢慢來沒關係" },
+  { time: 99.02, text: "願意等候有體貼的心" },
+  { time: 103.04, text: "他站在門口看著妳說" },
+  { time: 106.19, text: "那我先前往目的地" },
+  { time: 108.74, text: "結果不是要等妳" },
+  { time: 113.19, text: "多待一秒鐘都不願意" },
+  { time: 117.15, text: "看他坐上Uber尊榮離去" },
+  { time: 121.34, text: "難得邀請妳去看電影" },
+  { time: 124.47, text: "老派的約會也很美麗" },
+  { time: 128.55, text: "他買了電影票跟妳說" },
+  { time: 131.79, text: "我看完我的先去誠品" },
+  { time: 134.29, text: "竟然不是同一部電影" },
+  { time: 138.65, text: "只是各看各的而已" },
+  { time: 142.50, text: "拿著爆米花走進IMAX廳" },
+  { time: 146.60, text: "夜店裡有人搭訕妳" },
+  { time: 149.67, text: "好想看他吃醋的表情" },
+  { time: 153.69, text: "他有點生氣的跟妳說" },
+  { time: 156.84, text: "我路上也被警察關心" },
+  { time: 159.17, text: "臨檢才不算搭訕你" },
+  { time: 163.45, text: "是懷疑你不是喜歡你" },
+  { time: 167.31, text: "看他被押上警車歐伊歐伊歐伊" },
+  { time: 172.36, text: "這個男人" },
+  { time: 173.78, text: "就是個北七" },
+  { time: 178.46, text: "他說愛你" },
+  { time: 179.96, text: "就當他放屁" },
+  { time: 184.68, text: "這個男人" },
+  { time: 186.23, text: "就是個北七" },
+  { time: 191.26, text: "北七的愛讓妳全身過敏" },
+  { time: 193.26, text: "英文叫做allergy" },
+  { time: 196.41, text: "" },
+  { time: 197.53, text: "生日他寫卡片給妳" },
+  { time: 200.74, text: "一筆一畫都充滿感情" },
+  { time: 204.87, text: "打開卡片上面寫著" },
+  { time: 207.14, text: "" },
+  { time: 209.01, text: "Happy" },
+  { time: 210.52, text: "Birthday 到底在哪裡" },
+  { time: 214.76, text: "一封信寫不到一句" },
+  { time: 218.55, text: "在看守所那麼閒還不用心" },
+  { time: 222.75, text: "吃了妳親手做的料理" },
+  { time: 225.90, text: "合他的胃口吃得超乾淨" },
+  { time: 229.92, text: "他一臉滿足走到廚房說" },
+  { time: 232.92, text: "我碗放這裡記得洗" },
+  { time: 235.50, text: "到底 到底還有沒有天理" },
+  { time: 239.84, text: "被放出來沒有一點感激" },
+  { time: 243.77, text: "還給我幫你先付的保釋金" },
+  { time: 247.94, text: "為了紀念他說想刺青" },
+  { time: 251.13, text: "把最愛的刺在手臂不忘記" },
+  { time: 254.66, text: "" },
+  { time: 255.62, text: "結果他右手刺了" },
+  { time: 258.29, text: "是誰住在深海的大鳳梨裡" },
+  { time: 260.71, text: "海綿寶寶和派大星" },
+  { time: 265.02, text: "沒想到被他們比下去" },
+  { time: 268.72, text: "左手還刺了一二三四代火影" },
+  { time: 273.15, text: "他把一只戒指放妳手裡" },
+  { time: 276.22, text: "請妳緊握這一生的約定" },
+  { time: 280.30, text: "他深情的看著妳說" },
+  { time: 283.41, text: "數到三妳看在我嘴裡" },
+  { time: 285.80, text: "變魔術也不看一看時機" },
+  { time: 290.32, text: "騙妳眼淚還笑嘻嘻" },
+  { time: 294.04, text: "最後竟然不小心吞下去" },
+  { time: 298.14, text: "" },
+  { time: 299.24, text: "這個男人" },
+  { time: 300.62, text: "就是個北七" },
+  { time: 305.39, text: "妳別怪他" },
+  { time: 306.59, text: "只是少八根筋" },
+  { time: 311.44, text: "這個男人" },
+  { time: 312.82, text: "就是個北七" },
+  { time: 317.67, text: "甩掉以後記得要去收驚" },
+  { time: 323.89, text: "這個男人" },
+  { time: 325.22, text: "就是個北七" },
+  { time: 329.90, text: "還能在一起" },
+  { time: 331.20, text: "妳也病得不輕" },
+  { time: 335.95, text: "還能在一起" },
+  { time: 338.03, text: "你們也算是北…" },
+  { time: 340.13, text: "靈魂伴侶" },
+       { time: 350, text: "～來賓請掌聲鼓勵～" }
+          ]
+  }
+    };
+
+    let player;
+    let currentSongKey = 'fizzleout';
+    let lyricsData = playlist[currentSongKey].lyrics;
+
+    const currentTextEl = document.getElementById('current-text');
+    const nextTextEl = document.getElementById('next-text');
+
+ // 載入 YouTube API
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    videoId: playlist[currentSongKey].videoId,
+    playerVars: {
+      'playsinline': 1,
+      'rel': 0,
+      'cc_load_policy': 0,
+      'hl': 'zh-TW',
+      'start': playlist[currentSongKey].startSeconds || 0 // 👈 補上了逗號
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+// 關閉字幕的核心指令
+function disableCaptions() {
+  if (!player) return;
+  try {
+    // 1. 強制切換字幕軌道為關閉（特定 API 功能）
+    if (typeof player.setOption === 'function') {
+      player.setOption('captions', 'track', {});
+    }
+    // 2. 直接卸載字幕模組（最為徹底）
+    if (typeof player.unloadModule === 'function') {
+      player.unloadModule('captions');
+    }
+  } catch (e) {
+    console.log("字幕關閉嘗試中...", e);
+  }
+}
+
+function onPlayerReady() {
+  disableCaptions();
+
+  // 👈 確保初次載入時能精準 Jump 到指定秒數
+  const startSec = playlist[currentSongKey].startSeconds || 0;
+  if (startSec > 0) {
+    player.seekTo(startSec, true);
+  }
+
+  setInterval(checkTime, 100);
+}
+
+// 當影片狀態改變（如按下播放時）再次確保字幕關閉
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.PLAYING) {
+    disableCaptions();
+  }
+}
+
+// 切換歌曲邏輯
+function changeSong(songKey) { 
+  if (!playlist[songKey]) return; 
+  currentSongKey = songKey; 
+  lyricsData = playlist[songKey].lyrics; 
+
+  if (player && typeof player.loadVideoById === 'function') { 
+    // 切換影片並從 startSeconds 開始
+    player.loadVideoById({ 
+      videoId: playlist[songKey].videoId, 
+      startSeconds: playlist[songKey].startSeconds || 0 
+    }); 
+    disableCaptions(); 
+  } 
+
+  currentTextEl.innerText = "♫"; 
+  nextTextEl.innerText = ""; 
+} 
+
+// 動態檢查時間並切換字幕
+function checkTime() {
+  if (!player || typeof player.getCurrentTime !== 'function') return;
+
+  const currentTime = player.getCurrentTime();
+
+  if (!lyricsData || lyricsData.length === 0) return;
+
+  // 前奏階段
+  if (currentTime < lyricsData[0].time) {
+    currentTextEl.innerText = "🎶";
+    nextTextEl.innerText = lyricsData[0].text;
+    return;
+  }
+
+  // 尋找當前歌詞
+  let newIndex = lyricsData.findIndex((item, i) => {
+    const nextTime = lyricsData[i + 1] ? lyricsData[i + 1].time : Infinity;
+    return currentTime >= item.time && currentTime < nextTime;
+  });
+
+  if (newIndex !== -1) {
+    const currentLyric = lyricsData[newIndex];
+    currentTextEl.innerText = currentLyric.text || "♫";
+
+    if (lyricsData[newIndex + 1]) {
+      nextTextEl.innerText = lyricsData[newIndex + 1].text;
+    } else {
+      nextTextEl.innerText = "";
+    }
+  }
+    }
+  </script>
+</body>
+</html>
+
+

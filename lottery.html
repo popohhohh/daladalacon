@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽籤</title>
+    
+ <style>
+        /* 🌎 全域基礎樣式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 30px 5%; 
+            background: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lottery-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .lottery-container h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        /* 🎯 質感升級：低調透明米咖啡色長方形抽籤按鈕 */
+        .btn-draw {
+            background: linear-gradient(135deg, rgba(225, 212, 196, 0.8), rgba(198, 181, 160, 0.8));
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: #554637; 
+            border: 1px solid rgba(224, 224, 224, 0.8);
+            padding: 14px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px; /* 改為與主頁 input 相同的 12px 精緻圓角 */
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(198, 181, 160, 0.25), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px; 
+            text-indent: 1px;    
+            transition: all 0.2s ease; /* 與主頁一致的流暢速度 */
+            margin-bottom: 30px;
+            outline: none;
+        }
+
+        /* 懸浮狀態 */
+        .btn-draw:hover {
+            background: linear-gradient(135deg, rgba(218, 204, 187, 0.95), rgba(190, 172, 150, 0.95));
+            transform: translateY(-2px); 
+            border-color: rgba(160, 160, 160, 0.8);
+            box-shadow: 0 6px 16px rgba(198, 181, 160, 0.4);
+        }
+
+        /* 點擊狀態 */
+        .btn-draw:active {
+            transform: translateY(0); 
+            box-shadow: 0 3px 8px rgba(198, 181, 160, 0.2);
+        }
+
+        .btn-draw:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+            border-color: #e0e0e0;
+        }
+
+        /* 📦 抽籤結果卡片 */
+        .card.result-card {
+            text-align: left;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.4s ease;
+            display: none;
+            padding: 24px;
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #eaeaea;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+        }
+
+        .card.result-card.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #1a1a1a;
+        }
+
+        /* 🎬 YouTube 響應式內嵌矩形 */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; 
+            height: 0;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+
+/* 📝 完美適應手機、不爆框、不歪斜，且下方留有安全距離的便利貼 */
+.card p.video-text {
+    white-space: pre-wrap;
+    color: #4a4a4a;
+    font-size: 15px;
+    line-height: 1.7;
+    
+    /* 1. 寬度自適應，左右不設 margin，徹底解決手機爆框問題 */
+    width: auto; 
+    margin-top: 20px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 25px; /* 💡 關鍵：加強下方間距，把標籤雲優雅地推開 */
+    
+    /* 2. 便利貼經典配色與平整陰影 */
+    background: #fff9db; /* 柔和淺黃色 */
+    padding: 20px;
+    border-radius: 4px; /* 精緻微圓角 */
+    border-left: none; /* 移除左邊引導線 */
+    
+    /* 3. 平整紙張陰影 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 
+                0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+        }
+
+     
+     /* 🏷️ 標籤雲容器：解決手機上換行擠在一起的問題 */
+.tag-container {
+    width: 100%;
+    margin: 0; 
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;    /* 💡 關鍵：強制設定換行時，上下排標籤的「行距」為 10px */
+    column-gap: 12px;   /* 左右標籤之間的間距 */
+    justify-content: flex-start; 
+}
+
+/* 標籤本體微調（讓文字更有呼吸空間） */
+.tag-badge {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 6px 14px; /* 稍微增加內襯，讓標籤更圓潤好看 */
+    font-size: 11px;   /* 稍微放大一點點，閱讀更清晰 */
+    color: #666;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+    display: inline-block;
+    white-space: nowrap; /* 確保單個標籤內的文字不會自己斷行 */
+}
+
+        .shuffling {
+            animation: pulse 0.1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: #333;
+        }
+       footer { 
+      font-size: 12px; 
+      color: #999999; 
+      text-align: center; 
+      padding: 40px 0 20px 0; 
+      line-height: 1.6; 
+    }
+
+    </style>
+</head>
+<body>
+
+    <div class="lottery-container">
+        <h1>今天推薦給你的是……</h1>
+        <button class="btn-draw" id="drawBtn"> 抽籤！</button>
+
+        <div class="card result-card" id="resultCard">
+            <h3 id="videoTitle">影片標題將顯示在此</h3>
+             
+            <div class="video-container">
+                <iframe id="youtubePlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <p class="video-text" id="videoText"></p>
+            <div class="tag-container" id="tagContainer"></div>
+        </div>
+
+
+    <script>
+    // 1. 全域變數，用來存放資料
+    let videoData = [];
+
+    // 2. 初始化：一進頁面就嘗試抓取 data.json
+    async function initData() {
+        try {
+            const response = await fetch('data.json');
+            if (!response.ok) throw new Error("檔案讀取失敗");
+            videoData = await response.json();
+            console.log("資料庫已就緒，共", videoData.length, "筆資料");
+        } catch (err) {
+            console.error("資料載入錯誤:", err);
+            document.getElementById('videoTitle').innerText = "資料載入失敗，請檢查 JSON 格式或伺服器環境";
+        }
+    }
+    
+    // 執行載入
+    initData();
+
+    // 3. 取得 YouTube 嵌入連結的函式
+    function getEmbedUrl(url) {
+        if (!url) return '';
+        let videoId = '';
+        if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        }
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+    }
+
+    // 4. 抽籤邏輯
+    const drawBtn = document.getElementById('drawBtn');
+    const resultCard = document.getElementById('resultCard');
+    const videoTitle = document.getElementById('videoTitle');
+    const videoText = document.getElementById('videoText');
+    const tagContainer = document.getElementById('tagContainer');
+    const youtubePlayer = document.getElementById('youtubePlayer');
+
+    drawBtn.addEventListener('click', () => {
+        // 防呆：如果資料還沒抓到，就直接跳出
+        if (videoData.length === 0) {
+            alert('資料載入中！');
+            return;
+        }
+
+        drawBtn.disabled = true;
+        drawBtn.innerText = "抽籤中...";
+        
+        resultCard.classList.remove('show');
+        youtubePlayer.src = ''; 
+        resultCard.style.display = 'block';
+        videoTitle.classList.add('shuffling');
+
+        let shuffleCount = 0;
+        const interval = setInterval(() => {
+            const randomIdx = Math.floor(Math.random() * videoData.length);
+            videoTitle.innerText = videoData[randomIdx].title || "無標題";
+            shuffleCount++;
+            
+            if (shuffleCount > 12) {
+                clearInterval(interval);
+                
+                const finalSelection = videoData[Math.floor(Math.random() * videoData.length)];
+                
+                videoTitle.innerText = finalSelection.title || "無標題";
+                videoText.innerText = finalSelection.text || "";
+                youtubePlayer.src = getEmbedUrl(finalSelection.url);
+                
+                // 清空並重新產生標籤
+                tagContainer.innerHTML = '';
+                if (finalSelection.tags && Array.isArray(finalSelection.tags)) {
+                    finalSelection.tags.forEach(tag => {
+                        const span = document.createElement('span');
+                        span.classList.add('tag-badge');
+                        span.innerText = `#${tag}`;
+                        tagContainer.appendChild(span);
+                    });
+                }
+
+                videoTitle.classList.remove('shuffling');
+                resultCard.classList.add('show');
+                
+                drawBtn.disabled = false;
+                drawBtn.innerText = "再抽一集！";
+            }
+        }, 80);
+    });
+</script>
+    <footer>
+    
+            <div style="margin-top: 20px; font-size: 0.9em;">
+    <a href="https://ko-fi.com/popohhohh" target="_blank" class="report-link" style="color: #000000; font-weight: bold; text-decoration: underline;">
+      如果喜歡這個工具，可以請我喝奶茶三兄弟🧋
+    </a>
+  </div>
+    
+  <div class="copyright" style="margin-top: 1px; font-size: 0.9em; opacity: 0.8;">
+    © 2026 popohhohh. All rights reserved.
+  </div>
+
+    
+    </footer>
+
+</body>
+</html>
