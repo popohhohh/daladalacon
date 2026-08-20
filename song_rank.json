@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-08-19T16:28:03.805Z",
+  "updateTime": "2026-08-20T16:31:31.558Z",
   "songs": [
     {
       "title": "明天我會是更好的人嗎",
@@ -10,9 +10,9 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/crWGEFec9jM/mqdefault.jpg",
       "publishedAt": "2024-11-06T12:00:07Z",
-      "views": 226128,
-      "likes": 5186,
-      "comments": 347,
+      "views": 226246,
+      "likes": 5187,
+      "comments": 352,
       "engagement": 2.45,
       "durationSeconds": 505
     },
@@ -25,7 +25,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/gvkijPmbl-g/mqdefault.jpg",
       "publishedAt": "2024-06-06T12:00:17Z",
-      "views": 194275,
+      "views": 194387,
       "likes": 6076,
       "comments": 389,
       "engagement": 3.33,
@@ -40,8 +40,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/EqDoZplwxUk/mqdefault.jpg",
       "publishedAt": "2025-04-23T12:00:06Z",
-      "views": 154110,
-      "likes": 4108,
+      "views": 154284,
+      "likes": 4110,
       "comments": 245,
       "engagement": 2.82,
       "durationSeconds": 412
@@ -55,26 +55,11 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/r1qUpvtTHlk/mqdefault.jpg",
       "publishedAt": "2024-09-04T12:00:07Z",
-      "views": 150156,
+      "views": 150308,
       "likes": 3781,
-      "comments": 161,
-      "engagement": 2.63,
+      "comments": 164,
+      "engagement": 2.62,
       "durationSeconds": 386
-    },
-    {
-      "title": "啊～",
-      "isMerged": true,
-      "relatedVideoIds": [
-        "s4HcWjeUW40",
-        "BsdxH-fPCpA"
-      ],
-      "thumbnail": "https://i.ytimg.com/vi/s4HcWjeUW40/mqdefault.jpg",
-      "publishedAt": "2025-02-26T12:00:11Z",
-      "views": 91187,
-      "likes": 2319,
-      "comments": 140,
-      "engagement": 2.7,
-      "durationSeconds": 410
     },
     {
       "title": "我不在你的眼裡",
@@ -85,11 +70,26 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/N5iwakHAYl8/mqdefault.jpg",
       "publishedAt": "2026-01-14T12:00:07Z",
-      "views": 91034,
-      "likes": 2850,
-      "comments": 224,
-      "engagement": 3.38,
+      "views": 91298,
+      "likes": 2851,
+      "comments": 225,
+      "engagement": 3.37,
       "durationSeconds": 416
+    },
+    {
+      "title": "啊～",
+      "isMerged": true,
+      "relatedVideoIds": [
+        "s4HcWjeUW40",
+        "BsdxH-fPCpA"
+      ],
+      "thumbnail": "https://i.ytimg.com/vi/s4HcWjeUW40/mqdefault.jpg",
+      "publishedAt": "2025-02-26T12:00:11Z",
+      "views": 91241,
+      "likes": 2319,
+      "comments": 141,
+      "engagement": 2.7,
+      "durationSeconds": 410
     },
     {
       "title": "不放棄先生",
@@ -100,9 +100,9 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Nd3Ts0dgkMI/mqdefault.jpg",
       "publishedAt": "2025-07-23T12:00:06Z",
-      "views": 84832,
+      "views": 84935,
       "likes": 2212,
-      "comments": 155,
+      "comments": 157,
       "engagement": 2.79,
       "durationSeconds": 479
     },
@@ -115,10 +115,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/mWd1W61nDX8/mqdefault.jpg",
       "publishedAt": "2026-03-04T12:00:06Z",
-      "views": 71185,
+      "views": 71375,
       "likes": 2225,
       "comments": 143,
-      "engagement": 3.33,
+      "engagement": 3.32,
       "durationSeconds": 429
     },
     {
@@ -130,10 +130,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Ass__jb93sc/mqdefault.jpg",
       "publishedAt": "2026-06-24T12:00:06Z",
-      "views": 52311,
-      "likes": 1903,
+      "views": 52555,
+      "likes": 1904,
       "comments": 136,
-      "engagement": 3.9,
+      "engagement": 3.88,
       "durationSeconds": 587
     }
   ]
