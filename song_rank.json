@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-08-29T19:10:07.651Z",
+  "updateTime": "2026-08-30T19:01:40.043Z",
   "songs": [
     {
       "title": "明天我會是更好的人嗎",
@@ -10,7 +10,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/crWGEFec9jM/mqdefault.jpg",
       "publishedAt": "2024-11-06T12:00:07Z",
-      "views": 227360,
+      "views": 227537,
       "likes": 5192,
       "comments": 352,
       "engagement": 2.44,
@@ -25,8 +25,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/gvkijPmbl-g/mqdefault.jpg",
       "publishedAt": "2024-06-06T12:00:17Z",
-      "views": 195507,
-      "likes": 6086,
+      "views": 195665,
+      "likes": 6087,
       "comments": 391,
       "engagement": 3.31,
       "durationSeconds": 424
@@ -40,8 +40,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/EqDoZplwxUk/mqdefault.jpg",
       "publishedAt": "2025-04-23T12:00:06Z",
-      "views": 155577,
-      "likes": 4118,
+      "views": 155732,
+      "likes": 4119,
       "comments": 245,
       "engagement": 2.8,
       "durationSeconds": 412
@@ -55,7 +55,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/r1qUpvtTHlk/mqdefault.jpg",
       "publishedAt": "2024-09-04T12:00:07Z",
-      "views": 151348,
+      "views": 151488,
       "likes": 3787,
       "comments": 164,
       "engagement": 2.61,
@@ -70,10 +70,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/N5iwakHAYl8/mqdefault.jpg",
       "publishedAt": "2026-01-14T12:00:07Z",
-      "views": 93568,
-      "likes": 2866,
+      "views": 93946,
+      "likes": 2867,
       "comments": 226,
-      "engagement": 3.3,
+      "engagement": 3.29,
       "durationSeconds": 416
     },
     {
@@ -85,10 +85,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/s4HcWjeUW40/mqdefault.jpg",
       "publishedAt": "2025-02-26T12:00:11Z",
-      "views": 91635,
+      "views": 91702,
       "likes": 2321,
       "comments": 141,
-      "engagement": 2.69,
+      "engagement": 2.68,
       "durationSeconds": 410
     },
     {
@@ -100,8 +100,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Nd3Ts0dgkMI/mqdefault.jpg",
       "publishedAt": "2025-07-23T12:00:06Z",
-      "views": 85781,
-      "likes": 2219,
+      "views": 85860,
+      "likes": 2220,
       "comments": 158,
       "engagement": 2.77,
       "durationSeconds": 479
@@ -115,10 +115,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/mWd1W61nDX8/mqdefault.jpg",
       "publishedAt": "2026-03-04T12:00:06Z",
-      "views": 73069,
-      "likes": 2238,
+      "views": 73373,
+      "likes": 2240,
       "comments": 143,
-      "engagement": 3.26,
+      "engagement": 3.25,
       "durationSeconds": 429
     },
     {
@@ -130,10 +130,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Ass__jb93sc/mqdefault.jpg",
       "publishedAt": "2026-06-24T12:00:06Z",
-      "views": 55663,
-      "likes": 1929,
-      "comments": 136,
-      "engagement": 3.71,
+      "views": 56216,
+      "likes": 1934,
+      "comments": 137,
+      "engagement": 3.68,
       "durationSeconds": 587
     }
   ]
