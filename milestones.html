@@ -420,6 +420,47 @@
         height: 340px;
       }
     }
+
+    /* === 額外追加：參與互動按鈕樣式 (符合原有手帳日系風格) === */
+    .checkin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 3px 12px;
+      font-size: 0.95rem;
+      color: var(--book-accent);
+      background: rgba(122, 114, 103, 0.08);
+      border: 1px dashed #c4ccd4;
+      border-radius: 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s ease;
+      font-family: var(--font-handwriting);
+    }
+
+    .checkin-btn:hover {
+      background: rgba(124, 141, 166, 0.15);
+      border-color: var(--node-dot);
+      color: #2f3640;
+    }
+
+    /* 已簽到/已參與狀態 */
+    .checkin-btn.checked {
+      background-color: #e3ebf3;
+      border: 1px solid var(--node-dot);
+      color: #3b4e6b;
+      cursor: default;
+    }
+
+    .checkin-btn .count-badge {
+      font-size: 0.9rem;
+      background: #ffffff;
+      padding: 1px 7px;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -427,19 +468,15 @@
   <!-- ================= 1. 開場翻書層 ================= -->
   <div class="intro-overlay" id="introOverlay">
     <div class="book" id="book">
-      <!-- 底頁（翻開後的右頁） -->
       <div class="page page-base">
         <p>翻開回億...</p>
       </div>
 
-      <!-- 可翻動的封面 -->
       <div class="cover-page page">
-        <!-- 封面正面 -->
         <div class="front">
           <h1>達康近代史</h1>
           <p>2013~</p>
         </div>
-        <!-- 封面背面 -->
         <div class="back">
           <p style="font-size: 1.2rem; color: #7A7267;"></p>
         </div>
@@ -637,28 +674,28 @@
       </div>
 
       <div class="timeline-group">
-  <div class="date-header"><span>2019 . 08</span></div>
-  <div class="container left">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/zombi.jpeg" alt="《廳院指南：活屍末日劇院求生守則》首演" />
-      </div>
-      <div class="caption"> 《廳院指南：活屍末日劇院求生守則》首演 </div>
-    </a>
-  </div>
+        <div class="date-header"><span>2019 . 08</span></div>
+        <div class="container left">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/zombi.jpeg" alt="《廳院指南：活屍末日劇院求生守則》首演" />
+            </div>
+            <div class="caption"> 《廳院指南：活屍末日劇院求生守則》首演 </div>
+          </a>
+        </div>
       </div>
 
-  <div class="timeline-group">
-  <div class="date-header"><span>2019 . 11</span></div>
-  <div class="container right">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/Kowaii.png" alt="《欸！恐怖恐怖？》首演" />
+      <div class="timeline-group">
+        <div class="date-header"><span>2019 . 11</span></div>
+        <div class="container right">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/Kowaii.png" alt="《欸！恐怖恐怖？》首演" />
+            </div>
+            <div class="caption">《欸！恐怖恐怖？》首演</div>
+          </a>
+        </div>
       </div>
-      <div class="caption">《欸！恐怖恐怖？》首演</div>
-    </a>
-  </div>
-</div>
 
       <!-- ===== 2020年 ===== -->
       <div class="timeline-group">
@@ -676,18 +713,16 @@
       </div>
 
       <div class="timeline-group">
-  <div class="date-header"><span>2020 . 07</span></div>
-  <div class="container left">
-    <!-- 1. 移除 text-only -->
-    <a href="#" class="polaroid" target="_blank">
-      <!-- 2. 插入圖片框與圖片 -->
-      <div class="photo-frame">
-        <img src="images/3ko.jpeg" alt="《三口組》首演" />
+        <div class="date-header"><span>2020 . 07</span></div>
+        <div class="container left">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/3ko.jpeg" alt="《三口組》首演" />
+            </div>
+            <div class="caption">《三口組》首演</div>
+          </a>
+        </div>
       </div>
-      <div class="caption">《三口組》首演</div>
-    </a>
-  </div>
-</div>
 
       <div class="timeline-group">
         <div class="date-header"><span>2020 . 08</span></div>
@@ -722,26 +757,26 @@
         </div>
       </div>
 
-     <div class="timeline-group">
-  <div class="date-header"><span>2021 . 12</span></div>
-  <div class="container right">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/guest.jpeg" alt="《接客啦！達康！》" />
-      </div>
-      <div class="caption"> 《接客啦！達康！》 </div>
-    </a>
-  </div>
+      <div class="timeline-group">
+        <div class="date-header"><span>2021 . 12</span></div>
+        <div class="container right">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/guest.jpeg" alt="《接客啦！達康！》" />
+            </div>
+            <div class="caption"> 《接客啦！達康！》 </div>
+          </a>
         </div>
+      </div>
 
       <!-- ===== 2022年 ===== -->
       <div class="timeline-group">
         <div class="date-header year-start"><span>2022 . 02</span></div>
         <div class="container left">
-           <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/S6E5.jpeg" alt="《好了啦！達康！》第六季" />
-      </div>
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/S6E5.jpeg" alt="《好了啦！達康！》第六季" />
+            </div>
             <div class="caption">《好了啦！達康！》第六季</div>
           </a>
         </div>
@@ -750,20 +785,20 @@
       <div class="timeline-group">
         <div class="date-header"><span>2022 . 11</span></div>
         <div class="container right">
-         <a href="#" class="polaroid text-only" target="_blank">
+          <a href="#" class="polaroid text-only" target="_blank">
             <div class="caption">《陳同學》破百萬觀看</div>
           </a>
         </div>
         <div class="container left">
-       <a href="#" class="polaroid text-only" target="_blank">
+          <a href="#" class="polaroid text-only" target="_blank">
             <div class="caption">《刑者》破百萬收聽</div>
           </a>
         </div>
         <div class="container right">
-           <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/PBS_Comedy.jpeg" alt="PBS 實驗小場初登場" />
-      </div>
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/PBS_Comedy.jpeg" alt="PBS 實驗小場初登場" />
+            </div>
             <div class="caption">PBS 實驗小場初登場</div>
           </a>
         </div>
@@ -771,50 +806,49 @@
 
       <!-- ===== 2023年 ===== -->
       <div class="timeline-group">
-  <div class="date-header year-start"><span>2023 . 02</span></div>
-  <div class="container left">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/S7E2.jpeg" alt="《好了啦！達康！》第七季" />
+        <div class="date-header year-start"><span>2023 . 02</span></div>
+        <div class="container left">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/S7E2.jpeg" alt="《好了啦！達康！》第七季" />
+            </div>
+            <div class="caption"> 《好了啦！達康！》第七季 </div>
+          </a>
+        </div>
       </div>
-      <div class="caption"> 《好了啦！達康！》第七季 </div>
-    </a>
-  </div>
-       </div>
 
       <div class="timeline-group">
         <div class="date-header"><span>2023 . 06</span></div>
         <div class="container right">
           <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/PBS_Zepp.jpeg" alt="PBS 千人玩家大瘋測" />
-      </div>
+            <div class="photo-frame">
+              <img src="images/PBS_Zepp.jpeg" alt="PBS 千人玩家大瘋測" />
+            </div>
             <div class="caption">PBS 千人玩家大瘋測</div>
           </a>
         </div>
       </div>
 
-     
-<div class="timeline-group">
-  <div class="date-header"><span>2023 . 07</span></div>
-  <div class="container left">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/10th.jpeg" alt="十週年自我ㄅㄧㄠˇ揚大會" />
+      <div class="timeline-group">
+        <div class="date-header"><span>2023 . 07</span></div>
+        <div class="container left">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/10th.jpeg" alt="十週年自我ㄅㄧㄠˇ揚大會" />
+            </div>
+            <div class="caption"> 十週年自我ㄅㄧㄠˇ揚大會 </div>
+          </a>
+        </div>
       </div>
-      <div class="caption"> 十週年自我ㄅㄧㄠˇ揚大會 </div>
-    </a>
-  </div>
-</div>
 
       <!-- ===== 2024年 ===== -->
       <div class="timeline-group">
         <div class="date-header year-start"><span>2024 . 01</span></div>
         <div class="container right">
           <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/S8E1.jpeg" alt="《好了啦！達康！》第八季" />
-      </div>
+            <div class="photo-frame">
+              <img src="images/S8E1.jpeg" alt="《好了啦！達康！》第八季" />
+            </div>
             <div class="caption">《好了啦！達康！》第八季</div>
           </a>
         </div>
@@ -833,10 +867,9 @@
         <div class="date-header"><span>2024 . 06</span></div>
         <div class="container right">
           <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/PBS_PE.jpeg" alt="PBS 搞笑大賤檢" />
-      </div>
-
+            <div class="photo-frame">
+              <img src="images/PBS_PE.jpeg" alt="PBS 搞笑大賤檢" />
+            </div>
             <div class="caption">PBS 搞笑大賤檢</div>
           </a>
         </div>
@@ -851,36 +884,34 @@
         </div>
       </div>
 
-     
-
-  <div class="timeline-group">
-  <div class="date-header"><span>2024 . 12</span></div>
-  <div class="container left">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/yosei2024.jpeg" alt="台北喜劇節寄席第一屆" />
+      <div class="timeline-group">
+        <div class="date-header"><span>2024 . 12</span></div>
+        <div class="container left">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/yosei2024.jpeg" alt="台北喜劇節寄席第一屆" />
+            </div>
+            <div class="caption"> 台北喜劇節寄席第一屆 </div>
+          </a>
+        </div>
+        <div class="container right">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/PBS_konto2024.jpeg" alt="PBS SHUFFLE MATCH～短劇大亂鬥！" />
+            </div>
+            <div class="caption"> PBS SHUFFLE MATCH～短劇大亂鬥！ </div>
+          </a>
+        </div>
       </div>
-      <div class="caption"> 台北喜劇節寄席第一屆 </div>
-    </a>
-  </div>
-  <div class="container right">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/PBS_konto2024.jpeg" alt="PBS SHUFFLE MATCH～短劇大亂鬥！" />
-      </div>
-      <div class="caption"> PBS SHUFFLE MATCH～短劇大亂鬥！ </div>
-    </a>
-  </div>
-</div>
 
       <!-- ===== 2025年 ===== -->
       <div class="timeline-group">
         <div class="date-header year-start"><span>2025 . 02</span></div>
         <div class="container left">
           <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/S9E3.jpeg" alt="《好了啦！達康！》第九季" />
-      </div>
+            <div class="photo-frame">
+              <img src="images/S9E3.jpeg" alt="《好了啦！達康！》第九季" />
+            </div>
             <div class="caption">《好了啦！達康！》第九季</div>
           </a>
         </div>
@@ -915,15 +946,15 @@
 
       <!-- ===== 2026年 ===== -->
       <div class="timeline-group">
-  <div class="date-header year-start"><span>2026 . 01</span></div>
-  <div class="container right">
-    <a href="#" class="polaroid" target="_blank">
-      <div class="photo-frame">
-        <img src="images/PBS_konto2026.jpeg" alt="PBS SHUFFLE MATCH～短劇大亂鬥！2" />
-      </div>
-      <div class="caption"> PBS SHUFFLE MATCH～短劇大亂鬥！2 </div>
-    </a>
-  </div>
+        <div class="date-header year-start"><span>2026 . 01</span></div>
+        <div class="container right">
+          <a href="#" class="polaroid" target="_blank">
+            <div class="photo-frame">
+              <img src="images/PBS_konto2026.jpeg" alt="PBS SHUFFLE MATCH～短劇大亂鬥！2" />
+            </div>
+            <div class="caption"> PBS SHUFFLE MATCH～短劇大亂鬥！2 </div>
+          </a>
+        </div>
       </div>
 
       <div class="timeline-group">
@@ -958,7 +989,6 @@
         </div>
       </div>
 
-
       <div class="timeline-group">
         <div class="date-header"><span>2026 . 12</span></div>
         <div class="container right">
@@ -972,30 +1002,25 @@
   </div>
 
   <script>
+    // ⚠️ 請將此處替換為您在 Google Apps Script 部署取得的 Web 應用程式網址
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzERAXolcLMDYRkgPTn0Ay7rZC8A80VIbTJonTmZtdx8Kg5_7MU2oiX0GT1CG344wgWPQ/exec";
+
     document.addEventListener("DOMContentLoaded", function () {
-      // === 1. 開場動畫邏輯 ===
+      // === 1. 開場動畫邏輯 (保持原有設定) ===
       const book = document.getElementById('book');
       const introOverlay = document.getElementById('introOverlay');
       const mainWrapper = document.getElementById('mainWrapper');
 
       book.addEventListener('click', () => {
-        // 點擊書本觸發 3D 翻開
         book.classList.add('open');
-
-        // 動畫進行 1 秒後，淡出遮罩並展開時間軸
         setTimeout(() => {
           introOverlay.classList.add('fade-out');
           mainWrapper.classList.add('show');
         }, 900);
       });
 
-      // === 2. 時間軸 IntersectionObserver 滾動觸發動畫 ===
+      // === 2. 時間軸滾動觸發 (保持原有設定) ===
       const containers = document.querySelectorAll('.container');
-
-      const observerOptions = {
-        threshold: 0.1
-      };
-
       const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -1003,15 +1028,104 @@
             observer.unobserve(entry.target);
           }
         });
-      }, observerOptions);
+      }, { threshold: 0.1 });
 
       containers.forEach(container => {
         observer.observe(container);
       });
+
+      // === 3. 參與活動打卡與統計互動邏輯 ===
+      initParticipationTracker();
     });
+
+    function initParticipationTracker() {
+      // 讀取訪客本地已參與的活動紀錄
+      const checkedEvents = JSON.parse(localStorage.getItem('dacom_attended_events') || '[]');
+      const polaroids = document.querySelectorAll('.polaroid');
+
+      // 動態替每張拍立得加入「我有去」按鈕
+      polaroids.forEach((card) => {
+        const captionEl = card.querySelector('.caption');
+        if (!captionEl) return;
+
+        // 活動 ID 取文字標題（過濾前後空白）
+        const eventId = captionEl.textContent.trim();
+        card.setAttribute('data-event-id', eventId);
+
+        const isChecked = checkedEvents.includes(eventId);
+
+        // 建立打卡標籤
+        const btn = document.createElement('div');
+        btn.className = `checkin-btn ${isChecked ? 'checked' : ''}`;
+        btn.innerHTML = `
+          <span>${isChecked ? '✓ 我在現場' : '✋ 我有去'}</span>
+          <span class="count-badge">0</span>
+        `;
+
+        // 點擊事件：避免觸發外層 a 標籤跳轉
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (btn.classList.contains('checked')) return; // 已參與過不再重複計算
+
+          handleCheckIn(eventId, btn);
+        });
+
+        card.appendChild(btn);
+      });
+
+      // 從 Google Apps Script 載入目前統計數據
+      fetchEventCounts();
+    }
+
+    // 向後端請求所有數據
+    async function fetchEventCounts() {
+      if (!GAS_API_URL || GAS_API_URL === "YOUR_GAS_WEB_APP_URL") return;
+
+      try {
+        const response = await fetch(`${GAS_API_URL}?action=getAll`);
+        const json = await response.json();
+        if (json.status === 'success' && json.data) {
+          document.querySelectorAll('.polaroid').forEach(card => {
+            const eventId = card.getAttribute('data-event-id');
+            const countBadge = card.querySelector('.count-badge');
+            if (countBadge && json.data[eventId] !== undefined) {
+              countBadge.textContent = json.data[eventId];
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('載入活動數據失敗：', err);
+      }
+    }
+
+    // 處理打卡 +1
+    async function handleCheckIn(eventId, btnElement) {
+      // 1. 畫面樂觀更新（立即反應 +1）
+      const countBadge = btnElement.querySelector('.count-badge');
+      let currentNum = parseInt(countBadge.textContent, 10) || 0;
+      countBadge.textContent = currentNum + 1;
+
+      btnElement.classList.add('checked');
+      btnElement.querySelector('span:first-child').textContent = '✓ 我在現場';
+
+      // 2. 存入瀏覽器 localStorage
+      const checkedEvents = JSON.parse(localStorage.getItem('dacom_attended_events') || '[]');
+      if (!checkedEvents.includes(eventId)) {
+        checkedEvents.push(eventId);
+        localStorage.setItem('dacom_attended_events', JSON.stringify(checkedEvents));
+      }
+
+      // 3. 非同步發送請求給 Google Apps Script
+      if (!GAS_API_URL || GAS_API_URL === "YOUR_GAS_WEB_APP_URL") return;
+
+      try {
+        await fetch(`${GAS_API_URL}?action=checkin&eventId=${encodeURIComponent(eventId)}`);
+      } catch (err) {
+        console.error('送出打卡資料時發生錯誤：', err);
+      }
+    }
   </script>
 </body>
 </html>
-
-
-
