@@ -33,6 +33,7 @@ jobs:
           // 格式：'歌曲識別名稱': ['影片ID_1', '影片ID_2', ...]
           // ==========================================
           const SONG_MAPPING = {
+              '你有什麼罪': ['FRKTkFUbReg'],
               'Dirty Baby': ['gvkijPmbl-g', 'VJShzIWUVvQ'],
               '明天我會是更好的人嗎': ['crWGEFec9jM', 'N6-IoasXsPk'],
               '北七': ['r1qUpvtTHlk', 'El6CgTIbdfg'],
