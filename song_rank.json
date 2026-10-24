@@ -2,20 +2,6 @@
   "updateTime": "2026-10-24T16:53:00.000Z",
   "songs": [
     {
-      "title": "你有什麼罪",
-      "isMerged": true,
-      "relatedVideoIds": [
-        "FRKTkFUbReg"
-      ],
-      "thumbnail": "https://i.ytimg.com/vi/FRKTkFUbReg/mqdefault.jpg",
-      "publishedAt": "2026-10-23T00:00:00Z",
-      "views": 24008,
-      "likes": 1101,
-      "comments": 0,
-      "engagement": 4.59,
-      "durationSeconds": 495
-    },
-    {
       "title": "明天我會是更好的人嗎",
       "isMerged": true,
       "relatedVideoIds": [
@@ -149,6 +135,20 @@
       "comments": 142,
       "engagement": 2.81,
       "durationSeconds": 587
+    },
+     {
+      "title": "你有什麼罪",
+      "isMerged": true,
+      "relatedVideoIds": [
+        "FRKTkFUbReg"
+      ],
+      "thumbnail": "https://i.ytimg.com/vi/FRKTkFUbReg/mqdefault.jpg",
+      "publishedAt": "2026-10-23T00:00:00Z",
+      "views": 24008,
+      "likes": 1101,
+      "comments": 0,
+      "engagement": 4.59,
+      "durationSeconds": 495
     }
   ]
 }
