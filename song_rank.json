@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-24T16:53:00.000Z",
+  "updateTime": "2026-10-24T09:45:16.078Z",
   "songs": [
     {
       "title": "明天我會是更好的人嗎",
@@ -10,10 +10,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/crWGEFec9jM/mqdefault.jpg",
       "publishedAt": "2024-11-06T12:00:07Z",
-      "views": 234270,
+      "views": 234326,
       "likes": 5236,
       "comments": 352,
-      "engagement": 2.39,
+      "engagement": 2.38,
       "durationSeconds": 505
     },
     {
@@ -25,8 +25,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/gvkijPmbl-g/mqdefault.jpg",
       "publishedAt": "2024-06-06T12:00:17Z",
-      "views": 203854,
-      "likes": 6143,
+      "views": 203938,
+      "likes": 6145,
       "comments": 390,
       "engagement": 3.2,
       "durationSeconds": 424
@@ -40,7 +40,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/EqDoZplwxUk/mqdefault.jpg",
       "publishedAt": "2025-04-23T12:00:06Z",
-      "views": 163160,
+      "views": 163266,
       "likes": 4189,
       "comments": 248,
       "engagement": 2.72,
@@ -55,7 +55,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/r1qUpvtTHlk/mqdefault.jpg",
       "publishedAt": "2024-09-04T12:00:07Z",
-      "views": 157127,
+      "views": 157206,
       "likes": 3816,
       "comments": 164,
       "engagement": 2.53,
@@ -70,10 +70,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/N5iwakHAYl8/mqdefault.jpg",
       "publishedAt": "2026-01-14T12:00:07Z",
-      "views": 108547,
+      "views": 108843,
       "likes": 2943,
       "comments": 226,
-      "engagement": 2.92,
+      "engagement": 2.91,
       "durationSeconds": 416
     },
     {
@@ -85,7 +85,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/s4HcWjeUW40/mqdefault.jpg",
       "publishedAt": "2025-02-26T12:00:11Z",
-      "views": 94322,
+      "views": 94361,
       "likes": 2343,
       "comments": 142,
       "engagement": 2.63,
@@ -100,8 +100,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Nd3Ts0dgkMI/mqdefault.jpg",
       "publishedAt": "2025-07-23T12:00:06Z",
-      "views": 90796,
-      "likes": 2283,
+      "views": 90885,
+      "likes": 2284,
       "comments": 159,
       "engagement": 2.69,
       "durationSeconds": 479
@@ -115,7 +115,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/mWd1W61nDX8/mqdefault.jpg",
       "publishedAt": "2026-03-04T12:00:06Z",
-      "views": 83755,
+      "views": 83866,
       "likes": 2289,
       "comments": 144,
       "engagement": 2.9,
@@ -130,24 +130,24 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Ass__jb93sc/mqdefault.jpg",
       "publishedAt": "2026-06-24T12:00:06Z",
-      "views": 77301,
-      "likes": 2028,
+      "views": 77563,
+      "likes": 2029,
       "comments": 142,
-      "engagement": 2.81,
+      "engagement": 2.8,
       "durationSeconds": 587
     },
-     {
+    {
       "title": "你有什麼罪",
       "isMerged": true,
       "relatedVideoIds": [
         "FRKTkFUbReg"
       ],
       "thumbnail": "https://i.ytimg.com/vi/FRKTkFUbReg/mqdefault.jpg",
-      "publishedAt": "2026-10-23T00:00:00Z",
-      "views": 24008,
-      "likes": 1101,
-      "comments": 0,
-      "engagement": 4.59,
+      "publishedAt": "2026-10-23T14:45:08Z",
+      "views": 25462,
+      "likes": 1122,
+      "comments": 77,
+      "engagement": 4.71,
       "durationSeconds": 495
     }
   ]
