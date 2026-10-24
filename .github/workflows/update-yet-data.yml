@@ -212,14 +212,14 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
+          git add rank.json song_rank.json
           
-          # 💡 如果沒有任何變更，直接結束，避免不必要的 commit
-          git diff-index --quiet HEAD || (
-            git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]" &&
-            
-            # 🔑 關鍵：在推送前先將遠端的更新拉下來重定基底 (rebase)，解決版本領先/衝突問題
-            git pull --rebase origin main &&
-            
-            git push origin main
+          # 1. 先將變更進行 Commit（如果沒有任何改動則會自動略過）
+          git diff-index --quiet HEAD || git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]"
+          
+          # 2. 在推送前先強制拉取遠端最新變更並進行 rebase（重定基底）
+          git pull origin main --rebase
+          
+          # 3. 將本地更新推送到遠端主分支
+          git push origin main
           )
