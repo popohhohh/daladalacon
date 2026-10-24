@@ -1,6 +1,20 @@
 {
-  "updateTime": "2026-10-23T19:45:53.920Z",
+  "updateTime": "2026-10-24T16:53:00.000Z",
   "songs": [
+    {
+      "title": "你有什麼罪",
+      "isMerged": true,
+      "relatedVideoIds": [
+        "FRKTkFUbReg"
+      ],
+      "thumbnail": "https://i.ytimg.com/vi/FRKTkFUbReg/mqdefault.jpg",
+      "publishedAt": "2026-10-23T00:00:00Z",
+      "views": 24008,
+      "likes": 1101,
+      "comments": 0,
+      "engagement": 4.59,
+      "durationSeconds": 495
+    },
     {
       "title": "明天我會是更好的人嗎",
       "isMerged": true,
@@ -90,51 +104,3 @@
       "comments": 142,
       "engagement": 2.63,
       "durationSeconds": 410
-    },
-    {
-      "title": "不放棄先生",
-      "isMerged": true,
-      "relatedVideoIds": [
-        "Nd3Ts0dgkMI",
-        "TkzaUIbq_ko"
-      ],
-      "thumbnail": "https://i.ytimg.com/vi/Nd3Ts0dgkMI/mqdefault.jpg",
-      "publishedAt": "2025-07-23T12:00:06Z",
-      "views": 90796,
-      "likes": 2283,
-      "comments": 159,
-      "engagement": 2.69,
-      "durationSeconds": 479
-    },
-    {
-      "title": "我只會打全壘打",
-      "isMerged": true,
-      "relatedVideoIds": [
-        "mWd1W61nDX8",
-        "wV9S4WgConk"
-      ],
-      "thumbnail": "https://i.ytimg.com/vi/mWd1W61nDX8/mqdefault.jpg",
-      "publishedAt": "2026-03-04T12:00:06Z",
-      "views": 83755,
-      "likes": 2289,
-      "comments": 144,
-      "engagement": 2.9,
-      "durationSeconds": 429
-    },
-    {
-      "title": "爛尾",
-      "isMerged": true,
-      "relatedVideoIds": [
-        "Ass__jb93sc",
-        "-uX87w2XOnw"
-      ],
-      "thumbnail": "https://i.ytimg.com/vi/Ass__jb93sc/mqdefault.jpg",
-      "publishedAt": "2026-06-24T12:00:06Z",
-      "views": 77301,
-      "likes": 2028,
-      "comments": 142,
-      "engagement": 2.81,
-      "durationSeconds": 587
-    }
-  ]
-}
