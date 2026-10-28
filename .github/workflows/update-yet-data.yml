@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write # 允許 workflow 推送 commit 回 repo
 
+concurrency:
+  group: youtube-data-update # 同一時間只跑一個，避免兩次執行互相衝突
+  cancel-in-progress: false
+
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
@@ -221,7 +225,9 @@ jobs:
           git diff --cached --quiet || git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]"
 
           # 2. 在推送前先拉取遠端最新變更並進行 rebase（重定基底）
-          git pull origin main --rebase
+          #    -X theirs：rebase 時代表「正在重放的本地 commit」，
+          #    發生衝突時一律採用本次剛產生的最新資料
+          git pull origin main --rebase -X theirs
 
           # 3. 將本地更新推送到遠端主分支
           git push origin main
