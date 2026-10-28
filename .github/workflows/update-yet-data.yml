@@ -5,6 +5,9 @@ on:
     - cron: '0 16 * * *' # 每天國際標準時 16:00 (台灣時間半夜 00:00) 自動執行
   workflow_dispatch: # 允許隨時手動點擊按鈕強制更新
 
+permissions:
+  contents: write # 允許 workflow 推送 commit 回 repo
+
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
@@ -33,7 +36,7 @@ jobs:
           // 格式：'歌曲識別名稱': ['影片ID_1', '影片ID_2', ...]
           // ==========================================
           const SONG_MAPPING = {
-              '你有什麼罪': ['FRKTkFUbReg'],
+              '你有什麼罪': ['FRKTkFUbReg', 'XGMedSY03FU'],
               'Dirty Baby': ['gvkijPmbl-g', 'VJShzIWUVvQ'],
               '明天我會是更好的人嗎': ['crWGEFec9jM', 'N6-IoasXsPk'],
               '北七': ['r1qUpvtTHlk', 'El6CgTIbdfg'],
@@ -95,7 +98,7 @@ jobs:
                   console.log('🚀 Starting deep scan...');
                   const allIds = await getAllVideoIds();
                   const rawDetails = await getVideoDetails(allIds);
-                  
+
                   // --------------------------------------------------
                   // 1️⃣ 第一部分：處理「單一影片」資料 (原 rank.json 邏輯，已加入 publishedAt)
                   // --------------------------------------------------
@@ -119,7 +122,7 @@ jobs:
                       updateTime: new Date().toISOString(),
                       videos: processedVideos
                   };
-                  
+
                   fs.writeFileSync('rank.json', JSON.stringify(originalPayload, null, 2));
                   console.log('✅ rank.json (Original Video Data with publishedAt) saved!');
 
@@ -131,7 +134,7 @@ jobs:
                   rawDetails.forEach(item => {
                       const videoId = item.id;
                       const songKey = videoToSongMap[videoId];
-                      if (!songKey) return; 
+                      if (!songKey) return;
 
                       const views = item.statistics.viewCount ? parseInt(item.statistics.viewCount) : 0;
                       const likes = item.statistics.likeCount ? parseInt(item.statistics.likeCount) : 0;
@@ -169,7 +172,7 @@ jobs:
 
                   let processedSongs = Object.values(songAggregates).map(song => {
                       const engagement = song.views > 0 ? ((song.likes + song.comments) / song.views) * 100 : 0;
-                      
+
                       // 💡 排序發布日期，取出「最早發布」的日期作為該合輯歌曲的主發布日期
                       const validDates = song.dates.filter(d => d).sort();
                       const earliestPublishDate = validDates.length > 0 ? validDates[0] : '';
@@ -213,13 +216,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add rank.json song_rank.json
-          
+
           # 1. 先將變更進行 Commit（如果沒有任何改動則會自動略過）
-          git diff-index --quiet HEAD || git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]"
-          
-          # 2. 在推送前先強制拉取遠端最新變更並進行 rebase（重定基底）
+          git diff --cached --quiet || git commit -m "🔄 自動更新 YouTube 影片及歌曲排行榜數據 (新增日期欄位) [skip ci]"
+
+          # 2. 在推送前先拉取遠端最新變更並進行 rebase（重定基底）
           git pull origin main --rebase
-          
+
           # 3. 將本地更新推送到遠端主分支
           git push origin main
-          )
