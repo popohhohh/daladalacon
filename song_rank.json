@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-11-07T19:51:27.944Z",
+  "updateTime": "2026-11-08T20:09:52.184Z",
   "songs": [
     {
       "title": "明天我會是更好的人嗎",
@@ -10,7 +10,7 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/crWGEFec9jM/mqdefault.jpg",
       "publishedAt": "2024-11-06T12:00:07Z",
-      "views": 237389,
+      "views": 237516,
       "likes": 5268,
       "comments": 352,
       "engagement": 2.37,
@@ -25,10 +25,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/gvkijPmbl-g/mqdefault.jpg",
       "publishedAt": "2024-06-06T12:00:17Z",
-      "views": 207654,
+      "views": 207845,
       "likes": 6165,
       "comments": 390,
-      "engagement": 3.16,
+      "engagement": 3.15,
       "durationSeconds": 424
     },
     {
@@ -40,8 +40,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/EqDoZplwxUk/mqdefault.jpg",
       "publishedAt": "2025-04-23T12:00:06Z",
-      "views": 166824,
-      "likes": 4222,
+      "views": 167014,
+      "likes": 4224,
       "comments": 248,
       "engagement": 2.68,
       "durationSeconds": 412
@@ -55,10 +55,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/r1qUpvtTHlk/mqdefault.jpg",
       "publishedAt": "2024-09-04T12:00:07Z",
-      "views": 160761,
-      "likes": 3846,
+      "views": 160948,
+      "likes": 3847,
       "comments": 165,
-      "engagement": 2.5,
+      "engagement": 2.49,
       "durationSeconds": 386
     },
     {
@@ -70,10 +70,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/N5iwakHAYl8/mqdefault.jpg",
       "publishedAt": "2026-01-14T12:00:07Z",
-      "views": 116135,
+      "views": 116583,
       "likes": 3000,
       "comments": 227,
-      "engagement": 2.78,
+      "engagement": 2.77,
       "durationSeconds": 416
     },
     {
@@ -85,10 +85,10 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/XGMedSY03FU/mqdefault.jpg",
       "publishedAt": "2026-10-23T14:45:08Z",
-      "views": 100887,
-      "likes": 2928,
-      "comments": 142,
-      "engagement": 3.04,
+      "views": 102212,
+      "likes": 2937,
+      "comments": 143,
+      "engagement": 3.01,
       "durationSeconds": 495
     },
     {
@@ -100,8 +100,8 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/s4HcWjeUW40/mqdefault.jpg",
       "publishedAt": "2025-02-26T12:00:11Z",
-      "views": 96884,
-      "likes": 2393,
+      "views": 96978,
+      "likes": 2394,
       "comments": 148,
       "engagement": 2.62,
       "durationSeconds": 410
@@ -115,26 +115,11 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Nd3Ts0dgkMI/mqdefault.jpg",
       "publishedAt": "2025-07-23T12:00:06Z",
-      "views": 93276,
+      "views": 93380,
       "likes": 2301,
       "comments": 159,
-      "engagement": 2.64,
+      "engagement": 2.63,
       "durationSeconds": 479
-    },
-    {
-      "title": "我只會打全壘打",
-      "isMerged": true,
-      "relatedVideoIds": [
-        "mWd1W61nDX8",
-        "wV9S4WgConk"
-      ],
-      "thumbnail": "https://i.ytimg.com/vi/mWd1W61nDX8/mqdefault.jpg",
-      "publishedAt": "2026-03-04T12:00:06Z",
-      "views": 88374,
-      "likes": 2317,
-      "comments": 144,
-      "engagement": 2.78,
-      "durationSeconds": 429
     },
     {
       "title": "爛尾",
@@ -145,11 +130,26 @@
       ],
       "thumbnail": "https://i.ytimg.com/vi/Ass__jb93sc/mqdefault.jpg",
       "publishedAt": "2026-06-24T12:00:06Z",
-      "views": 88264,
-      "likes": 2128,
+      "views": 88807,
+      "likes": 2131,
       "comments": 146,
-      "engagement": 2.58,
+      "engagement": 2.56,
       "durationSeconds": 587
+    },
+    {
+      "title": "我只會打全壘打",
+      "isMerged": true,
+      "relatedVideoIds": [
+        "mWd1W61nDX8",
+        "wV9S4WgConk"
+      ],
+      "thumbnail": "https://i.ytimg.com/vi/mWd1W61nDX8/mqdefault.jpg",
+      "publishedAt": "2026-03-04T12:00:06Z",
+      "views": 88675,
+      "likes": 2317,
+      "comments": 144,
+      "engagement": 2.78,
+      "durationSeconds": 429
     }
   ]
 }
